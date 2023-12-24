@@ -1,5 +1,12 @@
-<script setup>
-import DiagramShape from './components/DiagramShape.vue'
+<script setup lang="ts">
+import { provide } from 'vue'
+import DiagramShape from './DiagramShape.vue'
+import { GraphModel } from './models/graphModel';
+import { shapeComps } from './shape/index'
+
+const props = defineProps<{graph:GraphModel}>()
+provide('graph', props.graph)
+props.graph.registerShapeComps(shapeComps)
 function handleClickOut() {
 
 
@@ -37,7 +44,7 @@ const handleDrop = () => {
         @drop.stop="handleDrop"
         >
         <g>
-            <DiagramShape />
+            <DiagramShape :graph="graph" />
         </g>
     </svg>
   </div>
