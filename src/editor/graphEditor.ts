@@ -13,8 +13,8 @@ export class GraphEditor {
     const shape = Shape.fromOption(options.shapeOption)
     const graphOption = new GraphOption(shape);
     const graph = reactive(new GraphModel(graphOption));
-    // graph.init();
     this.graphModel = graph;
+    graph.init();
   }
   init() {
     // const graphOption = new GraphOption();
