@@ -2,7 +2,7 @@
 import { inject } from 'vue'
 import { Shape } from '../../types/index'
 const props = defineProps<{shape:Shape}>()
-const graph = inject('graphModel')
+const graph = inject('graph')
 const eventHandler = {}
 </script>
 <template>
