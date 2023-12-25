@@ -1,6 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import { inject, computed } from 'vue'
-const graph = inject('graph')
+const graph = inject('graph') as any;
 const data = computed(() => {
   
   return {

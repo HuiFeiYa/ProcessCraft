@@ -2,15 +2,15 @@
 import {reactive} from 'vue'
 import { GraphEditor } from './editor/graphEditor'
 import { Shape, SubShapeType } from './graph/types/index'
-import Graph from './graph/index.vue'
-const graph = new Shape({
-    subShapeType: SubShapeType.Block
-})
-const editor = reactive(new GraphEditor(graph))
+import GraphView from './graph/GraphView.vue'
+import { modelKeyConfig } from './graph/shape/shapeOption/commonShapeOption'
+const option = modelKeyConfig[SubShapeType.Block]
+// const graph = new Shape(option.shapeOption)
+const editor = reactive(new GraphEditor(option))
 console.log('editor:', editor)
 </script>
 
 <template>
-<Graph :graph="editor.graphModel" />
+<GraphView :graph="editor.graphModel" />
 </template>
 

@@ -5,8 +5,8 @@ export class GraphModel {
   /**
    * graph配置对象(暴露的接口，由外部实现)
    */
-  graphOption: IGraphOption;
-  constructor(opt: IGraphOption) {
+  graphOption: any;
+    constructor(opt: any) {
     this.graphOption = opt;
     this.graphOption.graph = this;
   }

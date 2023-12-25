@@ -18,15 +18,15 @@ const eventHandler = {}
   >
 
     <!-- 最外层是绝对坐标，要创建相对坐标系需要用<g transform="translate(absX,absY)/> 或foreignObject" -->
-      <!-- 
+    
+    <foreignObject
+
+    
               :width="shape.bounds.width"
       :height="shape.bounds.height"
       :x="shape.bounds.absX"
       :y="shape.bounds.absY"
-       -->
-    <foreignObject
-
-
+      
       style="overflow:visible"
       v-on="eventHandler"
 
