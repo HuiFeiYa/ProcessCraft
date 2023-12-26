@@ -617,6 +617,7 @@ export class Shape {
   shapeKey: ShapeKey;
   children?: Shape[];
 
+  /** todo 添加画布等信息 */
   static fromOption(shapeOption:ShapeOption) {
     const shape = new Shape();
     shape.id = getUid();

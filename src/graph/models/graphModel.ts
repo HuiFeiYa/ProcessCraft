@@ -4,6 +4,7 @@ import { MoveModel } from "./MoveModel";
 import { ViewModel } from "./ViewModel";
 import { ShapeCompManager } from "./shapeManager";
 import { SelectionModel } from './SelectionModel'
+import { Shape } from "../types";
 export class GraphModel {
   disabled = false
   constructor(opt: any) {
@@ -23,6 +24,10 @@ export class GraphModel {
  * 元素移动模型
  */
   moveModel = new MoveModel(this)
+    /**
+   * 图形id索引
+   */
+    shapeMap = new Map<string, Shape>()
   /**
  * 事件发射器
  */
@@ -31,6 +36,10 @@ export class GraphModel {
    * 图形组件管理器(当前画布上使用到的那些图形组件)
    */
   shapeCompManager = new ShapeCompManager();
+  /**
+   * children索引， id -> children，(父图形ID对应的其多个子图形)
+   */
+  indexParent: Map<string | null, Shape[]> = new Map()
   /**
    * graph配置对象(暴露的接口，由外部实现)
    */
@@ -54,5 +63,20 @@ export class GraphModel {
    */
   getShapeComp(key: string) {
     return this.shapeCompManager.get(key);
+  }
+  getShape(id: string): Shape | undefined {
+    return this.shapeMap.get(id);
+  }
+  addShape(shape: Shape) {
+    if (this.shapeMap.has(shape.id)) {
+      return;
+    }
+    this.shapeMap.set(shape.id, shape);
+  }
+  removeShape(id: string) {
+    const shape = this.shapeMap.get(id);
+    if (shape) {
+      this.shapeMap.delete(id);
+    }
   }
 }

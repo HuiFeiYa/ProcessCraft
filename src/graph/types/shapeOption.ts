@@ -1,4 +1,4 @@
-import { Shape, ShapeKey } from ".";
+import { Shape, ShapeKey, SubShapeType } from ".";
 import { MoveModel } from "../models/MoveModel";
 import { Bounds } from "../util/Bounds";
 import { Point } from "../util/Point";
@@ -33,12 +33,6 @@ export enum ShapeType {
     EdgeLabel = "EdgeLabel",
     MovableLabel = "MovableLabel",
   }
-// 图形小类， 小类声明了要用哪个组件来渲染图形，在SubShapeType_Component 映射了小类到组件的映射
-export enum SubShapeType {
-    CommonDiagram = "CommonDiagram",
-    CommonCompartmentProperty = "CommonCompartmentProperty", // 属性的图形
-    Block="Block"
-}
 /**
  * 图形数据配置对象的接口
  */

@@ -1,6 +1,6 @@
 import { MoveModel } from "../../models/MoveModel";
-import { Shape, ShapeKey } from "../../types";
-import { ShapeOption, ShapeType, SubShapeType } from "../../types/shapeOption";
+import { Shape, ShapeKey, SubShapeType } from "../../types";
+import { ShapeOption, ShapeType } from "../../types/shapeOption";
 
 export const baseShapeOption: ShapeOption = {
 

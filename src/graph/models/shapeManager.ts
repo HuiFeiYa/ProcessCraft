@@ -17,9 +17,7 @@ export class ShapeCompManager {
     this.map.set(key, comp);
     // this.map[comp];
   }
-  addShapes(
-    arr: { key: string; comp: any; skeletonDrawer?: SkeletonDrawer }[]
-  ) {
+  addShapes(arr: { key: string; comp: any; skeletonDrawer?: SkeletonDrawer }[]) {
     arr.forEach((it) => {
       this.addShape(it.key, it.comp);
       if (it.skeletonDrawer) {

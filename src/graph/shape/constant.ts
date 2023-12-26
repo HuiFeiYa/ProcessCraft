@@ -33,3 +33,14 @@ export enum EventType {
     leftBottom=4
   }
   
+  export enum SiderbarItemKey {
+    Block = 'Block'
+  }
+
+  export enum MetaclassType {
+    Class = "Class"
+  }
+
+  export enum StType {
+    "SysML::Blocks::Block"="SysML::Blocks::Block"
+  }

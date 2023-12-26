@@ -1,3 +1,5 @@
+import { Base36 } from "../types";
+
 /**
  * svg path 路径构造器
  * 小写的方法都是传相对的坐标
@@ -182,3 +184,24 @@ export class PathBuilder {
 
 export const pathBuilder = new PathBuilder();
 
+
+/**
+ * 获取唯一的id，以时间为基准，
+ */
+export const getUid = (() => {
+  let now = Base36.encode(Date.now() - 1634869060000);
+  let random = Base36.encode(parseInt(Math.random() * 10000 + ''));
+  let index = 0;
+  let p = `${now}-${random}-`;
+  return () => {
+    if (index >= Number.MAX_SAFE_INTEGER) {
+      now = Base36.encode(Date.now() - 1634869060000);
+      random = Base36.encode(parseInt(Math.random() * 10000 + ''));
+      index = 0;
+      p = `${now}-${random}-`;
+    }
+    index++;
+    return `${p}${Base36.encode(index)}`;
+
+  };
+})();
