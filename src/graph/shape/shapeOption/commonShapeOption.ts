@@ -1,4 +1,5 @@
-import { ShapeKey } from "../../types";
+import { MoveModel } from "../../models/MoveModel";
+import { Shape, ShapeKey } from "../../types";
 import { ShapeOption, ShapeType, SubShapeType } from "../../types/shapeOption";
 
 export const baseShapeOption: ShapeOption = {
@@ -52,7 +53,22 @@ export const baseShapeOption: ShapeOption = {
     constraintsValuesBounds: {
         absX: 0, absY: 0, width: 100, height: 13, x: 0, y: 0
     },
-    bounds: { absX: 0, absY: 0, width: 100, height: 80, x: 0, y: 0 }
+    bounds: { absX: 0, absY: 0, width: 100, height: 80, x: 0, y: 0 },
+    /**
+     * 移动结束时触发的方法
+     * @param moveModel
+     * @param dx
+     * @param dy
+     */
+    async customEndMove(moveModel: MoveModel, dx: number, dy: number) {
+        // 更新模型位置
+        moveModel.movingShapes.forEach(shape => {
+            shape.bounds.x += dx;
+            shape.bounds.y += dy;
+            shape.bounds.absX += dx;
+            shape.bounds.absY += dy;
+        })
+    }
 };
 export const blockOption: ShapeOption = {
     ...baseShapeOption,
@@ -70,7 +86,7 @@ export const blockOption: ShapeOption = {
 
 };
 export const modelKeyConfig = {
-    [SubShapeType.Block] : {
+    [SubShapeType.Block]: {
         shapeOption: {
             ...blockOption,
             shapeKey: ShapeKey.Block

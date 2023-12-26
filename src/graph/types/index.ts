@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 
 import { GraphModel } from "../models/graphModel";
-import { cloneDeep } from "../util";
 import { ShapeOption } from "./shapeOption";
+import { cloneDeep } from 'lodash'
 
 // 图形大类,大类表示了图形的数据结构， 相同大类的图形适用的数据结构是相同的，
 export enum ShapeType {

@@ -52,6 +52,7 @@ export class MoveModel {
         this.previewDy = dy;
     }
     async endMove() {
+        this.graph.graphOption.shape.customEndMove(this, this.previewDx, this.previewDy)
         this.mouseDown = false;
         this.clear();
     }

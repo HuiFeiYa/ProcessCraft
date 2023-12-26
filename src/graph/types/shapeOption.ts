@@ -1,4 +1,5 @@
-import { ShapeKey } from ".";
+import { Shape, ShapeKey } from ".";
+import { MoveModel } from "../models/MoveModel";
 import { Bounds } from "../util/Bounds";
 import { Point } from "../util/Point";
 
@@ -84,4 +85,5 @@ export interface ShapeOption {
     svgPath?:string
   
     order?:number
+    customEndMove: (moveModel: MoveModel, dx: number, dy: number) => void
 }    
