@@ -81,7 +81,7 @@ export const blockOption: ShapeOption = {
         strokeColor: "#ad9d85",
         strokeWidth: 1
     },
-    bounds: { absX: 0, absY: 0, width: 100, height: 50, x: 0, y: 0 },
+    bounds: { absX: 10, absY: 10, width: 100, height: 50, x: 10, y: 10 },
     nameStyle: { fontWeight: 400, fontSize: 12, whiteSpace: 'pre-wrap', fontFamily: '', textAlign: 'center' },
 
 };

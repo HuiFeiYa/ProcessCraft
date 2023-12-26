@@ -4,11 +4,25 @@ import DiagramShape from './DiagramShape.vue'
 import { GraphModel } from './models/graphModel';
 import { shapeComps } from './shape/index'
 import ShapeMovePreview from './shape/interaction/ShapeMovePreview.vue'
-import { EventType } from './shape/constant';
+import SelectionVertex from './shape/interaction/SelectionVertex.vue';
+import { EventType, VertexType } from './shape/constant';
 const props = defineProps<{graph:GraphModel}>()
 provide('graph', props.graph)
 props.graph.registerShapeComps(shapeComps)
 const shape = computed(()=> props.graph.graphOption.shape)
+
+const showSelectionVertex = computed(()=> {
+  const { selectionModel } = props.graph
+  return selectionModel.selection.length > 0
+})
+
+function handleVertexMousedown(event: MouseEvent, index: VertexType) {
+  const graph = props.graph
+  if (graph.selectionModel.selection.length === 0) return;
+  if (graph.selectionModel.selection.length > 1) {
+    graph.selectionModel.clearSelection();
+  } 
+}
 function handleClickOut() {
 
 
@@ -60,6 +74,7 @@ const handleDrop = () => {
         >
         <g>
           <Shape-move-preview v-if="graph.moveModel.showMovingPreview" :shapes="graph.moveModel.movingShapes" :dx="graph.moveModel.previewDx" :dy="graph.moveModel.previewDy" />
+          <selection-vertex v-if="showSelectionVertex" :selection="graph.selectionModel.selection" @vertex-mousedown="handleVertexMousedown" />
         </g>
       
     </svg>

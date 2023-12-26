@@ -25,3 +25,11 @@ export enum EventType {
   
     PROJECT_MERGE_SHAPE_CLICK = "PROJECT_MERGE_SHAPE_CLICK",
   }
+
+  export enum VertexType {
+    leftTop=1,
+    rightTop=2,
+    rightBottom=3,
+    leftBottom=4
+  }
+  
