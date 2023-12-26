@@ -1,6 +1,7 @@
 import { EventType } from "../shape/constant";
 import { Emitter } from "../util/Emitter";
 import { MoveModel } from "./MoveModel";
+import { ViewModel } from "./ViewModel";
 import { ShapeCompManager } from "./shapeManager";
 
 export class GraphModel {
@@ -8,6 +9,11 @@ export class GraphModel {
     this.graphOption = opt;
     this.graphOption.graph = this;
   }
+    /**
+   * 视图模型
+   */
+    viewModel = new ViewModel(this)
+
   /**
  * 元素移动模型
  */

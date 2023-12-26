@@ -9,6 +9,9 @@ export class MoveModel {
     endPoint: Point = new Point() // 移动过程中鼠标的坐标
     mouseDown = false
     moved = false
+    showMovingPreview = false
+    previewDx = 0;
+    previewDy = 0
     clearEvents?: () => void
     constructor(public graph: GraphModel) {
 
@@ -19,6 +22,10 @@ export class MoveModel {
         this.endPoint.x = event.clientX;
         this.endPoint.y = event.clientY;
         this.mouseDown = true;
+        this.showMovingPreview = true;
+        this.movingShapes = [mouseDownShape];
+        this.previewDx = 0;
+        this.previewDy = 0;
         const onMouseMove = this.onMouseMove.bind(this);
         this.clearEvents = () => {
             this.graph.emitter.off(EventType.SHAPE_MOUSE_MOVE, onMouseMove);
@@ -39,6 +46,10 @@ export class MoveModel {
         this.moved = true;
         this.endPoint.x = event.clientX;
         this.endPoint.y = event.clientY;
+        let dx = this.endPoint.x - this.startPoint.x;
+        let dy = this.endPoint.y - this.startPoint.y;
+        this.previewDx = dx;
+        this.previewDy = dy;
     }
     async endMove() {
         this.mouseDown = false;
@@ -48,5 +59,6 @@ export class MoveModel {
         this.clearEvents?.();
         this.mouseDown = false;
         this.moved = false;
+        this.showMovingPreview = false;
     }
 }

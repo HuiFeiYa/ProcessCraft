@@ -15,7 +15,7 @@ const eventHandler = createEventHandler(graph, props);
 
     <foreignObject :width="shape.bounds.width" :height="shape.bounds.height" :x="shape.bounds.absX" :y="shape.bounds.absY"
       style="overflow:visible" v-on="eventHandler">
-      <div>1111</div>
+      <div style="user-select: none;">1111</div>
     </foreignObject>
   </g>
-</template>../createEventHandler
+</template>
