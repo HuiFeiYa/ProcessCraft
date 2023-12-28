@@ -4,7 +4,13 @@ import { EventType } from "../shape/constant"
 import { Shape } from "../types"
 import { Point } from "../util/Point"
 import { GraphModel } from "./graphModel"
-
+export type MoveRange = {
+    dxMin: number,
+    dyMin: number,
+    dxMax: number,
+    dyMax: number
+  
+  }
 export class MoveModel {
     movingShapes: Shape[] = [] // 被移动的shapes
     startPoint: Point = new Point() // 移动起始时的鼠标的坐标
@@ -16,6 +22,7 @@ export class MoveModel {
     previewDy = 0
     clearEvents?: () => void
     store: any;
+    limitRange: MoveRange = { dxMin: 0, dyMin: 0, dxMax: 0, dyMax: 0}
     constructor(public graph: GraphModel) {
         this.store = useDrawStore()
     }
@@ -51,8 +58,27 @@ export class MoveModel {
         this.endPoint.y = event.clientY;
         let dx = this.endPoint.x - this.startPoint.x;
         let dy = this.endPoint.y - this.startPoint.y;
+        if (this.graph.getMoveRange) {
+            const range = await this.graph.getMoveRange(this.movingShapes);
+            this.limitRange.dxMin = range.dxMin;
+            this.limitRange.dxMax = range.dxMax;
+            this.limitRange.dyMin = range.dyMin;
+            this.limitRange.dyMax = range.dyMax;
+
+            dx = Math.min(Math.max(dx, this.limitRange.dxMin), this.limitRange.dxMax);
+            dy = Math.min(Math.max(dy, this.limitRange.dyMin), this.limitRange.dyMax);
+        }
+    
         this.previewDx = dx;
         this.previewDy = dy;
+
+        /**
+         *     const xOnly = this.movingShapes[0]?.style?.xOnly;
+
+    if (xOnly) {
+      dy = 0;
+    }
+         */
     }
     async endMove() {
         // this.graph.selectionModel.setSelection(this.movingShapes)

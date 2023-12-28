@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 
+import { MoveRange } from "../models/MoveModel";
 import { GraphModel } from "../models/graphModel";
 import { ShapeOption } from "./shapeOption";
 import { cloneDeep } from 'lodash'
@@ -675,4 +676,5 @@ export interface IGraphOption {
   onClickNavBtn?: (shape: Shape) => void;
 
   limitResizeBounds?: (shape: Shape, newBounds: IBounds) => IBounds;
+
 }
