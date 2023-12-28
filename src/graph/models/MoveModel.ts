@@ -1,3 +1,5 @@
+import { Store, StoreDefinition } from "pinia"
+import { useDrawStore } from "../../editor/store"
 import { EventType } from "../shape/constant"
 import { Shape } from "../types"
 import { Point } from "../util/Point"
@@ -13,8 +15,9 @@ export class MoveModel {
     previewDx = 0;
     previewDy = 0
     clearEvents?: () => void
+    store: any;
     constructor(public graph: GraphModel) {
-
+        this.store = useDrawStore()
     }
     startMove(event: MouseEvent, mouseDownShape: Shape) {
         this.startPoint.x = event.clientX;
@@ -52,8 +55,9 @@ export class MoveModel {
         this.previewDy = dy;
     }
     async endMove() {
-        this.graph.selectionModel.setSelection(this.movingShapes)
-        this.graph.graphOption.shape.customEndMove(this, this.previewDx, this.previewDy)
+        // this.graph.selectionModel.setSelection(this.movingShapes)
+        this.store.setSelection(this.movingShapes)
+        this.graph.customEndMove(this, this.previewDx, this.previewDy)
         this.mouseDown = false;
         this.clear();
     }

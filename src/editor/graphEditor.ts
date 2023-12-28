@@ -6,14 +6,12 @@ import { ShapeOption } from "../graph/types/shapeOption";
 export class GraphEditor {
   graphOption!: GraphOption;
 
-  graphModel!: GraphModel;
+  graph: GraphModel
 
-  constructor(options: {shapeOption:ShapeOption}) {
-    // this.init();
-    const shape = Shape.fromOption(options.shapeOption)
-    const graphOption = new GraphOption(shape);
-    const graph = reactive(new GraphModel(graphOption));
-    this.graphModel = graph;
+  shapes: Set<Shape>
+  constructor() {
+    const graph = reactive(new GraphModel());
+    this.graph = graph;
     graph.init();
   }
   init() {
@@ -21,5 +19,10 @@ export class GraphEditor {
     // const graph = reactive(new GraphModel(graphOption));
     // graph.init();
     // this.graphModel = graph;
+  }
+  addShapes(shapeList: Set<Shape>) {
+    shapeList.forEach(shape=> {
+      this.shapes.add(shape)
+    })
   }
 }

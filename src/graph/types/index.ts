@@ -511,10 +511,12 @@ export interface IBounds {
 }
 export class Bounds implements IBounds {
   constructor(
-    public x = 0,
+    // 相对于父元素的位置
+    public x = 0, 
     public y = 0,
     public width = 0,
     public height = 0,
+    // 画布绝对位置
     public absX = 0,
     public absY = 0
   ) {}

@@ -5,11 +5,11 @@ import { ViewModel } from "./ViewModel";
 import { ShapeCompManager } from "./shapeManager";
 import { SelectionModel } from './SelectionModel'
 import { Shape } from "../types";
+export const emitter = new Emitter()
 export class GraphModel {
   disabled = false
-  constructor(opt: any) {
-    this.graphOption = opt;
-    this.graphOption.graph = this;
+  shapes: Set<Shape>
+  constructor() {
   }
   /**
  * 选中元素模型
@@ -31,7 +31,7 @@ export class GraphModel {
   /**
  * 事件发射器
  */
-  emitter = new Emitter()
+  emitter = emitter
   /**
    * 图形组件管理器(当前画布上使用到的那些图形组件)
    */
@@ -79,4 +79,19 @@ export class GraphModel {
       this.shapeMap.delete(id);
     }
   }
+      /**
+     * 移动结束时触发的方法
+     * @param moveModel
+     * @param dx
+     * @param dy
+     */
+      async customEndMove(moveModel: MoveModel, dx: number, dy: number) {
+        // 更新模型位置
+        moveModel.movingShapes.forEach(shape => {
+            shape.bounds.x += dx;
+            shape.bounds.y += dy;
+            shape.bounds.absX += dx;
+            shape.bounds.absY += dy;
+        })
+    }
 }

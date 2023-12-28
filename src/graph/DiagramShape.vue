@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { inject, computed } from 'vue'
+import { useDrawStore } from '../editor/store';
 const graph = inject('graph') as any;
+const store = useDrawStore()
 const data = computed(() => {
-  
   return {
-    children: [graph.graphOption.shape],
+    children: store.shapes,
     edges: []
   }
 })

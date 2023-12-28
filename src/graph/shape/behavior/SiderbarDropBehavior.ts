@@ -1,6 +1,9 @@
 import { Shape } from "../../types"
 import { ShapeOption } from "../../types/shapeOption";
+import { Point } from "../../util/Point";
 import { shapeFactory } from "../ShapeFactory";
+import { shapeUtil } from "../ShapeUtil";
+import { SiderbarItemKey } from "../constant";
 import { SiderBarDropRunner } from "./SiderBarDropRunner";
 import { siderbarKeyConfig } from "./config";
 export interface SiderbarItemKeyConfig {
@@ -23,15 +26,15 @@ export class SiderBarDropBehavior {
   
     siderbarConfigItem : SiderbarItemKeyConfig
 
-    constructor(public context: SiderBarDropRunner) {
+    constructor(public context: SiderBarDropRunner,public siderBarKey: SiderbarItemKey, public point?: Point) {
     }
     async run() : Promise<void | "stop">{
         await this.setSiderbarConfigItem();
-        this.setShapeParentId()
+        // this.setShapeParentId()
         await this.createShape();
     }
     async setSiderbarConfigItem() {
-        const { siderBarKey } = this.context;
+        const { siderBarKey } = this;
         const config = siderbarKeyConfig[siderBarKey];
         if (!config) {
             throw new Error("siderbarkey node found");
@@ -44,11 +47,12 @@ export class SiderBarDropBehavior {
       }
 
     async createShape () {
-        const { diagramId } = this.context;
-        const subShapeType = this.createdMainShape.subShapeType
-        let shapeOption = shapeFactory.getModelShapeOption(subShapeType);
+        const { siderBarKey } = this;
+        // const subShapeType = this.createdMainShape.subShapeType
+        let shapeOption = shapeFactory.getModelShapeOption(siderBarKey);
         // , projectId, diagramId, this.shapeParentId
         const shape = Shape.fromOption(shapeOption);
         this.createdShapes.add(shape);
+        shapeUtil.initShape(shape,this.point)
     }
 }

@@ -1,12 +1,12 @@
 import { cloneDeep } from 'lodash'
 import { ShapeOption } from "../types/shapeOption";
 import { modelKeyConfig } from "./shapeOption/commonShapeOption";
-import { SubShapeType } from '../types';
+import { SiderbarItemKey } from './constant';
 
 export class ShapeFactory {
-    getModelShapeOption(subShapeType: SubShapeType): ShapeOption | null {
+    getModelShapeOption(itemKey: SiderbarItemKey): ShapeOption | null {
 
-        return cloneDeep(modelKeyConfig[subShapeType]?.shapeOption);
+        return cloneDeep(modelKeyConfig[itemKey]?.shapeOption);
 
     }
 }

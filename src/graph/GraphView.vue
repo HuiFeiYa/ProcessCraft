@@ -6,14 +6,15 @@ import { shapeComps } from './shape/index'
 import ShapeMovePreview from './shape/interaction/ShapeMovePreview.vue'
 import SelectionVertex from './shape/interaction/SelectionVertex.vue';
 import { EventType, VertexType } from './shape/constant';
+import { useDrawStore } from '../editor/store';
 const props = defineProps<{graph:GraphModel}>()
+const store = useDrawStore()
 provide('graph', props.graph)
 props.graph.registerShapeComps(shapeComps)
-const shape = computed(()=> props.graph.graphOption.shape)
+
 
 const showSelectionVertex = computed(()=> {
-  const { selectionModel } = props.graph
-  return selectionModel.selection.length > 0
+  return store.selectedShapes.length > 0
 })
 
 function handleVertexMousedown(event: MouseEvent, index: VertexType) {
@@ -29,6 +30,7 @@ function handleClickOut() {
 }
 function handleMousedownOut(event:MouseEvent) {
   // props.graph.emitter.emit(EventType.SHAPE_MOUSE_DOWN, event, undefined);
+  console.log('selectionModel:', props.graph.selectionModel)
 }
 function handleMouseupOut() {
 
@@ -68,13 +70,13 @@ const handleDrop = () => {
     <svg
         version="1.1"
         xmlns="http://www.w3.org/2000/svg"
-        style="min-width: 100%; min-height: 100%; position: absolute; top: 0; left: 0; pointer-events: none"
+        style="min-width: 100%; min-height: 100%; position: absolute; top: 0; left: 200px; pointer-events: none"
         transform-origin="0 0"
         :width="graph.viewModel.bounds.width" :height="graph.viewModel.bounds.height" 
         >
         <g>
           <Shape-move-preview v-if="graph.moveModel.showMovingPreview" :shapes="graph.moveModel.movingShapes" :dx="graph.moveModel.previewDx" :dy="graph.moveModel.previewDy" />
-          <selection-vertex v-if="showSelectionVertex" :selection="graph.selectionModel.selection" @vertex-mousedown="handleVertexMousedown" />
+          <selection-vertex v-if="showSelectionVertex" :selection="store.selectedShapes" @vertex-mousedown="handleVertexMousedown" />
         </g>
       
     </svg>
