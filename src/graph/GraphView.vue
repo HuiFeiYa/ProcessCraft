@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, computed } from 'vue'
+import { provide, computed, onMounted,ref } from 'vue'
 import DiagramShape from './DiagramShape.vue'
 import { GraphModel } from './models/graphModel';
 import { shapeComps } from './shape/index'
@@ -11,7 +11,11 @@ const props = defineProps<{graph:GraphModel}>()
 const store = useDrawStore()
 provide('graph', props.graph)
 props.graph.registerShapeComps(shapeComps)
-
+const viewDom = ref<HTMLDivElement | null>(null);
+onMounted(()=> {
+  if (!viewDom.value) return;
+  props.graph.viewModel.setViewDom(viewDom.value);
+})
 
 const showSelectionVertex = computed(()=> {
   return store.selectedShapes.length > 0
@@ -47,7 +51,7 @@ const handleDrop = () => {
 };
 </script>
 <template>
-  <div class="graph-view">
+  <div class="graph-view" ref="viewDom">
         <!-- 展示层 -->
     <svg
         version="1.1"

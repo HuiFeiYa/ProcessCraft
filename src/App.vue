@@ -8,6 +8,7 @@ import { SiderBarDropRunner } from './graph/shape/behavior/SiderBarDropRunner'
 import { SiderbarItemKey } from './graph/shape/constant'
 import { Point } from './graph/util/Point'
 import { useDrawStore } from './editor/store/index'
+import Siderbar from './editor/components/SiderBar.vue'
 const store= useDrawStore()
     const editor = reactive(new GraphEditor())
 onMounted(async ()=> {
@@ -22,12 +23,11 @@ onMounted(async ()=> {
 
 <template>
     <div class="graph-container">
-        <div class="sidebar">
-            <button>模块</button>
-        </div>
+        <Siderbar />
         <div>
             <GraphView :graph="editor.graph" />
         </div>
+        <DropCursor :siderBarDropModel="editor.siderBarDropModel" />
     </div>
 </template>
 <style>
@@ -36,9 +36,6 @@ onMounted(async ()=> {
     width: 100vw;
     height: 100vh;
 }
-.sidebar {
-    width: 200px;
-    height: 100vh;
-}
+
 </style>
 

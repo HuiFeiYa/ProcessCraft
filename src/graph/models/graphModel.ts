@@ -17,6 +17,7 @@ export class GraphModel {
     }
   }
   constructor() {
+    
   }
   /**
  * 选中元素模型
