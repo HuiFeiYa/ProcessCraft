@@ -32,31 +32,49 @@ export class SiderBarDropModel {
     iconPosition = new Point()
     visible = false
     siderbarItem?: SiderBarItem
-    /** tab 用于创建不同类型的图 */
+    clearEvents?: () => void
     constructor(public graph: GraphModel, public tab?: any) { }
+    clear() {
+      this.siderbarItem = undefined;
+      this.visible = false;
+      this.isPointInDiagram = false;
+  
+    }
     onMouseDown(item: SiderBarItem) {
+      this.clear()
       this.siderbarItem = item;
       const onMouseMove = (evt: MouseEvent, shape: Shape) => {
 
         this.onMouseMove(evt, shape);
-  
       };
       const onMouseUp = (evt: MouseEvent, shape: Shape) => {
         console.log('onMouseUp');
+        this.visible = false;
+        if (!evt.shiftKey) {
+          this.clearEvents?.();
+          this.clear()
+        }
+
       }
+
+      this.clearEvents = () => {
+        console.log('clearEvents');
+        this.graph.emitter.off(EventType.SHAPE_MOUSE_MOVE, onMouseMove);
+        this.graph.emitter.off(EventType.SHAPE_MOUSE_UP, onMouseUp);
+        this.clearEvents = undefined;
+      };
+
       this.graph.emitter.on(EventType.SHAPE_MOUSE_MOVE, onMouseMove);
       this.graph.emitter.on(EventType.SHAPE_MOUSE_UP, onMouseUp);
     }
+    // 监听 graph-view 的移动，更新 point 的位置
     async onMouseMove(event: MouseEvent, shape: Shape) {
         requestAnimationFrame(() => {
-            // console.log('do AnimationFrame');
-      
             this.iconPosition.x = event.clientX;
             this.iconPosition.y = event.clientY;
             const rect = this.graph.viewModel.viewDom?.getBoundingClientRect();
-      
             this.isPointInDiagram = event.clientX > rect.left && event.clientY > rect.top;
-            // this.animationNumber = 0;
+           
           });
     }
     async dropToShape(evt: MouseEvent, shape: Shape) {}

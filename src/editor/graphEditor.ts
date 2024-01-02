@@ -4,6 +4,7 @@ import { GraphOption } from "./graphOption";
 import { IGraphOption, Shape } from "../graph/types";
 import { ShapeOption } from "../graph/types/shapeOption";
 import { SiderBarDropModel } from "./SiderBarDropModel";
+import { GraphTab } from "./project/GraphTab";
 export class GraphEditor {
   graphOption!: GraphOption;
 
@@ -11,17 +12,14 @@ export class GraphEditor {
 
   shapes: Set<Shape>
   siderBarDropModel:SiderBarDropModel
-  constructor() {
+  constructor(public tab: GraphTab) {
     const graph = reactive(new GraphModel());
     this.graph = graph;
     graph.init();
+    this.init()
   }
   init() {
-    this.siderBarDropModel = reactive(new SiderBarDropModel(this.graph)) as SiderBarDropModel;
-    // const graphOption = new GraphOption();
-    // const graph = reactive(new GraphModel(graphOption));
-    // graph.init();
-    // this.graphModel = graph;
+    this.tab.siderBarDropModel = reactive(new SiderBarDropModel(this.graph)) as SiderBarDropModel;
   }
   addShapes(shapeList: Set<Shape>) {
     shapeList.forEach(shape=> {

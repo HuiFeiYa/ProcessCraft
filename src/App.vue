@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import {onMounted, reactive, computed} from 'vue'
 import { GraphEditor } from './editor/graphEditor'
-import { Shape, SubShapeType } from './graph/types/index'
 import GraphView from './graph/GraphView.vue'
-import { modelKeyConfig } from './graph/shape/shapeOption/commonShapeOption'
+import DropCursor from './editor/DropCursor.vue'
 import { SiderBarDropRunner } from './graph/shape/behavior/SiderBarDropRunner'
 import { SiderbarItemKey } from './graph/shape/constant'
 import { Point } from './graph/util/Point'
 import { useDrawStore } from './editor/store/index'
 import Siderbar from './editor/components/SiderBar.vue'
 const store= useDrawStore()
-    const editor = reactive(new GraphEditor())
+const editor = reactive(new GraphEditor({modelId: 'a-1'}))
 onMounted(async ()=> {
     const point = new Point(100,100)
     const point1 = new Point(200,200)
@@ -23,11 +22,11 @@ onMounted(async ()=> {
 
 <template>
     <div class="graph-container">
-        <Siderbar />
-        <div>
+        <Siderbar :tab="editor.tab" />
+        <div style="flex:1">
             <GraphView :graph="editor.graph" />
         </div>
-        <DropCursor :siderBarDropModel="editor.siderBarDropModel" />
+        <DropCursor :siderBarDropModel="editor.tab.siderBarDropModel" />
     </div>
 </template>
 <style>

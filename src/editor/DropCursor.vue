@@ -23,3 +23,9 @@ import { SiderBarDropModel } from "./SiderBarDropModel";
   
   </script>
   
+  <style>
+
+._flow_mouse_icon{
+  position: absolute;
+}
+</style>

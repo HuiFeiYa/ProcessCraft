@@ -5,7 +5,6 @@ import { shapeSkeletonUtil } from '../../models/ShapeSkeletonUtil';
 import { PathBuilder } from '../../util';
 
 const props = defineProps<{shapes: Shape[], dx: number, dy:number}>();
-console.log('preview:', props)
 const c = new PathBuilder();
 const symbolBoundsSvgPath = computed(()=> {
     const symbols = props.shapes
@@ -15,7 +14,6 @@ const symbolBoundsSvgPath = computed(()=> {
             draw(c, shape)
         }) 
         const path = c.getPath()
-        console.log('path:',path)
         return path
     } else {
         return ''

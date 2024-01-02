@@ -2,6 +2,7 @@ import { GraphModel } from "../models/graphModel";
 import { Shape } from "../types";
 import { EventType } from "./constant";
 
+/** 选中元素的事件 */
 export function createEventHandler(graph:GraphModel, props:{shape:Shape}) {
   return {
     click() {
