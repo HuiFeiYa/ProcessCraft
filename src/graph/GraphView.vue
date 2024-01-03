@@ -32,12 +32,12 @@ function handleClickOut() {
 
 
 }
+// 监听画布上点击事件，用于清空选中状态
 function handleMousedownOut(event: MouseEvent) {
-  // props.graph.emitter.emit(EventType.SHAPE_MOUSE_DOWN, event, undefined);
-  console.log('selectionModel:', props.graph.selectionModel)
+  props.graph.emitter.emit(EventType.SHAPE_MOUSE_DOWN, event, undefined);
 }
 function handleMouseupOut() {
-  props.graph.emitter.emit(EventType.SHAPE_MOUSE_UP, window.event, undefined);
+  props.graph.emitter.emit(EventType.SHAPE_MOUSE_UP, window.event, props.graph.rootShape);
 }
 function handleMousemoveOut(event: MouseEvent) {
   props.graph.emitter.emit(EventType.SHAPE_MOUSE_MOVE, event, undefined);

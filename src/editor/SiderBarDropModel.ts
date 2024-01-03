@@ -1,5 +1,6 @@
 import { GraphModel } from "../graph/models/graphModel"
-import { EventType, MetaclassType } from "../graph/shape/constant"
+import { SiderBarDropRunner } from "../graph/shape/behavior/SiderBarDropRunner"
+import { EventType, MetaclassType, SiderbarItemKey } from "../graph/shape/constant"
 import { Shape } from "../graph/types"
 import { Point } from "../graph/util/Point"
 
@@ -16,7 +17,7 @@ export type SiderBarItem = {
       icon:string,
       name:string,
       metaclass?: MetaclassType.Class |string, // 构造型的metaclass， 如果是构造型就是stereotype， 否则是class
-      siderBarkey?: string
+      siderBarkey?: SiderbarItemKey
     }
 
     children?: SiderBarItem[],
@@ -32,6 +33,7 @@ export class SiderBarDropModel {
     iconPosition = new Point()
     visible = false
     siderbarItem?: SiderBarItem
+    dropRunner = new SiderBarDropRunner()
     clearEvents?: () => void
     constructor(public graph: GraphModel, public tab?: any) { }
     clear() {
@@ -50,6 +52,7 @@ export class SiderBarDropModel {
       const onMouseUp = (evt: MouseEvent, shape: Shape) => {
         console.log('onMouseUp');
         this.visible = false;
+        this.dropToShape(evt, shape)
         if (!evt.shiftKey) {
           this.clearEvents?.();
           this.clear()
@@ -77,5 +80,16 @@ export class SiderBarDropModel {
            
           });
     }
-    async dropToShape(evt: MouseEvent, shape: Shape) {}
+    async dropToShape(evt: MouseEvent, shape: Shape) {
+      const siderbarItem = this.siderbarItem
+      if (!siderbarItem) return 
+      let point = this.graph.viewModel.translateClientPointToDiagramAbsPoint(new Point(evt.clientX, evt.clientY));
+      const siderBarkey = siderbarItem.showData.siderBarkey;
+      await this.dropSiderbarKeyToShape(evt, shape, point, siderBarkey);
+
+    }
+    async dropSiderbarKeyToShape(evt: MouseEvent, shape: Shape, point: Point, sidebarKey: SiderbarItemKey) {
+      // 获取对应的behavior，创建对应的shape
+      this.dropRunner.run(sidebarKey, point)
+    }
 }

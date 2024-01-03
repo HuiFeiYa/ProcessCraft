@@ -12,5 +12,23 @@ export class ViewModel {
     setViewDom(dom: HTMLDivElement) {
         this.viewDom = dom;
     }
+    /**
+     * 转换屏幕坐标为图形的绝对坐标
+     * @param point
+     * @param diagramViewDom
+     * @returns
+     */
+    translateClientPointToDiagramAbsPoint (point: Point, diagramViewDom = this.viewDom): Point {
+        if (!diagramViewDom) {
+        throw new Error("no view dom");
 
+        }
+        const rect = diagramViewDom.getBoundingClientRect();
+
+        const x = (point.x - rect.left + diagramViewDom.scrollLeft) ;
+        const y = (point.y - rect.top + diagramViewDom.scrollTop) ;
+        const intPoint = new Point(x, y)
+        Point.toInt(intPoint);
+        return intPoint
+    }
 }
