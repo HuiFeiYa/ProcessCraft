@@ -60,8 +60,8 @@ const handleDrop = () => {
       style="min-width: 100%; min-height: 100%;" :width="graph.viewModel.bounds.width"
       :height="graph.viewModel.bounds.height" @click="handleClickOut" @mousedown="handleMousedownOut"
       @mouseup="handleMouseupOut" @mousemove="handleMousemoveOut" @dragover="handleDragOver" @drop.stop="handleDrop">
-      <g>
-        <DiagramShape :graph="graph" />
+      <g style="width: 100%;height: 100%;background-color: white;">
+        <DiagramShape :graph="graph" :shape="graph.rootShape" />
       </g>
     </svg>
     <!-- 交互层 -->
