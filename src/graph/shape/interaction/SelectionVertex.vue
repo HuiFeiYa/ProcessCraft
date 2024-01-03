@@ -43,21 +43,22 @@ function handleMouseDown(event: MouseEvent, index: VertexType) {
   <g style="pointer-events:all">
     <g v-for="shape in shapeGroup.commonShapes" :key="shape.id">
       <rect
-        :x="shape.bounds.absX - 6"
-        :y="shape.bounds.absY - 6"
+        :x="shape.bounds.absX "
+        :y="shape.bounds.absY "
         width="6"
         height="6"
         fill="#000"
-        :style="{cursor: resizable?'nw-resize':''}"
+        :style="{cursor: resizable?'nw-resize':'', transform: 'translate(3px,3px)'}"
+        transform="translate(50%,50%)"
         @mousedown="handleMouseDown($event, 1)"
       />
       <rect
         :x="shape.bounds.absX + shape.bounds.width"
-        :y="shape.bounds.absY - 6"
+        :y="shape.bounds.absY"
         width="6"
         height="6"
         fill="#000"
-        :style="{cursor: resizable?'ne-resize':''}"
+        :style="{cursor: resizable?'ne-resize':'', transform: 'translate(3px,3px)'}"
         @mousedown="handleMouseDown($event, 2)"
       />
       <rect
@@ -66,16 +67,16 @@ function handleMouseDown(event: MouseEvent, index: VertexType) {
         width="6"
         height="6"
         fill="#000"
-        :style="{cursor: resizable?'se-resize':''}"
+        :style="{cursor: resizable?'se-resize':'', transform: 'translate(3px,3px)'}"
         @mousedown="handleMouseDown($event, 3)"
       />
       <rect
-        :x="shape.bounds.absX - 6"
+        :x="shape.bounds.absX"
         :y="shape.bounds.absY + shape.bounds.height"
         width="6"
         height="6"
         fill="#000"
-        :style="{cursor: resizable?'sw-resize':''}"
+        :style="{cursor: resizable?'sw-resize':'', transform: 'translate(3px,3px)'}"
         @mousedown="handleMouseDown($event, 4)"
       />
       </g>

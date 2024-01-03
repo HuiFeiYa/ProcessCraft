@@ -6,6 +6,7 @@ import { ShapeCompManager } from "./shapeManager";
 import { SelectionModel } from './SelectionModel'
 import { Shape } from "../types";
 import { GraphOption } from "../../editor/graphOption";
+import { useDrawStore } from "../../editor/store";
 export const emitter = new Emitter()
 export class GraphModel {
   disabled = false
@@ -94,12 +95,24 @@ export class GraphModel {
  * @param dy
  */
   async customEndMove(moveModel: MoveModel, dx: number, dy: number) {
-    // 更新模型位置
+    const store = useDrawStore()
+    // 当数组为空时，得到的时 -Infinity 需要设置最低为0
+    const maxZIndex = Math.max(...store.shapes.map(item => item.style?.zIndex).filter(item => item !== undefined), 0)
+    // 更新图形位置
     moveModel.movingShapes.forEach(shape => {
       shape.bounds.x += dx;
       shape.bounds.y += dy;
       shape.bounds.absX += dx;
       shape.bounds.absY += dy;
+      /** 最新移动的层级最高 */
+      const isMax = shape.style.zIndex === maxZIndex
+      if (isMax) {
+        shape.style.zIndex =  maxZIndex 
+      } else {
+        shape.style.zIndex =  maxZIndex + 1 
+        store.updateShape(shape.id, shape)
+      }
+
     })
   }
   getMoveRange(moveShapes: Shape[]): Promise<MoveRange> {

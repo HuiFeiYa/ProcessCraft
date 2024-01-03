@@ -11,3 +11,7 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 * 添加 store
 * 在开始的时候读取 indexDb 数据
 * 在关闭时写入indexDb
+
+## 模块
+
+* 图形更新  models/graphModel.ts, 数据都会同步到 store

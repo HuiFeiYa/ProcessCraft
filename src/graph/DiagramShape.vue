@@ -5,7 +5,7 @@ const graph = inject('graph') as any;
 const store = useDrawStore()
 const data = computed(() => {
   return {
-    children: store.shapes,
+    children: store.sortedShapes,
     edges: []
   }
 })

@@ -575,6 +575,13 @@ export const getUid = (() => {
 
   };
 })();
+
+export interface StyleObj {
+  zIndex: number;
+  xOnly: number;
+  yOnly: number;
+  resizable: boolean;
+}
 export class Shape {
   id: string;
 
@@ -588,7 +595,7 @@ export class Shape {
   keywords: string[];
 
   showKeywords: boolean;
-  style: any;
+  style: StyleObj;
   // name:string
   names: {
     prefix: string; // 显示的前缀字符
