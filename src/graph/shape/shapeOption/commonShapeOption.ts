@@ -79,7 +79,7 @@ export const edgeOption: ShapeOption = {
     subShapeType: SubShapeType.CommonEdge,
     shapeKey: ShapeKey.Association,
     waypoint: [],
-
+    bounds: { absX: 0, absY: 0, width: 100, height: 2, x: 0, y: 0 },
     style: {
         ...baseShapeOption.style,
         showConstraintsValues: false,

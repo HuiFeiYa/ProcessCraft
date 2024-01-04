@@ -38,3 +38,15 @@ export class Point {
     }
   
   }
+
+  // z坐标系旋转
+export const rotate = function(p:Point, arc:number) {
+  // atan2自带坐标系识别, 注意X,Y的顺序
+  let A = Math.atan2(p.y, p.x); // 原来的角度
+  A += arc;// 旋转，增加一个角度
+  let R = Math.sqrt(p.x * p.x + p.y * p.y);// 半径
+  return {
+    x: Math.cos(A) * R,
+    y: Math.sin(A) * R
+  };
+};

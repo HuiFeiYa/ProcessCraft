@@ -11,8 +11,11 @@ export class ShapeUtil {
         // shape.bounds.x = shape.bounds.absX - parentShape.bounds.absX;
         // shape.bounds.y = shape.bounds.absY - parentShape.bounds.absY;
     }
-    initEdgeShape(shape:Shape, points: Point[]) {
+    initEdgeShape(shape: Shape, points: Point[]) {
+        const point = points[0]
         shape.waypoint = points
+        shape.bounds.absX = point.x;
+        shape.bounds.absY = point.y;
     }
 }
 

@@ -4,7 +4,7 @@ import { MoveModel, MoveRange } from "./MoveModel";
 import { ViewModel } from "./ViewModel";
 import { ShapeCompManager } from "./shapeManager";
 import { SelectionModel } from './SelectionModel'
-import { Shape } from "../types";
+import { Shape, ShapeKey, SubShapeType } from "../types";
 import { GraphOption } from "../../editor/graphOption";
 import { useDrawStore } from "../../editor/store";
 export const emitter = new Emitter()
@@ -99,11 +99,18 @@ export class GraphModel {
     // 当数组为空时，得到的时 -Infinity 需要设置最低为0
     const maxZIndex = Math.max(...store.shapes.map(item => item.style?.zIndex).filter(item => item !== undefined), 0)
     // 更新图形位置
-    moveModel.movingShapes.forEach(shape => {
+    moveModel.movingShapes.forEach((shape:Shape) => {
       shape.bounds.x += dx;
       shape.bounds.y += dy;
       shape.bounds.absX += dx;
       shape.bounds.absY += dy;
+      if (shape.subShapeType === SubShapeType.CommonEdge) {
+        // 更新 waypoint 位置
+        shape.waypoint.forEach(point => {
+          point.x += dx
+          point.y += dy
+        })
+      }
       /** 最新移动的层级最高 */
       const isMax = shape.style.zIndex === maxZIndex
       if (isMax) {

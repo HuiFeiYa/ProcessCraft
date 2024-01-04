@@ -52,6 +52,7 @@ const onDragstart = (event:DragEvent) => {
 .sidebar {
     width: 200px;
     height: 100vh;
+    user-select: none;
 }
 
 .collapse-item {

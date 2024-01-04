@@ -49,7 +49,6 @@ function handleMouseDown(event: MouseEvent, index: VertexType) {
         height="6"
         fill="#000"
         :style="{cursor: resizable?'nw-resize':'', transform: 'translate(3px,3px)'}"
-        transform="translate(50%,50%)"
         @mousedown="handleMouseDown($event, 1)"
       />
       <rect
