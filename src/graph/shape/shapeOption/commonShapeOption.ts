@@ -1,6 +1,7 @@
 import { MoveModel } from "../../models/MoveModel";
 import { Shape, ShapeKey, SubShapeType } from "../../types";
 import { ShapeOption, ShapeType } from "../../types/shapeOption";
+import { ArrowType, SiderbarItemKey } from "../constant";
 
 export const baseShapeOption: ShapeOption = {
 
@@ -70,6 +71,41 @@ export const baseShapeOption: ShapeOption = {
         })
     }
 };
+
+
+export const edgeOption: ShapeOption = {
+    ...baseShapeOption,
+    shapeType: ShapeType.Edge,
+    subShapeType: SubShapeType.CommonEdge,
+    shapeKey: ShapeKey.Association,
+    waypoint: [],
+
+    style: {
+        ...baseShapeOption.style,
+        showConstraintsValues: false,
+        dashed: false,
+        rounded: false,
+        rightAngle: true,
+        imageBox: false,
+        strokeColor: 'rgb(0,0,0)',
+        fillColor: 'rgb(255,255,255)',
+        strokeWidth: 1,
+        sourceArrow: undefined,
+        // midArrow: undefined,
+        targetMidArrow: undefined,
+        sourceMidArrow: undefined,
+        targetArrow: undefined,
+        hidden: false,
+        selectable: true,
+        movable: true,
+        resizable: false,
+        // showKeywords: false,
+        editable: false
+    }
+
+};
+
+
 export const blockOption: ShapeOption = {
     ...baseShapeOption,
     shapeType: ShapeType.Symbol,
@@ -86,10 +122,22 @@ export const blockOption: ShapeOption = {
 
 };
 export const modelKeyConfig = {
-    [SubShapeType.Block]: {
+    [SiderbarItemKey.Block]: {
         shapeOption: {
             ...blockOption,
             shapeKey: ShapeKey.Block
+        }
+    },
+    [SiderbarItemKey.ItemFlow]: {
+        shapeOption: {
+            ...edgeOption,
+            shapeKey: ShapeKey.ItemFlow,
+            showKeywords: true,
+            style: {
+                ...edgeOption.style,
+                dashed: true,
+                targetArrow: ArrowType.Arrow
+            }
         }
     }
 }

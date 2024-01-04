@@ -34,13 +34,25 @@ export enum EventType {
   }
   
   export enum SiderbarItemKey {
-    Block = 'Block'
+    Block = 'Block',
+    ItemFlow = "ItemFlow"
   }
 
   export enum MetaclassType {
-    Class = "Class"
+    Class = "Class",
+    ItemFlow = "ItemFlow"
   }
 
   export enum StType {
-    "SysML::Blocks::Block"="SysML::Blocks::Block"
+    "SysML::Blocks::Block"="SysML::Blocks::Block",
+    "SysML::ItemFlow"="SysML::ItemFlow",
+  }
+
+  export enum ArrowType {
+    ContainArrow="ContainArrow",
+    DiamondHollowArrow="DiamondHollowArrow",
+    DiamondSolidArrow="DiamondSolidArrow",
+    Arrow="Arrow",
+    TriangleHollowArrow="TriangleHollowArrow",
+    TriangleSolidArrow="TriangleSolidArrow"
   }

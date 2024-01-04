@@ -2,7 +2,8 @@
 
 import { MoveRange } from "../models/MoveModel";
 import { GraphModel } from "../models/graphModel";
-import { ShapeOption } from "./shapeOption";
+import { Point } from "../util/Point";
+import { ShapeOption, StyleObject } from "./shapeOption";
 import { cloneDeep } from 'lodash'
 
 // 图形大类,大类表示了图形的数据结构， 相同大类的图形适用的数据结构是相同的，
@@ -576,12 +577,7 @@ export const getUid = (() => {
   };
 })();
 
-export interface StyleObj {
-  zIndex: number;
-  xOnly: number;
-  yOnly: number;
-  resizable: boolean;
-}
+
 export class Shape {
   id: string;
 
@@ -595,7 +591,7 @@ export class Shape {
   keywords: string[];
 
   showKeywords: boolean;
-  style: StyleObj;
+  style: StyleObject;
   // name:string
   names: {
     prefix: string; // 显示的前缀字符
@@ -626,6 +622,7 @@ export class Shape {
   modelName: string;
   shapeKey: ShapeKey;
   children?: Shape[];
+  waypoint:Point[]
 
   /** todo 添加画布等信息 */
   static fromOption(shapeOption:ShapeOption) {

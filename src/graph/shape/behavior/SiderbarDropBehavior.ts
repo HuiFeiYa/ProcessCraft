@@ -52,7 +52,7 @@ export class SiderBarDropBehavior {
         let shapeOption = shapeFactory.getModelShapeOption(siderBarKey);
         // , projectId, diagramId, this.shapeParentId
         const shape = Shape.fromOption(shapeOption);
-        this.createdShapes.add(shape);
         shapeUtil.initShape(shape,this.point)
+        this.createdShapes.add(shape);
     }
 }

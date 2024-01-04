@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { SiderBarItem } from '../SiderBarDropModel';
 import { GraphTab } from '../project/GraphTab';
+import { SiderbarItemKey } from '../../graph/shape/constant';
 const props = defineProps<{tab: GraphTab}>()
 const active = ref('common')
 const siderBarList :SiderBarItem[]= [
@@ -12,8 +13,17 @@ const siderBarList :SiderBarItem[]= [
         "showData": {
             "name": "Block",
             "icon": "src/assets/Block.svg",
-            "metaclass": "Stereotype",
-            "siderBarkey": "Block"
+            "siderBarkey": SiderbarItemKey.Block
+        }
+    },
+    {
+        "modelId": "SysML::ItemFlow",
+        "operation": "",
+        "dropdownTag": "",
+        "showData": {
+            "name": "Item Flow",
+            "icon": "src/assets/ItemFlow.svg",
+            "siderBarkey":  SiderbarItemKey.ItemFlow
         }
     }
 ]

@@ -1,7 +1,8 @@
 import { ShapeKey } from "../../types"
 import { MetaclassType, SiderbarItemKey, StType } from "../constant"
+import { CreateEdgeOnDiagramBehavior } from "./CreateEdgeOnDiagramBehavior"
 import { CreateShapeOnDiagramBehavior } from "./CreateShapeOnDiagramBehavior"
-import { SiderBarDropBehavior } from "./SiderbarDropBehavior"
+import { SiderBarDropBehavior, SiderbarItemKeyConfig } from "./SiderbarDropBehavior"
 
 export type ConfigItem = {
     siderbarItemKeys: string[],
@@ -14,10 +15,15 @@ export const behaviorConfigs: ConfigItem[] = [
         siderbarItemKeys: [SiderbarItemKey.Block],
         targetShapeKeys: [],
         behavior: CreateShapeOnDiagramBehavior
+    },
+    {
+      siderbarItemKeys: [SiderbarItemKey.ItemFlow],
+      targetShapeKeys: [],
+      behavior: CreateEdgeOnDiagramBehavior
     }
 ]
 
-export const siderbarKeyConfig = {
+export const siderbarKeyConfig: {[property:string]: SiderbarItemKeyConfig} = {
       /**
 * 模块定义图图
 */
@@ -27,4 +33,10 @@ export const siderbarKeyConfig = {
     operation: '',
     shapeKey: ShapeKey.Block
   },
+  [SiderbarItemKey.ItemFlow]: {
+    metaclass: MetaclassType.ItemFlow,
+    stereotype: [StType['SysML::ItemFlow']],
+    operation: '',
+    shapeKey: ShapeKey.ItemFlow
+  }
 }
