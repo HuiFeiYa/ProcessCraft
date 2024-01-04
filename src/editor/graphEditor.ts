@@ -11,9 +11,10 @@ export class GraphEditor {
   graph: GraphModel
 
   shapes: Set<Shape>
-  siderBarDropModel:SiderBarDropModel
+  siderBarDropModel: SiderBarDropModel
   constructor(public tab: GraphTab) {
-    const graph = reactive(new GraphModel());
+    const graphOption = new GraphOption()
+    const graph = reactive(new GraphModel(graphOption));
     this.graph = graph;
     graph.init();
     this.init()
@@ -22,7 +23,7 @@ export class GraphEditor {
     this.tab.siderBarDropModel = reactive(new SiderBarDropModel(this.graph)) as SiderBarDropModel;
   }
   addShapes(shapeList: Set<Shape>) {
-    shapeList.forEach(shape=> {
+    shapeList.forEach(shape => {
       this.shapes.add(shape)
     })
   }

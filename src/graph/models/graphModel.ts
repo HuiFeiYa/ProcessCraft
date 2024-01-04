@@ -4,22 +4,32 @@ import { MoveModel, MoveRange } from "./MoveModel";
 import { ViewModel } from "./ViewModel";
 import { ShapeCompManager } from "./shapeManager";
 import { SelectionModel } from './SelectionModel'
-import { Shape, ShapeKey, SubShapeType } from "../types";
+import { IGraphOption, Shape, ShapeKey, SubShapeType } from "../types";
 import { GraphOption } from "../../editor/graphOption";
 import { useDrawStore } from "../../editor/store";
+import { ResizeModel } from "./ResizeModel";
 export const emitter = new Emitter()
 export class GraphModel {
   disabled = false
   shapes: Set<Shape>
-  rootShape =  {
+  rootShape = {
     bounds: {
       absX: 12,
-      absY:12
+      absY: 12
     }
   }
-  constructor() {
-    
+  /**
+ * graph配置对象(暴露的接口，由外部实现)
+ */
+  graphOption: IGraphOption
+  constructor(opt: IGraphOption) {
+    this.graphOption = opt;
+    this.graphOption.graph = this;
   }
+  /**
+   * 元素resize模型
+   */
+  resizeModel = new ResizeModel(this)
   /**
  * 选中元素模型
  */
@@ -49,10 +59,6 @@ export class GraphModel {
    * children索引， id -> children，(父图形ID对应的其多个子图形)
    */
   indexParent: Map<string | null, Shape[]> = new Map()
-  /**
-   * graph配置对象(暴露的接口，由外部实现)
-   */
-  graphOption: GraphOption;
   init() {
     this.initEvents()
   }
@@ -99,7 +105,7 @@ export class GraphModel {
     // 当数组为空时，得到的时 -Infinity 需要设置最低为0
     const maxZIndex = Math.max(...store.shapes.map(item => item.style?.zIndex).filter(item => item !== undefined), 0)
     // 更新图形位置
-    moveModel.movingShapes.forEach((shape:Shape) => {
+    moveModel.movingShapes.forEach((shape: Shape) => {
       shape.bounds.x += dx;
       shape.bounds.y += dy;
       shape.bounds.absX += dx;
@@ -114,40 +120,40 @@ export class GraphModel {
       /** 最新移动的层级最高 */
       const isMax = shape.style.zIndex === maxZIndex
       if (isMax) {
-        shape.style.zIndex =  maxZIndex 
+        shape.style.zIndex = maxZIndex
       } else {
-        shape.style.zIndex =  maxZIndex + 1 
+        shape.style.zIndex = maxZIndex + 1
         store.updateShape(shape.id, shape)
       }
 
     })
   }
   getMoveRange(moveShapes: Shape[]): Promise<MoveRange> {
-          // 判断是否存在只能沿x或y轴移动的元素，没有考虑上面俩
-          let [signX, signY] = [0, 0];
-          // 是否有选中元素只能在
-          for (let it of moveShapes) {
-            signX += it.style?.xOnly ? 1 : 0;
-            signY += it.style?.yOnly ? 1 : 0;
-          }
-    
-          let [dxMin, dyMin, dxMax, dyMax] = [0, 0, Infinity, Infinity];
-          let minAbsX = Math.min(...moveShapes.map(it => {
-            return it.bounds.absX
-          }));
-          let minAbsY = Math.min(...moveShapes.map(it => {
-            return it.bounds.absY
-          }));
-          // 能移动 x 轴偏差值如: -200,最小移动 -200
-          dxMin = this.rootShape!.bounds.absX - minAbsX;
-          dyMin = this.rootShape!.bounds.absY - minAbsY;
-          if (signX) dyMin = dyMax = 0;
-          if (signY) dxMin = dxMax = 0;
-          return Promise.resolve({
-            dxMin,
-            dyMin,
-            dxMax,
-            dyMax
-          });
+    // 判断是否存在只能沿x或y轴移动的元素，没有考虑上面俩
+    let [signX, signY] = [0, 0];
+    // 是否有选中元素只能在
+    for (let it of moveShapes) {
+      signX += it.style?.xOnly ? 1 : 0;
+      signY += it.style?.yOnly ? 1 : 0;
+    }
+
+    let [dxMin, dyMin, dxMax, dyMax] = [0, 0, Infinity, Infinity];
+    let minAbsX = Math.min(...moveShapes.map(it => {
+      return it.bounds.absX
+    }));
+    let minAbsY = Math.min(...moveShapes.map(it => {
+      return it.bounds.absY
+    }));
+    // 能移动 x 轴偏差值如: -200,最小移动 -200
+    dxMin = this.rootShape!.bounds.absX - minAbsX;
+    dyMin = this.rootShape!.bounds.absY - minAbsY;
+    if (signX) dyMin = dyMax = 0;
+    if (signY) dxMin = dxMax = 0;
+    return Promise.resolve({
+      dxMin,
+      dyMin,
+      dxMax,
+      dyMax
+    });
   }
 }

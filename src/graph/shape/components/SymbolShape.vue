@@ -15,7 +15,9 @@ const eventHandler = createEventHandler(graph, props);
 
     <foreignObject :width="shape.bounds.width" :height="shape.bounds.height" :x="shape.bounds.absX" :y="shape.bounds.absY"
       style="overflow:visible" v-on="eventHandler">
-      <div style="user-select: none;height: 50px; background: linear-gradient(to right, rgb(221, 205, 158), rgb(253, 247, 223));"></div>
+      <div
+        style="user-select: none;height:100% ;background: linear-gradient(to right, rgb(221, 205, 158), rgb(253, 247, 223));">
+      </div>
     </foreignObject>
   </g>
 </template>

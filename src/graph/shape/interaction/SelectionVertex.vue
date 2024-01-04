@@ -4,17 +4,17 @@ import { Shape } from '../../types';
 import { GraphModel } from '../../models/graphModel';
 import { VertexType } from '../constant';
 const props = defineProps<{
-    selection: Shape[]
+  selection: Shape[]
 }>();
 const emit = defineEmits<{
-    (event: 'vertex-mousedown', evt:MouseEvent, index:VertexType): void
+  (event: 'vertex-mousedown', evt: MouseEvent, index: VertexType): void
 }>()
 const graph = inject<GraphModel>('graph');
 
 const shapeGroup = computed(() => {
-    return {
-        commonShapes: props.selection
-    }
+  return {
+    commonShapes: props.selection
+  }
 })
 const resizable = computed(() => {
   const selection = props.selection;
@@ -39,42 +39,18 @@ function handleMouseDown(event: MouseEvent, index: VertexType) {
 <template>
   <g style="pointer-events:all">
     <g v-for="shape in shapeGroup.commonShapes" :key="shape.id">
-      <rect
-        :x="shape.bounds.absX "
-        :y="shape.bounds.absY "
-        width="6"
-        height="6"
-        fill="#000"
-        :style="{cursor: resizable?'nw-resize':'', transform: 'translate(3px,3px)'}"
-        @mousedown="handleMouseDown($event, 1)"
-      />
-      <rect
-        :x="shape.bounds.absX + shape.bounds.width"
-        :y="shape.bounds.absY"
-        width="6"
-        height="6"
-        fill="#000"
-        :style="{cursor: resizable?'ne-resize':'', transform: 'translate(3px,3px)'}"
-        @mousedown="handleMouseDown($event, 2)"
-      />
-      <rect
-        :x="shape.bounds.absX + shape.bounds.width"
-        :y="shape.bounds.absY + shape.bounds.height"
-        width="6"
-        height="6"
-        fill="#000"
-        :style="{cursor: resizable?'se-resize':'', transform: 'translate(3px,3px)'}"
-        @mousedown="handleMouseDown($event, 3)"
-      />
-      <rect
-        :x="shape.bounds.absX"
-        :y="shape.bounds.absY + shape.bounds.height"
-        width="6"
-        height="6"
-        fill="#000"
-        :style="{cursor: resizable?'sw-resize':'', transform: 'translate(3px,3px)'}"
-        @mousedown="handleMouseDown($event, 4)"
-      />
-      </g>
+      <rect :x="shape.bounds.absX" :y="shape.bounds.absY" width="6" height="6" fill="#000"
+        :style="{ cursor: resizable ? 'nw-resize' : '', transform: 'translate(-3px,-3px)' }"
+        @mousedown="handleMouseDown($event, 1)" />
+      <rect :x="shape.bounds.absX + shape.bounds.width" :y="shape.bounds.absY" width="6" height="6" fill="#000"
+        :style="{ cursor: resizable ? 'ne-resize' : '', transform: 'translate(-3px,-3px)' }"
+        @mousedown="handleMouseDown($event, 2)" />
+      <rect :x="shape.bounds.absX + shape.bounds.width" :y="shape.bounds.absY + shape.bounds.height" width="6" height="6"
+        fill="#000" :style="{ cursor: resizable ? 'se-resize' : '', transform: 'translate(-3px,-3px)' }"
+        @mousedown="handleMouseDown($event, 3)" />
+      <rect :x="shape.bounds.absX" :y="shape.bounds.absY + shape.bounds.height" width="6" height="6" fill="#000"
+        :style="{ cursor: resizable ? 'sw-resize' : '', transform: 'translate(-3px,-3px)' }"
+        @mousedown="handleMouseDown($event, 4)" />
+    </g>
   </g>
 </template>

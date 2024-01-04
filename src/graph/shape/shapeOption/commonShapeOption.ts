@@ -115,7 +115,8 @@ export const blockOption: ShapeOption = {
         ...baseShapeOption.style,
         background: 'linear-gradient(to right,#DDCD9E,#FDF7DF)',
         strokeColor: "#ad9d85",
-        strokeWidth: 1
+        strokeWidth: 1,
+        resizable: true
     },
     bounds: { absX: 10, absY: 10, width: 100, height: 50, x: 10, y: 10 },
     nameStyle: { fontWeight: 400, fontSize: 12, whiteSpace: 'pre-wrap', fontFamily: '', textAlign: 'center' },

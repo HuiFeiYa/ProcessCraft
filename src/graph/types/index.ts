@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 
 import { MoveRange } from "../models/MoveModel";
+import { VertexType } from "../models/ResizeModel";
 import { GraphModel } from "../models/graphModel";
 import { Point } from "../util/Point";
 import { ShapeOption, StyleObject } from "./shapeOption";
@@ -514,21 +515,21 @@ export interface IBounds {
 export class Bounds implements IBounds {
   constructor(
     // 相对于父元素的位置
-    public x = 0, 
+    public x = 0,
     public y = 0,
     public width = 0,
     public height = 0,
     // 画布绝对位置
     public absX = 0,
     public absY = 0
-  ) {}
+  ) { }
 }
 
 let CHARSET = "0123456789abcdefghijklmnopqrstuvwxyz".split("");
 const size = CHARSET.length;
 // NB: does not validate input
 export class Base36 {
-  static encode(int:number) {
+  static encode(int: number) {
     if (int === 0) {
       return CHARSET[0];
     }
@@ -540,7 +541,7 @@ export class Base36 {
     }
     return res;
   }
-  static decode(str:string) {
+  static decode(str: string) {
     let res = 0,
       length = str.length,
       i, char;
@@ -622,10 +623,10 @@ export class Shape {
   modelName: string;
   shapeKey: ShapeKey;
   children?: Shape[];
-  waypoint:Point[]
+  waypoint: Point[]
 
   /** todo 添加画布等信息 */
-  static fromOption(shapeOption:ShapeOption) {
+  static fromOption(shapeOption: ShapeOption) {
     const shape = new Shape();
     shape.id = getUid();
     Object.assign(shape, cloneDeep(shapeOption));
@@ -636,7 +637,7 @@ export class Shape {
 
 export interface IGraphOption {
   graph?: GraphModel;
-  shape: Shape;
+  shape?: Shape;
   simulationValueMap?: Map<string, string>;
   /**
    *
@@ -680,5 +681,5 @@ export interface IGraphOption {
   onClickNavBtn?: (shape: Shape) => void;
 
   limitResizeBounds?: (shape: Shape, newBounds: IBounds) => IBounds;
-
+  onShapeResized?: (shape: Shape, resizeIndex: VertexType, bounds: Bounds) => void
 }

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {onMounted, reactive, computed} from 'vue'
+import { onMounted, reactive, computed } from 'vue'
 import { GraphEditor } from './editor/graphEditor'
 import GraphView from './graph/GraphView.vue'
 import DropCursor from './editor/DropCursor.vue'
 import Siderbar from './editor/components/SiderBar.vue'
-const editor = reactive(new GraphEditor({modelId: 'a-1'}))
+const editor = reactive(new GraphEditor({ modelId: 'a-1' }))
 
 </script>
 
@@ -24,5 +24,10 @@ const editor = reactive(new GraphEditor({modelId: 'a-1'}))
     height: 100vh;
 }
 
+/* 画布计算起点归零 */
+body {
+    margin: 0;
+    padding: 0;
+}
 </style>
 
