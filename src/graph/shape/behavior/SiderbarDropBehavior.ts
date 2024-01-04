@@ -48,9 +48,7 @@ export class SiderBarDropBehavior {
 
     async createShape () {
         const { siderBarKey } = this;
-        // const subShapeType = this.createdMainShape.subShapeType
         let shapeOption = shapeFactory.getModelShapeOption(siderBarKey);
-        // , projectId, diagramId, this.shapeParentId
         const shape = Shape.fromOption(shapeOption);
         shapeUtil.initShape(shape,this.point)
         this.createdShapes.add(shape);

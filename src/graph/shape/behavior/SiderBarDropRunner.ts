@@ -30,7 +30,9 @@ export class SiderBarDropRunner {
             })
         }
         store.addShapes(this.createdShapes)
+        const createdShapes = [...this.createdShapes];
         this.createdShapes = new Set()
+        return createdShapes
     }
     getMatchedBehaviors(siderBarKey: SiderbarItemKey,  point?: Point) {
         const behaviors: SiderBarDropBehavior[] = [];
