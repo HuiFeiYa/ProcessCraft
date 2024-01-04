@@ -3,8 +3,6 @@ import { computed, inject } from 'vue'
 import { Shape } from '../../types';
 import { GraphModel } from '../../models/graphModel';
 import { VertexType } from '../constant';
-import { useDrawStore } from '../../../editor/store';
-const store = useDrawStore()
 const props = defineProps<{
     selection: Shape[]
 }>();
@@ -14,9 +12,8 @@ const emit = defineEmits<{
 const graph = inject<GraphModel>('graph');
 
 const shapeGroup = computed(() => {
-    let commonShapes:Shape[] = store.selectedShapes;
     return {
-        commonShapes
+        commonShapes: props.selection
     }
 })
 const resizable = computed(() => {

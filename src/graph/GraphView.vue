@@ -6,9 +6,7 @@ import { shapeComps } from './shape/index'
 import ShapeMovePreview from './shape/interaction/ShapeMovePreview.vue'
 import SelectionVertex from './shape/interaction/SelectionVertex.vue';
 import { EventType, VertexType } from './shape/constant';
-import { useDrawStore } from '../editor/store';
 const props = defineProps<{ graph: GraphModel }>()
-const store = useDrawStore()
 provide('graph', props.graph)
 props.graph.registerShapeComps(shapeComps)
 const viewDom = ref<HTMLDivElement | null>(null);
@@ -17,8 +15,11 @@ onMounted(() => {
   props.graph.viewModel.setViewDom(viewDom.value);
 })
 
+const selectedShapes = computed(()=> {
+  return props.graph.selectionModel.selectedShapes
+})
 const showSelectionVertex = computed(() => {
-  return store.selectedShapes.length > 0
+  return selectedShapes.value.length > 0
 })
 
 function handleVertexMousedown(event: MouseEvent, index: VertexType) {
@@ -26,6 +27,8 @@ function handleVertexMousedown(event: MouseEvent, index: VertexType) {
   if (graph.selectionModel.selection.length === 0) return;
   if (graph.selectionModel.selection.length > 1) {
     graph.selectionModel.clearSelection();
+  } else {
+    const targetShape = graph.selectionModel.selection[0];
   }
 }
 function handleClickOut() {
@@ -71,7 +74,7 @@ const handleDrop = () => {
       <g>
         <Shape-move-preview v-if="graph.moveModel.showMovingPreview" :shapes="graph.moveModel.movingShapes"
           :dx="graph.moveModel.previewDx" :dy="graph.moveModel.previewDy" />
-        <selection-vertex v-if="showSelectionVertex" :selection="store.selectedShapes"
+        <selection-vertex v-if="showSelectionVertex" :selection="selectedShapes"
           @vertex-mousedown="handleVertexMousedown" />
       </g>
 

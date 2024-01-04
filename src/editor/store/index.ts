@@ -6,8 +6,7 @@ import { emitter } from '../../graph/models/graphModel'
 export const useDrawStore = defineStore('draw', {
     state: () => {
         return {
-            shapes: [],
-            selectedShapes: []
+            shapes: []
         }
     },
     getters: {
@@ -24,17 +23,6 @@ export const useDrawStore = defineStore('draw', {
         },
         deleteShape(id: string) {
             this.shapes = this.shapes.filter(shape => shape.id !== id)
-        },
-        emitSelectionChange() {
-           emitter.emit(EventType.SELECTION_CHANGE, this.selectedShapes);
-        },
-        setSelection(arr:Shape[]) {
-            this.selectedShapes = arr
-            this.emitSelectionChange()
-        },
-        clearSelection() {
-            this.selectedShapes= [];
-            this.emitSelectionChange();
         },
         updateShape(id:string, newShape: Shape) {
             const index = this.shapes.findIndex(shape => shape.id === id)

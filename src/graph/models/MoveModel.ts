@@ -1,5 +1,3 @@
-import { Store, StoreDefinition } from "pinia"
-import { useDrawStore } from "../../editor/store"
 import { EventType } from "../shape/constant"
 import { Shape } from "../types"
 import { Point } from "../util/Point"
@@ -21,10 +19,8 @@ export class MoveModel {
     previewDx = 0;
     previewDy = 0
     clearEvents?: () => void
-    store: any;
     limitRange: MoveRange = { dxMin: 0, dyMin: 0, dxMax: 0, dyMax: 0}
     constructor(public graph: GraphModel) {
-        this.store = useDrawStore()
     }
     startMove(event: MouseEvent, mouseDownShape?: Shape) {
         if (mouseDownShape) {
@@ -52,10 +48,9 @@ export class MoveModel {
             this.graph.emitter.on(EventType.SHAPE_MOUSE_UP, onMouseUp);
             window.addEventListener('mouseup', onMouseUp);
         } else {
-            const store = useDrawStore()
             this.movingShapes = []
             this.clear()
-            store.clearSelection()
+            this.graph.selectionModel.clearSelection()
         }
     }
     async onMouseMove(event: MouseEvent, shape: Shape) {
@@ -78,18 +73,9 @@ export class MoveModel {
     
         this.previewDx = dx;
         this.previewDy = dy;
-
-        /**
-         *     const xOnly = this.movingShapes[0]?.style?.xOnly;
-
-    if (xOnly) {
-      dy = 0;
-    }
-         */
     }
     async endMove() {
-        // this.graph.selectionModel.setSelection(this.movingShapes)
-        this.store.setSelection(this.movingShapes)
+        this.graph.selectionModel.setSelection(this.movingShapes)
         this.graph.customEndMove(this, this.previewDx, this.previewDy)
         this.mouseDown = false;
         this.clear();
