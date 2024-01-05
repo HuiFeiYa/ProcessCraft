@@ -21,9 +21,8 @@ const selectedShapes = computed(() => {
   return props.graph.selectionModel.selectedShapes
 })
 const showSelectionVertex = computed(() => {
-  return selectedShapes.value.length > 0
+  return selectedShapes.value.length > 0 && !props.graph.moveModel.showMovingPreview && !props.graph.resizeModel.showResizePreview
 })
-
 function handleVertexMousedown(event: MouseEvent, index: VertexType) {
   const graph = props.graph
   if (graph.selectionModel.selection.length === 0) return;

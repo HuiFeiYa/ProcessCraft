@@ -3,14 +3,14 @@ import { Shape } from "../types";
 import { EventType } from "./constant";
 
 /** 选中元素的事件 */
-export function createEventHandler(graph:GraphModel, props:{shape:Shape}) {
+export function createEventHandler(graph: GraphModel, props: { shape: Shape }) {
   return {
     click() {
 
       graph.emitter.emit(EventType.SHAPE_CLICK, window.event, props.shape);
     },
     mousedown() {
-
+      console.log('shape:', props.shape)
       graph.emitter.emit(EventType.SHAPE_MOUSE_DOWN, window.event, props.shape);
       // this.moved = false;
       // app.$bus.emit('close_contextMenu');
@@ -22,7 +22,7 @@ export function createEventHandler(graph:GraphModel, props:{shape:Shape}) {
 
     },
 
-    mousemove(event:MouseEvent) {
+    mousemove(event: MouseEvent) {
       //
       graph.emitter.emit(EventType.SHAPE_MOUSE_MOVE, event, props.shape);
       // this.moved = true;
@@ -36,7 +36,7 @@ export function createEventHandler(graph:GraphModel, props:{shape:Shape}) {
       graph.emitter.emit(EventType.SHAPE_DRAG_DROP, window.event, props.shape);
     },
 
-    dragover(event:DragEvent) {
+    dragover(event: DragEvent) {
 
       event.stopPropagation();
       event.preventDefault();

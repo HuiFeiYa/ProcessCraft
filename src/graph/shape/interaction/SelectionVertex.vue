@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject } from 'vue'
-import { Shape } from '../../types';
+import { Shape, SubShapeType } from '../../types';
 import { GraphModel } from '../../models/graphModel';
 import { VertexType } from '../constant';
 import { ResizeModel } from '../../models/ResizeModel';
@@ -14,8 +14,18 @@ const emit = defineEmits<{
 const graph = inject<GraphModel>('graph');
 
 const shapeGroup = computed(() => {
+  let commonShapes: Shape[] = []
+  let edgeShapes: Shape[] = []
+  props.selection.forEach(shape => {
+    if (shape.subShapeType === SubShapeType.CommonEdge) {
+      edgeShapes.push(shape)
+    } else {
+      commonShapes.push(shape)
+    }
+  })
   return {
-    commonShapes: props.selection
+    commonShapes,
+    edgeShapes
   }
 })
 const resizable = computed(() => {
@@ -40,40 +50,27 @@ function handleMouseDown(event: MouseEvent, index: VertexType) {
 </script>
 <template>
   <g style="pointer-events:all">
+    <!-- symbol 图形 -->
     <g v-for="shape in shapeGroup.commonShapes" :key="shape.id">
-      <!-- 预览控制点渲染 -->
-      <template v-if="resizeModel?.showResizePreview && shape.id === resizeModel?.resizeShape.id">
-        <rect :x="resizeModel.previewBounds.absX" :y="resizeModel.previewBounds.absY" width="6" height="6" fill="#000"
-          :style="{ cursor: resizable ? 'nw-resize' : '', transform: 'translate(-3px,-3px)' }"
-          @mousedown="handleMouseDown($event, 1)" />
-        <rect :x="resizeModel.previewBounds.absX + resizeModel.previewBounds.width" :y="resizeModel.previewBounds.absY"
-          width="6" height="6" fill="#000"
-          :style="{ cursor: resizable ? 'ne-resize' : '', transform: 'translate(-3px,-3px)' }"
-          @mousedown="handleMouseDown($event, 2)" />
-        <rect :x="resizeModel.previewBounds.absX + resizeModel.previewBounds.width"
-          :y="resizeModel.previewBounds.absY + resizeModel.previewBounds.height" width="6" height="6" fill="#000"
-          :style="{ cursor: resizable ? 'se-resize' : '', transform: 'translate(-3px,-3px)' }"
-          @mousedown="handleMouseDown($event, 3)" />
-        <rect :x="resizeModel.previewBounds.absX" :y="resizeModel.previewBounds.absY + resizeModel.previewBounds.height"
-          width="6" height="6" fill="#000"
-          :style="{ cursor: resizable ? 'sw-resize' : '', transform: 'translate(-3px,-3px)' }"
-          @mousedown="handleMouseDown($event, 4)" />
-      </template>
-      <!-- 移动选中控制点渲染 -->
-      <template v-else>
-        <rect :x="shape.bounds.absX" :y="shape.bounds.absY" width="6" height="6" fill="#000"
-          :style="{ cursor: resizable ? 'nw-resize' : '', transform: 'translate(-3px,-3px)' }"
-          @mousedown="handleMouseDown($event, 1)" />
-        <rect :x="shape.bounds.absX + shape.bounds.width" :y="shape.bounds.absY" width="6" height="6" fill="#000"
-          :style="{ cursor: resizable ? 'ne-resize' : '', transform: 'translate(-3px,-3px)' }"
-          @mousedown="handleMouseDown($event, 2)" />
-        <rect :x="shape.bounds.absX + shape.bounds.width" :y="shape.bounds.absY + shape.bounds.height" width="6"
-          height="6" fill="#000" :style="{ cursor: resizable ? 'se-resize' : '', transform: 'translate(-3px,-3px)' }"
-          @mousedown="handleMouseDown($event, 3)" />
-        <rect :x="shape.bounds.absX" :y="shape.bounds.absY + shape.bounds.height" width="6" height="6" fill="#000"
-          :style="{ cursor: resizable ? 'sw-resize' : '', transform: 'translate(-3px,-3px)' }"
-          @mousedown="handleMouseDown($event, 4)" />
-      </template>
+      <rect :x="shape.bounds.absX" :y="shape.bounds.absY" width="6" height="6" fill="#000"
+        :style="{ cursor: resizable ? 'nw-resize' : '', transform: 'translate(-3px,-3px)' }"
+        @mousedown="handleMouseDown($event, 1)" />
+      <rect :x="shape.bounds.absX + shape.bounds.width" :y="shape.bounds.absY" width="6" height="6" fill="#000"
+        :style="{ cursor: resizable ? 'ne-resize' : '', transform: 'translate(-3px,-3px)' }"
+        @mousedown="handleMouseDown($event, 2)" />
+      <rect :x="shape.bounds.absX + shape.bounds.width" :y="shape.bounds.absY + shape.bounds.height" width="6" height="6"
+        fill="#000" :style="{ cursor: resizable ? 'se-resize' : '', transform: 'translate(-3px,-3px)' }"
+        @mousedown="handleMouseDown($event, 3)" />
+      <rect :x="shape.bounds.absX" :y="shape.bounds.absY + shape.bounds.height" width="6" height="6" fill="#000"
+        :style="{ cursor: resizable ? 'sw-resize' : '', transform: 'translate(-3px,-3px)' }"
+        @mousedown="handleMouseDown($event, 4)" />
+    </g>
+    <!-- edge 图形 -->
+    <g v-for="shape in shapeGroup.edgeShapes" :key="shape.id">
+      <g v-if="shape.waypoint">
+        <rect v-for="(point, index) in (shape).waypoint" :key="index" :x="point.x - 3" :y="point.y - 3" width="6"
+          height="6" fill="#000" style="cursor: crosshair" @mousedown="handleMouseDown($event, index)" />
+      </g>
     </g>
   </g>
 </template>
