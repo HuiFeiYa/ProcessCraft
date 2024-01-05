@@ -82,10 +82,16 @@ export class ResizeModel {
             const MIN_WIDTH = 100
             switch (this.resizeIndex) {
                 case VertexType.leftTop: {
+                    // 最小 x 轴坐标为0
+                    dx = originBounds.absX + dx < 0 ? (0 - originBounds.absX) : dx;
+                    dy = originBounds.absY + dy < 0 ? (0 - originBounds.absY) : dy;
+                    // 最大 x 坐标 宽度不小于 MIN_WIDTH
+                    dx = originBounds.width - dx < MIN_WIDTH ? (originBounds.width - MIN_WIDTH) : dx;
+                    dy = originBounds.height - dy < MIN_HEIGHT ? (originBounds.height - MIN_HEIGHT) : dy;
+                    previewBounds.absX = originBounds.absX + dx
                     previewBounds.absY = originBounds.absY + dy;
-                    previewBounds.absY = Math.min(previewBounds.absY, this.minimumBounds.absY);
-                    previewBounds.width = originBounds.absX + originBounds.width - previewBounds.absX;
-                    previewBounds.height = originBounds.absY + originBounds.height - previewBounds.absY;
+                    previewBounds.width = originBounds.width - dx;
+                    previewBounds.height = originBounds.height - dy;
                     break
                 }
 
@@ -99,25 +105,22 @@ export class ResizeModel {
                     break
                 }
                 case VertexType.rightBottom: {
+                    // 不需要改变 absX 和 absY 坐标
+                    dx = originBounds.width + dx < MIN_WIDTH ? (MIN_WIDTH - originBounds.width) : dx;
+                    dy = originBounds.height + dy < MIN_HEIGHT ? (MIN_HEIGHT - originBounds.height) : dy
                     previewBounds.width = originBounds.width + dx;
-                    if (previewBounds.absX + previewBounds.width < this.minimumBounds.absX + this.minimumBounds.width) {
-                        previewBounds.width = this.minimumBounds.absX + this.minimumBounds.width - previewBounds.absX;
-                    }
                     previewBounds.height = originBounds.height + dy;
-                    if (previewBounds.absY + previewBounds.height < this.minimumBounds.absY + this.minimumBounds.height) {
-                        previewBounds.height = this.minimumBounds.absY + this.minimumBounds.height - previewBounds.absY;
-                    }
                     break
                 }
 
                 case VertexType.leftBottom: {
+                    // 需要改变 absX 坐标（向左负数，宽度增加），不需要改变 absY 坐标
+                    dx = originBounds.absX + dx < 0 ? (0 - originBounds.absX) : dx;
+                    dx = originBounds.width - dx < MIN_WIDTH ? (originBounds.width - MIN_WIDTH) : dx;
+                    dy = originBounds.height + dy < MIN_HEIGHT ? (MIN_HEIGHT - originBounds.height) : dy;
                     previewBounds.absX = originBounds.absX + dx;
-                    // previewBounds.absX = Math.min(previewBounds.absX, this.minimumBounds.absX);
-                    previewBounds.width = originBounds.absX + originBounds.width - previewBounds.absX;
+                    previewBounds.width = originBounds.width - dx;
                     previewBounds.height = originBounds.height + dy;
-                    if (previewBounds.absY + previewBounds.height < this.minimumBounds.absY + this.minimumBounds.height) {
-                        previewBounds.height = this.minimumBounds.absY + this.minimumBounds.height - previewBounds.absY;
-                    }
                     break
                 }
             }

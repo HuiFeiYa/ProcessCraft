@@ -80,7 +80,7 @@ const handleDrop = () => {
         <Shape-move-preview v-if="graph.moveModel.showMovingPreview" :shapes="graph.moveModel.movingShapes"
           :dx="graph.moveModel.previewDx" :dy="graph.moveModel.previewDy" />
         <Shape-resize-preview v-if="graph.resizeModel.showResizePreview" :bounds="graph.resizeModel.previewBounds" />
-        <selection-vertex v-if="showSelectionVertex" :selection="selectedShapes"
+        <selection-vertex v-if="showSelectionVertex" :selection="selectedShapes" :resize-model="graph.resizeModel"
           @vertex-mousedown="handleVertexMousedown" />
       </g>
 
