@@ -6,6 +6,7 @@ import { shapeComps } from './shape/index'
 import ShapeMovePreview from './shape/interaction/ShapeMovePreview.vue'
 import SelectionVertex from './shape/interaction/SelectionVertex.vue';
 import ShapeResizePreview from './shape/interaction/ShapeResizePreview.vue';
+import EdgeMovePreview from './shape/interaction/EdgeMovePreview.vue'
 import { EventType, VertexType } from './shape/constant';
 import { ShapeType } from './types';
 const props = defineProps<{ graph: GraphModel }>()
@@ -21,7 +22,7 @@ const selectedShapes = computed(() => {
   return props.graph.selectionModel.selectedShapes
 })
 const showSelectionVertex = computed(() => {
-  return selectedShapes.value.length > 0 && !props.graph.moveModel.showMovingPreview && !props.graph.resizeModel.showResizePreview
+  return selectedShapes.value.length > 0 && !props.graph.moveModel.showMovingPreview && !props.graph.resizeModel.showResizePreview && !props.graph.edgePointMoveModel.showPreview
 })
 function handleVertexMousedown(event: MouseEvent, index: VertexType) {
   const graph = props.graph
@@ -32,6 +33,8 @@ function handleVertexMousedown(event: MouseEvent, index: VertexType) {
     const targetShape = graph.selectionModel.selection[0];
     if (targetShape.shapeType === ShapeType.Symbol) {
       graph.resizeModel.startResize(event, graph.selectionModel.selectedShapes[0], index)
+    } else if (targetShape.shapeType === ShapeType.Edge) {
+      graph.edgePointMoveModel.onEdgePointMouseDown(event, targetShape, index)
     }
   }
 }
@@ -81,6 +84,8 @@ const handleDrop = () => {
         <Shape-resize-preview v-if="graph.resizeModel.showResizePreview" :bounds="graph.resizeModel.previewBounds" />
         <selection-vertex v-if="showSelectionVertex" :selection="selectedShapes" :resize-model="graph.resizeModel"
           @vertex-mousedown="handleVertexMousedown" />
+        <edge-move-preview v-if="graph.edgePointMoveModel.showPreview" :shape="graph.edgePointMoveModel.movingShape"
+          :previewPath="graph.edgePointMoveModel.previewPath" />
       </g>
 
     </svg>

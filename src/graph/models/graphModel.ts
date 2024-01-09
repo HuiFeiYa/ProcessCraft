@@ -8,6 +8,7 @@ import { IGraphOption, Shape, ShapeKey, SubShapeType } from "../types";
 import { GraphOption } from "../../editor/graphOption";
 import { useDrawStore } from "../../editor/store";
 import { ResizeModel } from "./ResizeModel";
+import { EdgePointMoveModel } from "./EdgePointMoveModel";
 export const emitter = new Emitter()
 export class GraphModel {
   disabled = false
@@ -30,6 +31,10 @@ export class GraphModel {
    * 元素resize模型
    */
   resizeModel = new ResizeModel(this)
+  /**
+* 线的控制点移动模型
+*/
+  edgePointMoveModel = new EdgePointMoveModel(this)
   /**
  * 选中元素模型
  */

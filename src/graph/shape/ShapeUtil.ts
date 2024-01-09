@@ -1,4 +1,5 @@
 import { Shape } from "../types";
+import { Bounds } from "../util/Bounds";
 import { Point } from "../util/Point";
 
 export class ShapeUtil {
@@ -20,3 +21,23 @@ export class ShapeUtil {
 }
 
 export const shapeUtil = new ShapeUtil();
+
+/**
+ * 点是否在边框上
+ * @param p
+ * @param bounds
+ */
+export function isPointAtBorder(p: Point, bounds: Bounds, borderWidth = 16) {
+    const size = borderWidth / 2;
+
+    if ((p.y >= bounds.absY - size && p.y <= bounds.absY + size) || (p.y >= bounds.absY + bounds.height - size && p.y <= bounds.absY + bounds.height + size)) {
+        if (p.x >= bounds.absX - size && p.x <= bounds.absX + bounds.width + size) {
+            return true;
+        }
+    } else if ((p.x >= bounds.absX - size && p.x <= bounds.absX + size) || (p.x >= bounds.absX + bounds.width - size && p.x <= bounds.absX + bounds.width + size)) {
+        if (p.y >= bounds.absY - size && p.y <= bounds.absY + bounds.height + size) {
+            return true;
+        }
+    }
+    return false;
+}
