@@ -10,10 +10,8 @@ export function createEventHandler(graph: GraphModel, props: { shape: Shape }) {
       graph.emitter.emit(EventType.SHAPE_CLICK, window.event, props.shape);
     },
     mousedown() {
-      console.log('shape:', props.shape)
+      // console.log('shape:', props.shape)
       graph.emitter.emit(EventType.SHAPE_MOUSE_DOWN, window.event, props.shape);
-      // this.moved = false;
-      // app.$bus.emit('close_contextMenu');
     },
     mouseup() {
 
@@ -23,14 +21,8 @@ export function createEventHandler(graph: GraphModel, props: { shape: Shape }) {
     },
 
     mousemove(event: MouseEvent) {
-      //
       graph.emitter.emit(EventType.SHAPE_MOUSE_MOVE, event, props.shape);
-      // this.moved = true;
-
     },
-    // handleNameLabelClick(event:MouseEvent){
-    //   graph.emitter.emit(EventType.NAME_LABEL_CLICK, event, props.shape);
-    // },
 
     drop() {
       graph.emitter.emit(EventType.SHAPE_DRAG_DROP, window.event, props.shape);

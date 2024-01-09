@@ -4,8 +4,8 @@ import { Shape } from '../../../../types';
 import { Point, rotate } from '../../../../util/Point';
 
 const props = defineProps<{
-  edge:Shape,
-  style?:{[key: string]: string},
+  edge: Shape,
+  style?: { [key: string]: string },
   position: String
 }>();
 let pt1 = new Point(-8, 4);
@@ -15,7 +15,7 @@ const getPath = computed(() => {
   const edge = props.edge;
   let p = '';
   if (props.position === 'end' && props.edge.waypoint && props.edge.waypoint.length) {
-    const p2 = props.edge.waypoint[props.edge.waypoint.length - 1]; 
+    const p2 = props.edge.waypoint[props.edge.waypoint.length - 1];
     const p1 = props.edge.waypoint[props.edge.waypoint.length - 2] ? props.edge.waypoint[props.edge.waypoint.length - 2] : edge.waypoint[0];
     if (!p1 || !p2) { return p; }
     const arc1 = Math.atan2((p2.y - p1.y), (p2.x - p1.x));
@@ -27,17 +27,11 @@ const getPath = computed(() => {
     p += ` L ${initPoint.x + _pt2.x} ${initPoint.y + _pt2.y}`;
     p += ` L ${initPoint.x + _pt3.x} ${initPoint.y + _pt3.y}`;
   }
-  console.log('arrow path:', p)
   return p;
 });
 </script>
 <template>
-  <path
-    :d="getPath"
-    fill="none"
-    :stroke="props.style ? props.style.strokeColor :  props.edge.style.strokeColor"
-    :stroke-width="props.style ? props.style.strokeWidth : props.edge.style.strokeWidth"
-    name="arrow"
-    :position="position"
+  <path :d="getPath" fill="none" :stroke="props.style ? props.style.strokeColor : props.edge.style.strokeColor"
+    :stroke-width="props.style ? props.style.strokeWidth : props.edge.style.strokeWidth" name="arrow" :position="position"
     stroke-linejoin="round"></path>
 </template>

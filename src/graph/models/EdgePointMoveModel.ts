@@ -1,11 +1,12 @@
 import { cloneDeep } from "lodash";
-import { EdgeMoveType, EventType } from "../shape/constant";
-import { Shape } from "../types";
+import { EdgeMoveType, EventType, MarkerColor } from "../shape/constant";
+import { Shape, SubShapeType } from "../types";
 import { ShapeType } from "../types/shapeOption";
 import { Point } from "../util/Point";
 import { int } from "../util/WaypointUtil";
 import { GraphModel } from "./graphModel";
 import { useDrawStore } from "../../editor/store";
+import { Marker } from "./Marker";
 
 export class EdgePointMoveModel {
     movingShape: Shape | undefined = undefined;
@@ -23,6 +24,7 @@ export class EdgePointMoveModel {
     sourceShape?: Shape
     targetShape?: Shape
     moved = false
+    marker?: Marker
     store = useDrawStore()
     constructor(public graph: GraphModel) {
 
@@ -91,6 +93,7 @@ export class EdgePointMoveModel {
         this.moved = false;
         this.showPreview = false;
         this.movingShape = undefined
+        this.removeMarker();
     }
     async onMouseMove(event: MouseEvent, shape?: Shape) {
         this.endPoint.x = event.clientX;
@@ -98,8 +101,20 @@ export class EdgePointMoveModel {
         this.moved = true;
         this.dx = this.endPoint.x - this.startPoint.x;
         this.dy = this.endPoint.y - this.startPoint.y;
+        // 获取当前鼠标点在画布上的坐标
+        const curPoint = this.graph.viewModel.translateClientPointToDiagramAbsPoint(new Point(event.clientX, event.clientY), this.graph.viewModel.viewDom as HTMLDivElement);
         const edgeShape = this.movingShape;
         const newEdgeShape = cloneDeep(edgeShape)
+        /**
+         * 当前悬浮的元素, 过滤掉悬浮在线元素上的图形
+         * 如果已经绘制过则跳过
+         */
+        if (shape && shape.subShapeType !== SubShapeType.CommonEdge && shape.id !== this.movingShape.id) {
+            this.connectShape(shape) // mousemove 移动到对应图形上，会 emit move 事件出来，此时监听到进入某个图形，进行图形之间关系绑定
+        } else if (!shape) {
+            // 移动时未连接图形，则情况 marker
+            this.removeMarker()
+        }
         // TODO 目前只考虑两个点的情况，后续考虑折线
         if (this.isTargetPoint) {
             const lastPoint = newEdgeShape.waypoint[1]
@@ -149,5 +164,22 @@ export class EdgePointMoveModel {
             path += (' L ' + int(p.x) + ' ' + int(p.y));
         }
         this.previewPath = path;
+    }
+    connectShape(shape: Shape) {
+        // 创建 marker
+        if (!this.marker) {
+            this.marker = new Marker(shape, 'blue', 2);
+            this.graph.markerModel.addMarker(this.marker);
+        }
+        this.marker.setTargetShape(shape);
+        this.marker.setVisible(true);
+        this.marker.setStrokeColor(MarkerColor.valid);
+    }
+    removeMarker() {
+        if (this.marker) {
+            // 清除 markerModel 管理器中对应的 marker
+            this.graph.markerModel.removeMarker(this.marker.id);
+            this.marker = undefined;
+        }
     }
 }

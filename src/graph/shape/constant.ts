@@ -4,6 +4,15 @@ export enum EdgeMoveType {
   SourcePoint, // 起点拖动
   TargetPoint // 终点拖动
 }
+
+/**
+ * 图形标亮的颜色
+ */
+export enum MarkerColor {
+  valid = "#1890FF",
+  invalid = "#FF181F"
+}
+
 export enum EventType {
   SHAPE_INIT_EDIT = "SHAPE_INIT_EDIT",
   SHAPE_CLICK = "SHAPE_CLICK",

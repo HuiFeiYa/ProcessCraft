@@ -645,6 +645,14 @@ export interface IGraphOption {
   onShapeMouseDown?: (event: MouseEvent, shape: Shape) => void;
   onShapeMouseUp?: (event: MouseEvent, shape: Shape) => void;
   onShapeClick?: (event: MouseEvent, shape: Shape) => void;
+  /**
+ * 获得连线的目标图形
+ * @param shapeKey
+ * @param shape
+ * @param graph
+ * @param point
+ */
+  getConnectTargetShape?(edgeKey: string, hoverShape: Shape | undefined, point: Point): Shape | undefined
   onShapeDblClick?: (
     event: MouseEvent,
     shape: Shape,

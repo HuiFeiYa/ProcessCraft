@@ -9,6 +9,7 @@ import { GraphOption } from "../../editor/graphOption";
 import { useDrawStore } from "../../editor/store";
 import { ResizeModel } from "./ResizeModel";
 import { EdgePointMoveModel } from "./EdgePointMoveModel";
+import { MarkerModel } from "./MarkerModel";
 export const emitter = new Emitter()
 export class GraphModel {
   disabled = false
@@ -18,7 +19,7 @@ export class GraphModel {
       absX: 12,
       absY: 12
     }
-  }
+  } as Shape
   /**
  * graph配置对象(暴露的接口，由外部实现)
  */
@@ -27,6 +28,10 @@ export class GraphModel {
     this.graphOption = opt;
     this.graphOption.graph = this;
   }
+  /**
+   * 图形标记（高亮效果）
+   */
+  markerModel = new MarkerModel(this)
   /**
    * 元素resize模型
    */

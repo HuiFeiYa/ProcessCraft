@@ -25,3 +25,4 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 ## graph
 * 根据 subShapeType 使用对应组件， 注册 components 处 src/graph/GraphView.vue:13
 * shapeComps src/graph/shape/index.ts:4
+* 图形关系绑定 src/graph/models/EdgePointMoveModel.ts:113
