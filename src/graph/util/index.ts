@@ -205,3 +205,12 @@ export const getUid = (() => {
 
   };
 })();
+
+/**
+ * 四舍五入转小数，默认保留两位小数
+ * @param num
+ * @returns
+ */
+export function float(num:number, precision = 2) {
+  return parseFloat(num.toFixed(precision));
+}

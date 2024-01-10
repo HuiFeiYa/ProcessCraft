@@ -7,6 +7,7 @@ import { int } from "../util/WaypointUtil";
 import { GraphModel } from "./graphModel";
 import { useDrawStore } from "../../editor/store";
 import { Marker } from "./Marker";
+import { Line } from "../shape/Line";
 
 export class EdgePointMoveModel {
     movingShape: Shape | undefined = undefined;
@@ -20,12 +21,13 @@ export class EdgePointMoveModel {
     previewPath = '' // 预览线的路径path的d属性
     movePointIndex = -1 // 移动的点是第几个点 从0开始
     moveType: EdgeMoveType | undefined = undefined // 移动类型
-    // marker?: Marker
     sourceShape?: Shape
     targetShape?: Shape
     moved = false
     marker?: Marker
     store = useDrawStore()
+    // 是否连到图形
+    isConnectShape = false
     constructor(public graph: GraphModel) {
 
     }
@@ -93,6 +95,7 @@ export class EdgePointMoveModel {
         this.moved = false;
         this.showPreview = false;
         this.movingShape = undefined
+        this.isConnectShape = false
         this.removeMarker();
     }
     async onMouseMove(event: MouseEvent, shape?: Shape) {
@@ -102,7 +105,6 @@ export class EdgePointMoveModel {
         this.dx = this.endPoint.x - this.startPoint.x;
         this.dy = this.endPoint.y - this.startPoint.y;
         // 获取当前鼠标点在画布上的坐标
-        const curPoint = this.graph.viewModel.translateClientPointToDiagramAbsPoint(new Point(event.clientX, event.clientY), this.graph.viewModel.viewDom as HTMLDivElement);
         const edgeShape = this.movingShape;
         const newEdgeShape = cloneDeep(edgeShape)
         /**
@@ -120,15 +122,12 @@ export class EdgePointMoveModel {
             const lastPoint = newEdgeShape.waypoint[1]
             lastPoint.x = lastPoint.x + this.dx
             lastPoint.y = lastPoint.y + this.dy
-            this.store.updateShape(edgeShape.id, newEdgeShape)
         } else if (this.isSourcePoint) {
             const firstPoint = newEdgeShape.waypoint[0]
             firstPoint.x = firstPoint.x + this.dx
             firstPoint.y = firstPoint.y + this.dy
-            this.store.updateShape(edgeShape.id, newEdgeShape)
         }
         this.previewwaypoint = newEdgeShape.waypoint
-
         this.updatePreviewPath();
     }
     endMove() {
@@ -142,8 +141,12 @@ export class EdgePointMoveModel {
             [EdgeMoveType.TargetPoint]: this.targetShape,
             [EdgeMoveType.SourcePoint]: this.sourceShape
         };
+        // 剪切元素上多余的线，找到最近的点，更新waypoint
+        const newPoints = this.updateClosestWaypoint(this.previewwaypoint)
         // 更新，vertex 渲染最新控制点
-        this.movingShape.waypoint = this.previewwaypoint
+        this.movingShape.waypoint = this.previewwaypoint = newPoints
+        // 数据存储，持久化数据同步
+        this.store.updateShape(this.movingShape.id, this.movingShape)
         const id = shapeMap[this.moveType]?.id // 建立关联关系
         if (id) { }
         this.initPreviewState()
@@ -165,6 +168,24 @@ export class EdgePointMoveModel {
         }
         this.previewPath = path;
     }
+    /** 更新 edge 的 wayPoint */
+    updateClosestWaypoint(pts: Point[]) {
+        if (this.isTargetPoint && this.targetShape) {
+            // 根据倒数第二个点和最后一个点生成一条射线
+            const rayline = Line.createRayLine(pts[pts.length - 2], pts[pts.length - 1]);
+            const targetBoundsLines = Line.createBoundsSegmentLines(this.targetShape.bounds);
+            // 计算射线和目标元素的 BoundsLines 的相交点
+            const joinPoints = Line.getJoinPointBetweenLineAndLines(rayline, targetBoundsLines, true);
+            if (joinPoints.length) {
+                // 计算两个点 (x1,y1) 倒数第二个点 和 [(x2,y2),(x3,y3)] 相交点 的距离最短的
+                const closePoint = Line.getClosePoint(pts[pts.length - 2], joinPoints);
+                if (!Point.isSame(pts[pts.length - 1], closePoint)) {
+                    pts[pts.length - 1] = closePoint; // 更新最后的点为最近点
+                }
+            }
+        }
+        return pts
+    }
     connectShape(shape: Shape) {
         // 创建 marker
         if (!this.marker) {
@@ -174,6 +195,13 @@ export class EdgePointMoveModel {
         this.marker.setTargetShape(shape);
         this.marker.setVisible(true);
         this.marker.setStrokeColor(MarkerColor.valid);
+        this.isConnectShape = true
+        if (this.isTargetPoint) {
+            this.targetShape = shape
+        }
+        if (this.isSourcePoint) {
+            this.sourceShape = shape
+        }
     }
     removeMarker() {
         if (this.marker) {
