@@ -10,7 +10,7 @@ export function createEventHandler(graph: GraphModel, props: { shape: Shape }) {
       graph.emitter.emit(EventType.SHAPE_CLICK, window.event, props.shape);
     },
     mousedown() {
-      // console.log('shape:', props.shape)
+      console.log('mousedown shape:', props.shape)
       graph.emitter.emit(EventType.SHAPE_MOUSE_DOWN, window.event, props.shape);
     },
     mouseup() {

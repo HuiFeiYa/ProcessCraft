@@ -134,21 +134,30 @@ export class EdgePointMoveModel {
         if (!this.movingShape) {
             console.error('缺失 movingShape');
             this.initPreviewState();
-
             return;
         }
-        const shapeMap = {
-            [EdgeMoveType.TargetPoint]: this.targetShape,
-            [EdgeMoveType.SourcePoint]: this.sourceShape
-        };
         // 剪切元素上多余的线，找到最近的点，更新waypoint
         const newPoints = this.updateClosestWaypoint(this.previewwaypoint)
         // 更新，vertex 渲染最新控制点
         this.movingShape.waypoint = this.previewwaypoint = newPoints
         // 数据存储，持久化数据同步
         this.store.updateShape(this.movingShape.id, this.movingShape)
-        const id = shapeMap[this.moveType]?.id // 建立关联关系
-        if (id) { }
+        /** 更新 edgeShape 的sourceId、targetId */
+        if (this.isSourcePoint) {
+            if (this.sourceShape) {
+                this.movingShape.sourceId = this.sourceShape.id
+            } else {
+                this.movingShape.sourceId = undefined
+            }
+        }
+
+        if (this.isTargetPoint) {
+            if (this.targetShape) {
+                this.movingShape.targetId = this.targetShape.id
+            } else {
+                this.movingShape.targetId = undefined
+            }
+        }
         this.initPreviewState()
     }
     updatePreviewPath() {
@@ -181,6 +190,18 @@ export class EdgePointMoveModel {
                 const closePoint = Line.getClosePoint(pts[pts.length - 2], joinPoints);
                 if (!Point.isSame(pts[pts.length - 1], closePoint)) {
                     pts[pts.length - 1] = closePoint; // 更新最后的点为最近点
+                }
+            }
+        } else if (this.isSourcePoint && this.sourceShape) {
+            // 根据最后一个点和倒数第二个点生成一条射线
+            const rayline = Line.createRayLine(pts[pts.length - 1], pts[pts.length - 2]);
+            const sourceBoundsLines = Line.createBoundsSegmentLines(this.sourceShape.bounds);
+            // 计算射线和目标元素的 BoundsLines 的相交点
+            const joinPoints = Line.getJoinPointBetweenLineAndLines(rayline, sourceBoundsLines, true);
+            if (joinPoints.length) {
+                const closePoint = Line.getClosePoint(pts[pts.length - 2], joinPoints);
+                if (!Point.isSame(pts[pts.length - 1], closePoint)) {
+                    pts[pts.length - 2] = closePoint; // 更新最后的点为最近点
                 }
             }
         }
