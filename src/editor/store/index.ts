@@ -23,6 +23,11 @@ export const useDrawStore = defineStore('draw', {
                 this.shapeMap.set(shape.id, shape)
             })
         },
+        deleteShapes(ids: string[]) {
+            ids.forEach(id => {
+                this.deleteShape(id)
+            }) 
+        },
         deleteShape(id: string) {
             this.shapes = this.shapes.filter(shape => shape.id !== id)
             this.shapeMap.delete(id)

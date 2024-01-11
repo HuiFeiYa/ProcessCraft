@@ -10,7 +10,7 @@ const editor = reactive(new GraphEditor({ modelId: 'a-1' }))
 </script>
 
 <template>
-    <Header />
+    <Header :graph="editor.graph" />
     <div class="graph-container">
         <Siderbar :tab="editor.tab" />
         <div class="diagram-container">
