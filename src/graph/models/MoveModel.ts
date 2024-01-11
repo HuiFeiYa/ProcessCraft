@@ -1,5 +1,5 @@
 import { EventType } from "../shape/constant"
-import { Shape } from "../types"
+import { Shape, SubShapeType } from "../types"
 import { Point } from "../util/Point"
 import { GraphModel } from "./graphModel"
 export type MoveRange = {
@@ -7,8 +7,8 @@ export type MoveRange = {
     dyMin: number,
     dxMax: number,
     dyMax: number
-  
-  }
+
+}
 export class MoveModel {
     movingShapes: Shape[] = [] // 被移动的shapes
     startPoint: Point = new Point() // 移动起始时的鼠标的坐标
@@ -19,7 +19,7 @@ export class MoveModel {
     previewDx = 0;
     previewDy = 0
     clearEvents?: () => void
-    limitRange: MoveRange = { dxMin: 0, dyMin: 0, dxMax: 0, dyMax: 0}
+    limitRange: MoveRange = { dxMin: 0, dyMin: 0, dxMax: 0, dyMax: 0 }
     constructor(public graph: GraphModel) {
     }
     startMove(event: MouseEvent, mouseDownShape?: Shape) {
@@ -54,7 +54,14 @@ export class MoveModel {
         }
     }
     async onMouseMove(event: MouseEvent, shape: Shape) {
-        if (!this.mouseDown) return 
+        const movingShapes = this.movingShapes
+        /** 当线有连接不可以移动 */
+        for (const s of movingShapes) {
+            if (s.subShapeType === SubShapeType.CommonEdge && (s.sourceId || s.targetId)) {
+                return
+            }
+        }
+        if (!this.mouseDown) return
         this.moved = true;
         this.endPoint.x = event.clientX;
         this.endPoint.y = event.clientY;
@@ -70,7 +77,7 @@ export class MoveModel {
             dx = Math.min(Math.max(dx, this.limitRange.dxMin), this.limitRange.dxMax);
             dy = Math.min(Math.max(dy, this.limitRange.dyMin), this.limitRange.dyMax);
         }
-    
+
         this.previewDx = dx;
         this.previewDy = dy;
     }

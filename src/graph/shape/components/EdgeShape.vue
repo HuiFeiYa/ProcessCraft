@@ -20,9 +20,13 @@ const computedData = computed(() => {
         style
     }
 })
+const style = computed(() => {
+    const { sourceId, targetId } = props.shape
+    return { cursor: (!!sourceId || !!targetId) ? 'not-allowed' : 'grab' }
+})
 </script>
 <template>
-    <g @click.stop @mousedown.stop @mouseup.stop @drop.stop v-on="eventHandler">
+    <g @click.stop @mousedown.stop @mouseup.stop @drop.stop v-on="eventHandler" :style="style">
         <!-- 展示线 -->
         <path :d="computedData.svgPath" :stroke="computedData.style.strokeColor"
             :stroke-dasharray="computedData.style.strokeDasharray || (computedData.style.dashed ? '10 8' : '')"

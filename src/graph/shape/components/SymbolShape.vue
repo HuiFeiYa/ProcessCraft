@@ -9,7 +9,7 @@ const eventHandler = createEventHandler(graph, props);
 </script>
 <template>
   <g @click.stop @mousedown.stop @mouseup.stop @mousemove.stop @dragenter.stop dragenter stop @dragleave.stop @drop.stop
-    @dragover.stop v-on="eventHandler">
+    @dragover.stop v-on="eventHandler" style="cursor: grab;">
 
     <!-- 最外层是绝对坐标，要创建相对坐标系需要用<g transform="translate(absX,absY)/> 或foreignObject" -->
 
