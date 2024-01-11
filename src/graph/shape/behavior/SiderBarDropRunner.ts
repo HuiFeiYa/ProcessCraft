@@ -17,7 +17,8 @@ export class SiderBarDropRunner {
         const shapeMap = new Map()
         // this.shape = shapeMap.get(this.shapeId)
     }
-    async run( siderBarKey: SiderbarItemKey,  point?: Point) {
+    // 调用处 dropSiderbarKeyToShape 函数，放置图形时 src/editor/SiderBarDropModel.ts:91
+    async run(siderBarKey: SiderbarItemKey, point?: Point) {
         const store = useDrawStore()
 
         await this.init()
@@ -34,12 +35,12 @@ export class SiderBarDropRunner {
         this.createdShapes = new Set()
         return createdShapes
     }
-    getMatchedBehaviors(siderBarKey: SiderbarItemKey,  point?: Point) {
+    getMatchedBehaviors(siderBarKey: SiderbarItemKey, point?: Point) {
         const behaviors: SiderBarDropBehavior[] = [];
         behaviorConfigs.forEach(config => {
             if (config.siderbarItemKeys.includes(siderBarKey)) {
                 const Behavior = config.behavior
-                behaviors.push(new Behavior(this, siderBarKey,  point))
+                behaviors.push(new Behavior(this, siderBarKey, point))
             }
         })
         return behaviors

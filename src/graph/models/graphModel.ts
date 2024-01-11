@@ -10,6 +10,7 @@ import { useDrawStore } from "../../editor/store";
 import { ResizeModel } from "./ResizeModel";
 import { EdgePointMoveModel } from "./EdgePointMoveModel";
 import { MarkerModel } from "./MarkerModel";
+import { cloneDeep } from "lodash";
 export const emitter = new Emitter()
 export class GraphModel {
   disabled = false
@@ -65,6 +66,8 @@ export class GraphModel {
    * 图形组件管理器(当前画布上使用到的那些图形组件)
    */
   shapeCompManager = new ShapeCompManager();
+  store = useDrawStore()
+
   /**
    * children索引， id -> children，(父图形ID对应的其多个子图形)
    */
@@ -111,15 +114,36 @@ export class GraphModel {
  * @param dy
  */
   async customEndMove(moveModel: MoveModel, dx: number, dy: number) {
-    const store = useDrawStore()
     // 当数组为空时，得到的时 -Infinity 需要设置最低为0
-    const maxZIndex = Math.max(...store.shapes.map(item => item.style?.zIndex).filter(item => item !== undefined), 0)
+    const maxZIndex = Math.max(...this.store.shapes.map(item => item.style?.zIndex).filter(item => item !== undefined), 0)
     // 更新图形位置
     moveModel.movingShapes.forEach((shape: Shape) => {
       shape.bounds.x += dx;
       shape.bounds.y += dy;
       shape.bounds.absX += dx;
       shape.bounds.absY += dy;
+      if (shape.subShapeType === SubShapeType.Block) {
+        // 查询 shapes 中关联的线，将线的一端进行更新
+        this.store.shapes.forEach(s => {
+          if (s.subShapeType === SubShapeType.CommonEdge) {
+            if (s.sourceId === shape.id) {
+              const newShape = cloneDeep(s)
+              // 更新 source 端 point 数据
+              const firstPoint = newShape.waypoint[0]
+              firstPoint.x += dx
+              firstPoint.y += dy
+              this.store.updateShape(newShape.id, newShape)
+            } else if (s.targetId === shape.id) {
+              const newShape = cloneDeep(s)
+              // 更新 target 端 point 数据
+              const lastPoint = newShape.waypoint[s.waypoint.length - 1]
+              lastPoint.x += dx
+              lastPoint.y += dy
+              this.store.updateShape(newShape.id, newShape)
+            }
+          }
+        })
+      }
       if (shape.subShapeType === SubShapeType.CommonEdge) {
         // 更新 waypoint 位置
         shape.waypoint.forEach(point => {
@@ -133,7 +157,7 @@ export class GraphModel {
         shape.style.zIndex = maxZIndex
       } else {
         shape.style.zIndex = maxZIndex + 1
-        store.updateShape(shape.id, shape)
+        this.store.updateShape(shape.id, shape)
       }
 
     })

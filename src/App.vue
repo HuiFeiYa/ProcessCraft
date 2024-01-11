@@ -4,14 +4,16 @@ import { GraphEditor } from './editor/graphEditor'
 import GraphView from './graph/GraphView.vue'
 import DropCursor from './editor/DropCursor.vue'
 import Siderbar from './editor/components/SiderBar.vue'
+import Header from './editor/components/header.vue'
 const editor = reactive(new GraphEditor({ modelId: 'a-1' }))
 
 </script>
 
 <template>
+    <Header />
     <div class="graph-container">
         <Siderbar :tab="editor.tab" />
-        <div style="flex:1">
+        <div class="diagram-container">
             <GraphView :graph="editor.graph" />
         </div>
         <DropCursor :siderBarDropModel="editor.tab.siderBarDropModel" />
@@ -21,7 +23,14 @@ const editor = reactive(new GraphEditor({ modelId: 'a-1' }))
 .graph-container {
     display: flex;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 39px);
+}
+
+.diagram-container {
+    width: calc(100vw - 220px);
+    overflow: auto;
+    background-image: linear-gradient(to right, #eee 1px, transparent 1px, transparent 40px), linear-gradient(to bottom, #eee 1px, transparent 1px, transparent 40px);
+    background-size: 20px 20px;
 }
 
 /* 画布计算起点归零 */

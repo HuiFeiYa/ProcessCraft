@@ -18,15 +18,15 @@ export class ViewModel {
      * @param diagramViewDom
      * @returns
      */
-    translateClientPointToDiagramAbsPoint (point: Point, diagramViewDom = this.viewDom): Point {
+    translateClientPointToDiagramAbsPoint(point: Point, diagramViewDom = this.viewDom): Point {
         if (!diagramViewDom) {
-        throw new Error("no view dom");
+            throw new Error("no view dom");
 
         }
         const rect = diagramViewDom.getBoundingClientRect();
-
-        const x = (point.x - rect.left + diagramViewDom.scrollLeft) ;
-        const y = (point.y - rect.top + diagramViewDom.scrollTop) ;
+        const x = (point.x - rect.left + diagramViewDom.scrollLeft);
+        const y = (point.y - rect.top + diagramViewDom.scrollTop);
+        // 相对于画布的距离
         const intPoint = new Point(x, y)
         Point.toInt(intPoint);
         return intPoint

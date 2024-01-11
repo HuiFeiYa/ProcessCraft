@@ -75,9 +75,12 @@ const handleDrop = () => {
         <DiagramShape :graph="graph" :shape="graph.rootShape" />
       </g>
     </svg>
-    <!-- 交互层 -->
+    <!-- 
+      交互层
+      * 设置了pointer-events， 元素永远不会成为鼠标事件的target (en-US)。其后端元素可以捕获
+     -->
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
-      style="min-width: 100%; min-height: 100%; position: absolute; top: 0; left: 200px; pointer-events: none"
+      style="min-width: 100%; min-height: 100%; position: absolute; top: 0; left: 0; pointer-events: none"
       transform-origin="0 0" :width="graph.viewModel.bounds.width" :height="graph.viewModel.bounds.height">
       <g>
         <Shape-move-preview v-if="graph.moveModel.showMovingPreview" :shapes="graph.moveModel.movingShapes"
@@ -93,3 +96,8 @@ const handleDrop = () => {
     </svg>
   </div>
 </template>
+<style>
+.graph-view {
+  position: relative;
+}
+</style>
