@@ -117,6 +117,12 @@ export class EdgePointMoveModel {
             // 移动时未连接图形，则情况 marker
             this.removeMarker()
         }
+        if (this.isTargetPoint) {
+            this.targetShape = shape || undefined
+        }
+        if (this.isSourcePoint) {
+            this.sourceShape = shape || undefined
+        }
         // TODO 目前只考虑两个点的情况，后续考虑折线
         if (this.isTargetPoint) {
             const lastPoint = newEdgeShape.waypoint[1]
@@ -143,19 +149,21 @@ export class EdgePointMoveModel {
         // 数据存储，持久化数据同步
         this.store.updateShape(this.movingShape.id, this.movingShape)
         /** 更新 edgeShape 的sourceId、targetId */
-        if (this.isSourcePoint) {
-            if (this.sourceShape) {
-                this.movingShape.sourceId = this.sourceShape.id
-            } else {
-                this.movingShape.sourceId = undefined
+        if (this.movingShape.subShapeType === SubShapeType.CommonEdge) {
+            if (this.isSourcePoint) {
+                if (this.sourceShape) {
+                    this.movingShape.sourceId = this.sourceShape.id
+                } else {
+                    this.movingShape.sourceId = undefined
+                }
             }
-        }
 
-        if (this.isTargetPoint) {
-            if (this.targetShape) {
-                this.movingShape.targetId = this.targetShape.id
-            } else {
-                this.movingShape.targetId = undefined
+            if (this.isTargetPoint) {
+                if (this.targetShape) {
+                    this.movingShape.targetId = this.targetShape.id
+                } else {
+                    this.movingShape.targetId = undefined
+                }
             }
         }
         this.initPreviewState()
@@ -199,7 +207,8 @@ export class EdgePointMoveModel {
             // 计算射线和目标元素的 BoundsLines 的相交点
             const joinPoints = Line.getJoinPointBetweenLineAndLines(rayline, sourceBoundsLines, true);
             if (joinPoints.length) {
-                const closePoint = Line.getClosePoint(pts[pts.length - 2], joinPoints);
+                // 计算第二个点距离起始点最近的距离
+                const closePoint = Line.getClosePoint(pts[1], joinPoints);
                 if (!Point.isSame(pts[pts.length - 1], closePoint)) {
                     pts[pts.length - 2] = closePoint; // 更新最后的点为最近点
                 }
@@ -217,12 +226,6 @@ export class EdgePointMoveModel {
         this.marker.setVisible(true);
         this.marker.setStrokeColor(MarkerColor.valid);
         this.isConnectShape = true
-        if (this.isTargetPoint) {
-            this.targetShape = shape
-        }
-        if (this.isSourcePoint) {
-            this.sourceShape = shape
-        }
     }
     removeMarker() {
         if (this.marker) {
