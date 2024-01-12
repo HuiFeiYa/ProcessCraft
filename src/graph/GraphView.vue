@@ -8,6 +8,7 @@ import SelectionVertex from './shape/interaction/SelectionVertex.vue';
 import ShapeResizePreview from './shape/interaction/ShapeResizePreview.vue';
 import EdgeMovePreview from './shape/interaction/EdgeMovePreview.vue'
 import Markers from './shape/interaction/Markers.vue'
+import LabelEditor from './shape/interaction/LabelEditor.vue'
 import { EventType, VertexType } from './shape/constant';
 import { ShapeType } from './types';
 const props = defineProps<{ graph: GraphModel }>()
@@ -91,6 +92,7 @@ const handleDrop = () => {
         <edge-move-preview v-if="graph.edgePointMoveModel.showPreview" :shape="graph.edgePointMoveModel.movingShape"
           :previewPath="graph.edgePointMoveModel.previewPath" />
         <Markers v-if="graph.markerModel.markerMap.size" :markerMap="graph.markerModel.markerMap" />
+        <!-- <LabelEditor v-if="graph.labelEditorModel.showPreview" :editor-model="graph.labelEditorModel" /> -->
       </g>
 
     </svg>

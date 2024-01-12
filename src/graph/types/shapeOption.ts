@@ -31,6 +31,11 @@ export interface StyleObject {
   imageBox?: boolean
   [key: string]: any
 }
+
+export interface FontStyle extends StyleObject {
+  fontSize: number
+}
+
 // 图形大类,大类表示了图形的数据结构， 相同大类的图形适用的数据结构是相同的，
 export enum ShapeType {
   Symbol = "Symbol", // 图形外框

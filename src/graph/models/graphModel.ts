@@ -11,6 +11,7 @@ import { ResizeModel } from "./ResizeModel";
 import { EdgePointMoveModel } from "./EdgePointMoveModel";
 import { MarkerModel } from "./MarkerModel";
 import { cloneDeep } from "lodash";
+import { LabelEditorModel } from "./LabelEditorModel";
 export const emitter = new Emitter()
 export class GraphModel {
   disabled = false
@@ -55,6 +56,10 @@ export class GraphModel {
  */
   moveModel = new MoveModel(this)
   /**
+* 标签编辑模型(任何可编辑的标签，比如：模块名称、线的名称)
+*/
+  labelEditorModel = new LabelEditorModel(this)
+  /**
  * 图形id索引
  */
   shapeMap = new Map<string, Shape>()
@@ -76,7 +81,11 @@ export class GraphModel {
     this.initEvents()
   }
   initEvents() {
+    // 移动事件监听
     this.emitter.on(EventType.SHAPE_MOUSE_DOWN, this.moveModel.startMove.bind(this.moveModel));
+
+    // label 编辑框选中监听
+    this.emitter.on(EventType.NAME_LABEL_CLICK, this.labelEditorModel.onShapeNameLabelClick.bind(this.labelEditorModel));
   }
   /**
    * 注册图形组件 {key:组件的subShapeType, comp:vue组件}

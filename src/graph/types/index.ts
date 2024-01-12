@@ -4,7 +4,7 @@ import { MoveRange } from "../models/MoveModel";
 import { VertexType } from "../models/ResizeModel";
 import { GraphModel } from "../models/graphModel";
 import { Point } from "../util/Point";
-import { ShapeOption, StyleObject } from "./shapeOption";
+import { FontStyle, ShapeOption, StyleObject } from "./shapeOption";
 import { cloneDeep } from 'lodash'
 
 // 图形大类,大类表示了图形的数据结构， 相同大类的图形适用的数据结构是相同的，
@@ -603,7 +603,7 @@ export class Shape {
     // parameter_direction:string
     [p: string]: string;
   };
-
+  nameStyle: FontStyle
   shapeType: ShapeType;
   subShapeType: SubShapeType;
 
@@ -690,4 +690,6 @@ export interface IGraphOption {
 
   limitResizeBounds?: (shape: Shape, newBounds: IBounds) => IBounds;
   onShapeResized?: (shape: Shape, resizeIndex: VertexType, bounds: Bounds) => void
+  saveText?: (editingShape: Shape, text: string) => void
+  getEditingText?: (shape: Shape) => string
 }
