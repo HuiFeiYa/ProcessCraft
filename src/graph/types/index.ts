@@ -589,6 +589,7 @@ export class Shape {
   noteTargetId: string | null;
 
   bounds: Bounds;
+  nameBounds: Bounds;
   keywords: string[];
 
   showKeywords: boolean;
