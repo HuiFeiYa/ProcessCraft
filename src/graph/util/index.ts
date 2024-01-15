@@ -1,4 +1,5 @@
 import { Base36 } from "../types";
+import { charWidthConfig } from "./charWidth";
 
 /**
  * svg path 路径构造器
@@ -211,6 +212,39 @@ export const getUid = (() => {
  * @param num
  * @returns
  */
-export function float(num:number, precision = 2) {
+export function float(num: number, precision = 2) {
   return parseFloat(num.toFixed(precision));
+}
+
+/**
+ * 根据文本字符串，其对应设置的样式获取文本长度
+ * @param str 
+ * @param fontSize 
+ * @param fontWeight 
+ * @param fontFamily 
+ * @returns 
+ */
+export function getTextWidth(str: string, fontSize: number, fontFamily: keyof typeof charWidthConfig = '') {
+
+  if (str === null || str === undefined) {
+    return 0;
+  }
+  let width = 0;
+  let char = '';
+  const scale = (fontSize / 12);
+  const oneFontSize = fontSize * 1000;
+  let charWidth = 0;
+  const length = str.length;
+  for (let i = 0; i < length; i++) {
+    char = str.charAt(i);
+    charWidth = (charWidthConfig)[fontFamily]?.[char];
+    if (charWidth) {
+      charWidth = charWidth * scale;
+    } else {
+      charWidth = oneFontSize; // 没有配置的fontFamily使用默认的
+    }
+    width += charWidth;
+
+  }
+  return Math.ceil(width / 1000) + 2;
 }
