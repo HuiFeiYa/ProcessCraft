@@ -29,6 +29,9 @@ export class GraphModel {
   constructor(opt: IGraphOption) {
     this.graphOption = opt;
     this.graphOption.graph = this;
+    // if (this.store.shapes.length > 0) {
+    //   this.shapes
+    // }
   }
   /**
    * 图形标记（高亮效果）

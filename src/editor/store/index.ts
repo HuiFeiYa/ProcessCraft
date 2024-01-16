@@ -1,8 +1,6 @@
 import { createPinia, defineStore } from 'pinia'
 import { Shape } from '../../graph/types'
-import { EventType } from '../../graph/shape/constant'
-import { emitter } from '../../graph/models/graphModel'
-
+import piniaPersist from 'pinia-plugin-persist'
 export const useDrawStore = defineStore('draw', {
     state: () => {
         return {
@@ -26,7 +24,7 @@ export const useDrawStore = defineStore('draw', {
         deleteShapes(ids: string[]) {
             ids.forEach(id => {
                 this.deleteShape(id)
-            }) 
+            })
         },
         deleteShape(id: string) {
             this.shapes = this.shapes.filter(shape => shape.id !== id)
@@ -37,6 +35,7 @@ export const useDrawStore = defineStore('draw', {
             index !== -1 && this.shapes.splice(index, 1, newShape)
         }
     },
+    persist: {
+        enabled: true
+    }
 })
-
-export const pinia = createPinia()

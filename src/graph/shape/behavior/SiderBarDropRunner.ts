@@ -6,7 +6,7 @@ import { SiderBarDropBehavior } from "./SiderbarDropBehavior";
 import { behaviorConfigs } from "./config";
 
 
-import { pinia, useDrawStore } from '../../../editor/store/index'
+import { useDrawStore } from '../../../editor/store/index'
 export class SiderBarDropRunner {
     public shape: Shape
     createdShapes: Set<Shape> = new Set()

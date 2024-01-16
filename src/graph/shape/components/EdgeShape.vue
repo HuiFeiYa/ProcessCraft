@@ -20,7 +20,7 @@ const store = useDrawStore()
 const eventHandler = createEventHandler(graph, props);
 const editable = ref(false);
 const labelDom = ref(null);
-const text = ref("");
+const text = ref(props.shape.modelName);
 const isShowLabel = ref(!!props.shape.modelName)
 /** 非受控组件 */
 const nameBounds = reactive(props.shape.nameBounds);

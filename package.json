@@ -13,6 +13,7 @@
     "element-plus": "^2.4.4",
     "lodash": "4.17.21",
     "pinia": "^2.1.7",
+    "pinia-plugin-persist": "^1.0.0",
     "vue": "^3.3.11"
   },
   "devDependencies": {

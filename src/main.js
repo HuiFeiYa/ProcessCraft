@@ -3,12 +3,14 @@ import './style.css'
 import App from './App.vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import { pinia } from './editor/store/index'
+import './editor/store/index'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import piniaPersist from 'pinia-plugin-persist'
+import { createPinia } from 'pinia'
 const app = createApp(App)
-app.use(pinia)
 app.use(ElementPlus)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
-app.mount('#app')
+
+app.use(createPinia().use(piniaPersist)).mount('#app')

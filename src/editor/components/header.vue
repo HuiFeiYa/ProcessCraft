@@ -45,11 +45,18 @@ const deleteHandler = () => {
         props.graph.selectionModel.clearSelection()
     }
 }
+
+const resetHandler = () => {
+    store.$reset()
+}
 </script>
 <template>
     <div class="toolbar">
         <el-tooltip effect="dark" content="删除元素" placement="top-start">
             <el-button :disabled="!hasSelectedShape" icon="delete" text @click="deleteHandler"></el-button>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="删除元素" placement="top-start">
+            <el-button text @click="resetHandler">清空画布</el-button>
         </el-tooltip>
 
     </div>
