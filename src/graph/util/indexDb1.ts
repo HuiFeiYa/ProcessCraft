@@ -6,21 +6,22 @@ const storeName = 'stack';
 const dbPromise = new Promise((resolve, reject) => {
     let request = indexedDB.open(dbName, version);
 
-    request.onerror = (event) => {
+    request.onerror = (event: any) => {
         console.error('Error opening database:', event.target.error);
         reject(event.target.error);
     };
 
-    request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = (event: any) => {
         let db = event.target.result;
         // 检查是否已存在对象存储，如不存在则创建
         if (!db.objectStoreNames.contains(storeName)) {
-            let objectStore = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+            // 通过 shapeId 作为唯一值
+            let objectStore = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: false });
             objectStore.createIndex('nameIndex', 'name');
         }
     };
 
-    request.onsuccess = (event) => {
+    request.onsuccess = (event: any) => {
         resolve(event.target.result);
     };
 });
@@ -35,7 +36,7 @@ const dbOperation = (transactionMode, operation) => {
 
 
 export const stepManager = {
-    add(data) {
+    add(data: { id: string;[key: string]: any }) {
         return dbOperation('readwrite', (objectStore) => {
             return new Promise((resolve, reject) => {
                 const request = objectStore.add(data);
