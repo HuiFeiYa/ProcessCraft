@@ -521,7 +521,11 @@ export class Bounds implements IBounds {
     public height = 0,
     // 画布绝对位置
     public absX = 0,
-    public absY = 0
+    public absY = 0,
+    /** 相对于线的偏移距离,百分比 */
+    // 如果要修改label的位置就是修改对应的百分比值
+    public offsetX = 0.5,
+    public offsetY = 0.5
   ) { }
 }
 

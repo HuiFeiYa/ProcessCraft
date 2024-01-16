@@ -38,18 +38,29 @@ const style = computed(() => {
 });
 
 const labelStyle = computed(() => {
-    const { width, height, absX, absY } = nameBounds
+    const { bounds: { absX: parentAbsX, absY: parentAbsY }, waypoint } = props.shape
+    const { width, height, offsetX, offsetY } = nameBounds
+    const firstPoint = waypoint[0]
+    const lastPoint = waypoint[waypoint.length - 1]
     // 编辑状态下有 padding
-    const paddingWidth = 10
+    const paddingWidth = 12
     if (editable.value) {
         return {
             width: width + paddingWidth,
             height: Math.max(height, 30),
-            absX: absX - paddingWidth / 2,
-            absY
+            /**
+             * 以父级的 absX 为相对坐标，向右偏移 offsetX 百分比的距离，然后将自身移动到中点，然后在移动一个 padding 中点的位置
+             */
+            absX: parentAbsX + (lastPoint.x - firstPoint.x) * offsetX - width / 2 - paddingWidth / 2,
+            absY: parentAbsY + (lastPoint.y - firstPoint.y) * offsetY - height / 2
         }
     } else {
-        return nameBounds
+        return {
+            width,
+            height,
+            absX: parentAbsX + (lastPoint.x - firstPoint.x) * offsetX - width / 2,
+            absY: parentAbsY + (lastPoint.y - firstPoint.y) * offsetY - height / 2
+        }
     }
 
 })
@@ -73,26 +84,19 @@ const handleDbClick = () => {
 };
 const handleInput = (e) => {
     text.value = e.target.innerHTML;
+    const { nameBounds: { offsetX, offsetY }, bounds: { width: parentWidth, height: parentHeight, absX } } = props.shape;
     const { width, height } = shapeUtil.getTextSize(text.value, props.shape.nameStyle.fontSize)
     nameBounds.width = width
     nameBounds.height = height
+    nameBounds.absX = absX + (parentWidth * offsetX - width) / 2; // 减去文本的宽度
+    // 输入时 y 轴高度不需要改变
+    props.shape.modelName = text.value
 };
 const handleBlur = () => {
     editable.value = false;
     if (!text.value) {
         isShowLabel.value = false
     }
-    //  todo 更新 nameBounds，更新到 store
-    const { bounds, nameStyle: { fontSize } } = props.shape;
-    const nameBounds = props.shape.nameBounds;
-    const { width, height, absX, absY } = bounds;
-    const { width: nameWidth, height: nameHeight } = shapeUtil.getTextSize(text.value, fontSize)
-    // 计算文本宽度
-    nameBounds.absX = absX + (width - nameWidth) / 2; // 减去文本的宽度
-    nameBounds.absY = absY + (height - nameHeight) / 2; // 减去文本的高度
-    nameBounds.width = nameWidth
-    nameBounds.height = nameHeight
-
     store.updateShape(props.shape.id, { ...props.shape, nameBounds })
 };
 window.addEventListener("mouseup", handleBlur);
@@ -112,8 +116,8 @@ window.addEventListener("mouseup", handleBlur);
             <!-- 操作线，设置宽度为10，透明方便拖拽 -->
             <path :d="computedData.svgPath" fill="none" :stroke-width="10" stroke="rgba(0,0,0,0)" stroke-linejoin="round" />
         </g>
-        <foreignObject v-if="isShowLabel" @mousedown.stop :width="labelStyle.width" :height="labelStyle.height"
-            :x="labelStyle.absX" :y="labelStyle.absY">
+        <foreignObject v-if="isShowLabel" :width="labelStyle.width" :height="labelStyle.height" :x="labelStyle.absX"
+            :y="labelStyle.absY" @click.stop @mousedown.stop @mouseup.stop @drop.stop>
             <div ref="labelDom" class="label" :class="{ edit: editable }" :contenteditable="editable" autofocus
                 @input="handleInput" @blur="handleBlur">
                 {{ text }}
@@ -137,6 +141,7 @@ window.addEventListener("mouseup", handleBlur);
     white-space: nowrap;
     border: 1px solid transparent;
     background-color: #fff;
+    cursor: grab;
 }
 
 .edit {

@@ -8,6 +8,8 @@ import { GraphModel } from "./graphModel";
 import { useDrawStore } from "../../editor/store";
 import { Marker } from "./Marker";
 import { Line } from "../shape/Line";
+import { shapeUtil } from "../shape/ShapeUtil";
+import { Bounds } from "../util/Bounds";
 
 export class EdgePointMoveModel {
     movingShape: Shape | undefined = undefined;
@@ -18,6 +20,7 @@ export class EdgePointMoveModel {
     showPreview = false // 是否显示预览
     previewwaypoint: Point[] = [] // 预览线的路径点
     movingOriginWayPoint: Point[] = [] // 原始waypoint线路
+    originShape: Shape
     previewPath = '' // 预览线的路径path的d属性
     movePointIndex = -1 // 移动的点是第几个点 从0开始
     moveType: EdgeMoveType | undefined = undefined // 移动类型
@@ -48,6 +51,7 @@ export class EdgePointMoveModel {
     startMoveEdgePoint(event: MouseEvent, shape: Shape, index: number) {
         this.movingShape = shape;
         this.movingOriginWayPoint = shape.waypoint.map((n) => { return new Point(n.x, n.y); });
+        this.originShape = cloneDeep(shape)
         this.movePointIndex = index;
 
         if (index === 0) {
@@ -142,12 +146,14 @@ export class EdgePointMoveModel {
             this.initPreviewState();
             return;
         }
-        // 剪切元素上多余的线，找到最近的点，更新waypoint
-        const newPoints = this.updateClosestWaypoint(this.previewwaypoint)
-        // 更新，vertex 渲染最新控制点
-        this.movingShape.waypoint = this.previewwaypoint = newPoints
-        // 数据存储，持久化数据同步
-        this.store.updateShape(this.movingShape.id, this.movingShape)
+        if (this.isSourcePoint && this.sourceShape || this.isTargetPoint && this.targetShape) {
+            // 剪切元素上多余的线，找到最近的点，更新waypoint
+            const newPoints = this.updateClosestWaypoint(this.previewwaypoint)
+            // 更新，vertex 渲染最新控制点
+            this.movingShape.waypoint = this.previewwaypoint = newPoints
+        } else {
+            this.movingShape.waypoint = this.previewwaypoint
+        }
         /** 更新 edgeShape 的sourceId、targetId */
         if (this.movingShape.subShapeType === SubShapeType.CommonEdge) {
             if (this.isSourcePoint) {
@@ -166,6 +172,9 @@ export class EdgePointMoveModel {
                 }
             }
         }
+
+        // 数据存储，持久化数据同步
+        this.store.updateShape(this.movingShape.id, this.movingShape)
         this.initPreviewState()
     }
     updatePreviewPath() {

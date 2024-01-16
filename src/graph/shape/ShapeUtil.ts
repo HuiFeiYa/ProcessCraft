@@ -18,16 +18,16 @@ export class ShapeUtil {
   initEdgeShape(shape: Shape, points: Point[]) {
     const point = points[0];
     shape.waypoint = points;
+    const firstPoint = points[0];
+    const lastPoint = points[points.length - 1]
     shape.bounds.absX = point.x;
     shape.bounds.absY = point.y;
     const { modelName, nameStyle: { fontSize } } = shape
-    const { width, height } = shapeUtil.getTextSize(modelName, fontSize)
-
-    // 更新 label 位置
-    shape.nameBounds.absX = point.x + (shape.bounds.width - width) / 2; // 减去文本的宽度
-    shape.nameBounds.absY = point.y + (shape.bounds.height - height) / 2; // 减去文本的高度
-    shape.nameBounds.width = width
-    shape.nameBounds.height = height
+    const { width, height } = modelName ? shapeUtil.getTextSize(modelName, fontSize) : { width: 0, height: 20 }
+    const edgeWidth = lastPoint.x - firstPoint.x
+    const edgeYDiff = lastPoint.y - firstPoint.y
+    // 更新 label 位置, 相对于父级的坐标
+    shape.nameBounds = new Bounds(point.x, point.y, width, height)
   }
   /**
    * 获得一段文本的宽高，换行符会被计算进折行,
