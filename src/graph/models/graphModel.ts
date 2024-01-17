@@ -154,10 +154,16 @@ export class GraphModel {
               firstPoint.y += dy
               edgePatch = {
                 oldVal: {
-                  waypoint: s.waypoint
+                  waypoint: s.waypoint,
+                  bounds: s.bounds
                 },
                 newVal: {
-                  waypoint: newWaypoint
+                  waypoint: newWaypoint,
+                  bounds: { // 如果移动的是 source 端，需要调整线的 bounds，名称位置计算会依赖
+                    ...s.bounds,
+                    absX: firstPoint.x,
+                    absY: firstPoint.y
+                  }
                 },
                 id: s.id
               }

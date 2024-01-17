@@ -164,6 +164,11 @@ export class EdgePointMoveModel {
                 } else {
                     changes.sourceId = undefined
                 }
+                changes.bounds = {
+                    ...this.movingShape.bounds,
+                    absX: changes.waypoint[0].x,
+                    absY: changes.waypoint[0].y
+                }
             }
 
             if (this.isTargetPoint) {

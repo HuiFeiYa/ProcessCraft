@@ -9,7 +9,7 @@ const props = defineProps<{ shape: Shape }>()
 const input = ref(null)
 const graph = inject('graph') as GraphModel;
 const eventHandler = createEventHandler(graph, props);
-const text = ref('')
+const text = ref(props.shape.modelName)
 const editable = ref(true)
 /** 双击图形时显示编辑 label 输入框 */
 const handleDbClick = () => {
@@ -36,6 +36,7 @@ onMounted(() => {
       <div class="textarea" ref="input"
         style="height:100% ;background: linear-gradient(to right, rgb(221, 205, 158), rgb(253, 247, 223)); "
         :contenteditable="editable" @input="handleInput" @blur="handleSave">
+        {{ text }}
       </div>
     </foreignObject>
   </g>
