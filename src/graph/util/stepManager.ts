@@ -16,7 +16,7 @@ const dbPromise = new Promise((resolve, reject) => {
         // 检查是否已存在对象存储，如不存在则创建
         if (!db.objectStoreNames.contains(storeName)) {
             // 通过 shapeId 作为唯一值
-            let objectStore = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: false });
+            let objectStore = db.createObjectStore(storeName, { keyPath: 'stepId', autoIncrement: false });
             objectStore.createIndex('nameIndex', 'name');
         }
     };
@@ -34,9 +34,32 @@ const dbOperation = (transactionMode, operation) => {
     });
 };
 
+export enum ChangeType {
+    INSERT = 1, // 插入对象
+    UPDATE = 2, // 更新某个或多个字段
+    DELETE = 3, // 删除对象
+}
+
+export class Change {
+    constructor(public type: ChangeType, public shapeId: string) {
+
+    }
+
+    /** 新增和删除不需要这两个值 */
+    oldValue?: { [p: string]: any }; // 更新前的key-value对象的 json串，只记录变更的字段即可，undo的时候会用这个keyValue去update对应的table
+    newValue?: { [p: string]: any }; // 更新后的key-value对象的 json串，只记录变更的字段即可，redo的时候会用这个keyValue去update对应的table
+}
+
+export class Step {
+
+
+    constructor(public stepId: string, public index: number /**序号 */, changes: Change[]) {
+
+    }
+}
 
 export const stepManager = {
-    add(data: { id: string;[key: string]: any }) {
+    add(data: Step) {
         return dbOperation('readwrite', (objectStore) => {
             return new Promise((resolve, reject) => {
                 const request = objectStore.add(data);
@@ -135,5 +158,3 @@ export const stepManager = {
         })
     }
 }
-// @ts-ignore
-window.stepManager = stepManager

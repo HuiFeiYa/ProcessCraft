@@ -7,6 +7,7 @@ import { behaviorConfigs } from "./config";
 
 
 import { useDrawStore } from '../../../editor/store/index'
+import { addShapesService } from "../../service";
 export class SiderBarDropRunner {
     public shape: Shape
     createdShapes: Set<Shape> = new Set()
@@ -14,7 +15,7 @@ export class SiderBarDropRunner {
 
     }
     async init() {
-        const shapeMap = new Map()
+        // const shapeMap = new Map()
         // this.shape = shapeMap.get(this.shapeId)
     }
     // 调用处 dropSiderbarKeyToShape 函数，放置图形时 src/editor/SiderBarDropModel.ts:91
@@ -30,7 +31,7 @@ export class SiderBarDropRunner {
                 this.createdShapes.add(shape)
             })
         }
-        store.addShapes(this.createdShapes)
+        addShapesService(this.createdShapes)
         const createdShapes = [...this.createdShapes];
         this.createdShapes = new Set()
         return createdShapes

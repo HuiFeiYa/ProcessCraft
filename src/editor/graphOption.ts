@@ -1,5 +1,6 @@
 import { VertexType } from "../graph/models/ResizeModel";
 import { GraphModel } from "../graph/models/graphModel";
+import { updateShapeService } from "../graph/service";
 import { IGraphOption, Shape, SubShapeType } from "../graph/types/index";
 import { Bounds } from "../graph/util/Bounds";
 import { Point } from "../graph/util/Point";
@@ -24,8 +25,7 @@ export class GraphOption implements IGraphOption {
   }
   /*** 编辑文案更新到 shape */
   saveText(shape: Shape, text: string) {
-    const newShape = { ...shape, modelName: text }
-    this.store.updateShape(newShape.id, newShape)
+    updateShapeService(shape, { modelName: text })
   }
   getEditingText(shape: Shape) {
     if (shape.subShapeType === SubShapeType.Block) {

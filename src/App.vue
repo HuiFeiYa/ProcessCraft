@@ -5,7 +5,6 @@ import GraphView from './graph/GraphView.vue'
 import DropCursor from './editor/DropCursor.vue'
 import Siderbar from './editor/components/SiderBar.vue'
 import Header from './editor/components/header.vue'
-import './graph/util/indexDb1'
 const editor = reactive(new GraphEditor({ modelId: 'a-1' }))
 
 </script>

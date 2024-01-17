@@ -10,6 +10,7 @@ import { Marker } from "./Marker";
 import { Line } from "../shape/Line";
 import { shapeUtil } from "../shape/ShapeUtil";
 import { Bounds } from "../util/Bounds";
+import { UpdateShapeValue, updateShapeService } from "../service";
 
 export class EdgePointMoveModel {
     movingShape: Shape | undefined = undefined;
@@ -146,35 +147,36 @@ export class EdgePointMoveModel {
             this.initPreviewState();
             return;
         }
+        let changes: UpdateShapeValue = {}
         if (this.isSourcePoint && this.sourceShape || this.isTargetPoint && this.targetShape) {
             // 剪切元素上多余的线，找到最近的点，更新waypoint
             const newPoints = this.updateClosestWaypoint(this.previewwaypoint)
             // 更新，vertex 渲染最新控制点
-            this.movingShape.waypoint = this.previewwaypoint = newPoints
+            changes.waypoint = this.previewwaypoint = newPoints
         } else {
-            this.movingShape.waypoint = this.previewwaypoint
+            changes.waypoint = this.previewwaypoint
         }
         /** 更新 edgeShape 的sourceId、targetId */
         if (this.movingShape.subShapeType === SubShapeType.CommonEdge) {
             if (this.isSourcePoint) {
                 if (this.sourceShape) {
-                    this.movingShape.sourceId = this.sourceShape.id
+                    changes.sourceId = this.sourceShape.id
                 } else {
-                    this.movingShape.sourceId = undefined
+                    changes.sourceId = undefined
                 }
             }
 
             if (this.isTargetPoint) {
                 if (this.targetShape) {
-                    this.movingShape.targetId = this.targetShape.id
+                    changes.targetId = this.targetShape.id
                 } else {
-                    this.movingShape.targetId = undefined
+                    changes.targetId = undefined
                 }
             }
         }
 
         // 数据存储，持久化数据同步
-        this.store.updateShape(this.movingShape.id, this.movingShape)
+        updateShapeService(this.movingShape, changes)
         this.initPreviewState()
     }
     updatePreviewPath() {

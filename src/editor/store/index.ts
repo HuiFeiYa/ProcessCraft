@@ -5,7 +5,7 @@ export const useDrawStore = defineStore('draw', {
     state: () => {
         return {
             shapes: [],
-            shapeMap: new Map()
+            shapeMap: {} // 此处不能使用 map，可能是 pinia-plugin-persist 序列化数据时造成的问题
         }
     },
     getters: {
@@ -18,7 +18,7 @@ export const useDrawStore = defineStore('draw', {
         addShapes(shapes: Shape[] | Set<Shape>) {
             shapes.forEach((shape: Shape) => {
                 this.shapes.push(shape)
-                this.shapeMap.set(shape.id, shape)
+                this.shapeMap[shape.id] = shape
             })
         },
         deleteShapes(ids: string[]) {
