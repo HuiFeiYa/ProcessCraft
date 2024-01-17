@@ -11,6 +11,7 @@ import { cloneDeep } from "lodash";
 import { shapeUtil } from "../ShapeUtil";
 import { useDrawStore } from "../../../editor/store";
 import { reactive } from "vue";
+import { updateShapeService } from "../../service";
 const props = defineProps<{
     shape: Shape;
 }>();
@@ -97,7 +98,7 @@ const handleBlur = () => {
     if (!text.value) {
         isShowLabel.value = false
     }
-    store.updateShape(props.shape.id, { ...props.shape, nameBounds })
+    updateShapeService(props.shape, { nameBounds })
 };
 window.addEventListener("mouseup", handleBlur);
 </script>

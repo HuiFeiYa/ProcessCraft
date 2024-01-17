@@ -5,14 +5,12 @@ import { createEventHandler } from '../createEventHandler';
 import { GraphModel } from '../../models/graphModel';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
-import { useDrawStore } from '../../../editor/store';
 const props = defineProps<{ shape: Shape }>()
 const input = ref(null)
 const graph = inject('graph') as GraphModel;
 const eventHandler = createEventHandler(graph, props);
 const text = ref('')
 const editable = ref(true)
-const store = useDrawStore()
 /** 双击图形时显示编辑 label 输入框 */
 const handleDbClick = () => {
   editable.value = true

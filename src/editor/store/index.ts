@@ -1,6 +1,7 @@
 import { createPinia, defineStore } from 'pinia'
 import { Shape } from '../../graph/types'
 import piniaPersist from 'pinia-plugin-persist'
+import { UpdatePatchItem } from '../../graph/service'
 export const useDrawStore = defineStore('draw', {
     state: () => {
         return {
@@ -30,9 +31,16 @@ export const useDrawStore = defineStore('draw', {
             this.shapes = this.shapes.filter(shape => shape.id !== id)
             this.shapeMap.delete(id)
         },
-        updateShape(id: string, newShape: Shape) {
+        updateShape(id: string, newVal: UpdatePatchItem) {
             const index = this.shapes.findIndex(shape => shape.id === id)
-            index !== -1 && this.shapes.splice(index, 1, newShape)
+            if (index !== -1) {
+                this.shapes[index] = Object.assign({}, this.shapes[index], newVal)
+            }
+        },
+        batchUpdateShapes(effectList: UpdatePatchItem[]) {
+            effectList.forEach(effect => {
+                this.updateShape(effect.id, effect.newVal)
+            })
         }
     },
     persist: {

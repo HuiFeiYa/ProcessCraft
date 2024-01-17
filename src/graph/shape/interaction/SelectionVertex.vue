@@ -3,10 +3,8 @@ import { computed, inject } from 'vue'
 import { Shape, SubShapeType } from '../../types';
 import { GraphModel } from '../../models/graphModel';
 import { VertexType } from '../constant';
-import { ResizeModel } from '../../models/ResizeModel';
 const props = defineProps<{
   selection: Shape[],
-  resizeModel?: ResizeModel
 }>();
 const emit = defineEmits<{
   (event: 'vertex-mousedown', evt: MouseEvent, index: VertexType): void

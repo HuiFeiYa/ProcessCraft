@@ -12,6 +12,7 @@ import { EdgePointMoveModel } from "./EdgePointMoveModel";
 import { MarkerModel } from "./MarkerModel";
 import { cloneDeep } from "lodash";
 import { LabelEditorModel } from "./LabelEditorModel";
+import { UpdatePatchItem, batchUpdateShapesService, patchItemFactory } from "../service";
 export const emitter = new Emitter()
 export class GraphModel {
   disabled = false
@@ -29,9 +30,6 @@ export class GraphModel {
   constructor(opt: IGraphOption) {
     this.graphOption = opt;
     this.graphOption.graph = this;
-    // if (this.store.shapes.length > 0) {
-    //   this.shapes
-    // }
   }
   /**
    * 图形标记（高亮效果）
@@ -128,51 +126,87 @@ export class GraphModel {
   async customEndMove(moveModel: MoveModel, dx: number, dy: number) {
     // 当数组为空时，得到的时 -Infinity 需要设置最低为0
     const maxZIndex = Math.max(...this.store.shapes.map(item => item.style?.zIndex).filter(item => item !== undefined), 0)
+    const valList = []
     // 更新图形位置
     moveModel.movingShapes.forEach((shape: Shape) => {
-      shape.bounds.x += dx;
-      shape.bounds.y += dy;
-      shape.bounds.absX += dx;
-      shape.bounds.absY += dy;
+      const res = patchItemFactory()
+      res.oldVal.bounds = shape.bounds
+      res.newVal.bounds = {
+        ...shape.bounds,
+        x: shape.bounds.x + dx,
+        y: shape.bounds.y + dy,
+        absX: shape.bounds.absX + dx,
+        absY: shape.bounds.absY + dy
+      }
+      res.id = shape.id
+      valList.push(res)
+
       if (shape.subShapeType === SubShapeType.Block) {
         // 查询 shapes 中关联的线，将线的一端进行更新
         this.store.shapes.forEach(s => {
           if (s.subShapeType === SubShapeType.CommonEdge) {
             if (s.sourceId === shape.id) {
-              const newShape = cloneDeep(s)
+              let edgePatch = patchItemFactory()
+              const newWaypoint = cloneDeep(s.waypoint)
               // 更新 source 端 point 数据
-              const firstPoint = newShape.waypoint[0]
+              const firstPoint = newWaypoint[0]
               firstPoint.x += dx
               firstPoint.y += dy
-              this.store.updateShape(newShape.id, newShape)
+              edgePatch = {
+                oldVal: {
+                  waypoint: s.waypoint
+                },
+                newVal: {
+                  waypoint: newWaypoint
+                },
+                id: s.id
+              }
+              valList.push(edgePatch)
             } else if (s.targetId === shape.id) {
-              const newShape = cloneDeep(s)
+              let edgePatch = patchItemFactory()
+              const newWaypoint = cloneDeep(s.waypoint)
               // 更新 target 端 point 数据
-              const lastPoint = newShape.waypoint[s.waypoint.length - 1]
+              const lastPoint = newWaypoint[s.waypoint.length - 1]
               lastPoint.x += dx
               lastPoint.y += dy
-              this.store.updateShape(newShape.id, newShape)
+              edgePatch = {
+                oldVal: {
+                  waypoint: s.waypoint
+                },
+                newVal: {
+                  waypoint: newWaypoint
+                },
+                id: s.id
+              }
+              valList.push(edgePatch)
             }
           }
         })
       }
       if (shape.subShapeType === SubShapeType.CommonEdge) {
         // 更新 waypoint 位置
-        shape.waypoint.forEach(point => {
-          point.x += dx
-          point.y += dy
+        res.oldVal.waypoint = shape.waypoint
+        res.newVal.waypoint = shape.waypoint.map(point => {
+          return {
+            ...point,
+            x: point.x + dx,
+            y: point.y + dy
+          }
         })
       }
       /** 最新移动的层级最高 */
       const isMax = shape.style.zIndex === maxZIndex
+      const newStyle = cloneDeep(shape.style)
       if (isMax) {
-        shape.style.zIndex = maxZIndex
+        newStyle.zIndex = maxZIndex
       } else {
-        shape.style.zIndex = maxZIndex + 1
-        this.store.updateShape(shape.id, shape)
+        newStyle.zIndex = maxZIndex + 1
       }
-
+      res.oldVal.style = shape.style
+      res.newVal.style = newStyle
     })
+    batchUpdateShapesService(valList)
+
   }
   getMoveRange(moveShapes: Shape[]): Promise<MoveRange> {
     // 判断是否存在只能沿x或y轴移动的元素，没有考虑上面俩

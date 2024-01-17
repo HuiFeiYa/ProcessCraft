@@ -8,9 +8,10 @@ import SelectionVertex from './shape/interaction/SelectionVertex.vue';
 import ShapeResizePreview from './shape/interaction/ShapeResizePreview.vue';
 import EdgeMovePreview from './shape/interaction/EdgeMovePreview.vue'
 import Markers from './shape/interaction/Markers.vue'
-import LabelEditor from './shape/interaction/LabelEditor.vue'
 import { EventType, VertexType } from './shape/constant';
 import { ShapeType } from './types';
+import { useDrawStore } from '../editor/store';
+const store = useDrawStore()
 const props = defineProps<{ graph: GraphModel }>()
 provide('graph', props.graph)
 props.graph.registerShapeComps(shapeComps)
@@ -19,9 +20,12 @@ onMounted(() => {
   if (!viewDom.value) return;
   props.graph.viewModel.setViewDom(viewDom.value);
 })
-
+/**
+ * store 中是最新的样式， model 中存储的是历史的，@todo，如何同步？
+ */
 const selectedShapes = computed(() => {
-  return props.graph.selectionModel.selectedShapes
+  const ids = props.graph.selectionModel.selectedShapes.map(shape => shape.id)
+  return store.shapes.filter(shape => ids.includes(shape.id))
 })
 const showSelectionVertex = computed(() => {
   return selectedShapes.value.length > 0 && !props.graph.moveModel.showMovingPreview && !props.graph.resizeModel.showResizePreview && !props.graph.edgePointMoveModel.showPreview
@@ -32,9 +36,9 @@ function handleVertexMousedown(event: MouseEvent, index: VertexType) {
   if (graph.selectionModel.selection.length > 1) {
     graph.selectionModel.clearSelection();
   } else {
-    const targetShape = graph.selectionModel.selection[0];
+    const targetShape = selectedShapes.value[0];
     if (targetShape.shapeType === ShapeType.Symbol) {
-      graph.resizeModel.startResize(event, graph.selectionModel.selectedShapes[0], index)
+      graph.resizeModel.startResize(event, selectedShapes.value[0], index)
     } else if (targetShape.shapeType === ShapeType.Edge) {
       graph.edgePointMoveModel.onEdgePointMouseDown(event, targetShape, index)
     }

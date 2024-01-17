@@ -1,6 +1,8 @@
 import { MoveModel } from "../../models/MoveModel";
+import { UpdatePatchItem, batchUpdateShapesService, patchItemFactory } from "../../service";
 import { Shape, ShapeKey, SubShapeType } from "../../types";
 import { ShapeOption, ShapeType } from "../../types/shapeOption";
+import { Bounds } from "../../util/Bounds";
 import { ArrowType, SiderbarItemKey } from "../constant";
 
 export const baseShapeOption: ShapeOption = {
@@ -22,9 +24,7 @@ export const baseShapeOption: ShapeOption = {
         // paddingRight: 0,
         // paddingBottom: 0
     },
-    keywordsBounds: {
-        absX: 0, absY: 0, width: 0, height: 0, x: 0, y: 0
-    },
+    keywordsBounds: new Bounds(0, 0, 0, 0, 0, 0),
     keywordsStyle: {
         fontWeight: 400, fontSize: 12, whiteSpace: 'pre-wrap', fontFamily: '', color: 'rgb(0,0,0)', textAlign: 'center'
     },
@@ -45,16 +45,10 @@ export const baseShapeOption: ShapeOption = {
         fontWeight: 400, fontSize: 12, whiteSpace: 'pre-wrap', fontFamily: '', color: 'rgb(0,0,0)',
         textAlign: 'center', wordBreak: 'break-all'
     },
-    nameBounds: {
-        absX: 0, absY: 0, width: 100, height: 13, x: 0, y: 0
-    },
-    taggedValuesBounds: {
-        absX: 0, absY: 0, width: 100, height: 13, x: 0, y: 0
-    },
-    constraintsValuesBounds: {
-        absX: 0, absY: 0, width: 100, height: 13, x: 0, y: 0
-    },
-    bounds: { absX: 0, absY: 0, width: 100, height: 80, x: 0, y: 0 },
+    nameBounds: new Bounds(0, 0, 100, 13, 0, 0),
+    taggedValuesBounds: new Bounds(0, 0, 100, 13, 0, 0),
+    constraintsValuesBounds: new Bounds(0, 0, 100, 13, 0, 0),
+    bounds: new Bounds(0, 0, 100, 80, 0, 0),
     /**
      * 移动结束时触发的方法
      * @param moveModel
@@ -63,12 +57,21 @@ export const baseShapeOption: ShapeOption = {
      */
     async customEndMove(moveModel: MoveModel, dx: number, dy: number) {
         // 更新模型位置
-        moveModel.movingShapes.forEach(shape => {
-            shape.bounds.x += dx;
-            shape.bounds.y += dy;
-            shape.bounds.absX += dx;
-            shape.bounds.absY += dy;
+        const effectList: UpdatePatchItem[] = moveModel.movingShapes.map(shape => {
+            return {
+                oldVal: { bounds: shape.bounds },
+                newVal: {
+                    bounds: {
+                        x: shape.bounds.x + dx,
+                        y: shape.bounds.y + dy,
+                        absX: shape.bounds.absX + dx,
+                        absY: shape.bounds.absY + dy
+                    }
+                },
+                id: shape.id
+            }
         })
+        batchUpdateShapesService(effectList)
     }
 };
 
@@ -79,7 +82,7 @@ export const edgeOption: ShapeOption = {
     subShapeType: SubShapeType.CommonEdge,
     shapeKey: ShapeKey.Association,
     waypoint: [],
-    bounds: { absX: 0, absY: 0, width: 100, height: 2, x: 0, y: 0 },
+    bounds: new Bounds(0, 0, 100, 2, 0, 0),
     style: {
         ...baseShapeOption.style,
         showConstraintsValues: false,
@@ -118,7 +121,7 @@ export const blockOption: ShapeOption = {
         strokeWidth: 1,
         resizable: true
     },
-    bounds: { absX: 10, absY: 10, width: 100, height: 50, x: 10, y: 10 },
+    bounds: new Bounds(10, 10, 100, 50, 10, 10),
     nameStyle: { fontWeight: 400, fontSize: 12, whiteSpace: 'pre-wrap', fontFamily: '', textAlign: 'center' },
 
 };

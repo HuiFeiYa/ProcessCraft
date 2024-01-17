@@ -4,6 +4,16 @@ import { Change, ChangeType, Step, stepManager } from "../util/stepManager"
 export interface UpdateShapeValue {
     [key: string]: any
 }
+
+
+export interface UpdatePatchItem { newVal: UpdateShapeValue, oldVal: UpdateShapeValue, id: string }
+export const patchItemFactory: () => UpdatePatchItem = () => {
+    return {
+        newVal: {},
+        oldVal: {},
+        id: ''
+    }
+}
 let stepIndex = 0;
 
 stepManager.findAll().then((list: Step[]) => {
@@ -17,8 +27,9 @@ setTimeout(() => {
     store = useDrawStore()
 }, 0);
 
+type Shapes = (Shape[] | Set<Shape>)
 /** 添加多个 shape 到 store，并且存储记录到 stepManager */
-export const addShapesService = (shapes: (Shape[] | Set<Shape>)) => {
+export const addShapesService = (shapes: Shapes) => {
     store.addShapes(shapes)
     shapes.forEach(shape => {
         const stepId = getUid()
@@ -36,9 +47,27 @@ export const updateShapeService = (shape: Shape, newValue: UpdateShapeValue) => 
     for (const key in newValue) {
         oldValue[key] = shape[key]
     }
-    store.updateShape(shape.id, Object.assign(shape, newValue))
+    store.updateShape(shape.id, newValue)
+    /** 设置单个 change，一次更新，可能包含多个图形的更新 */
     const change = new Change(ChangeType.UPDATE, shape.id)
+    change.newValue = newValue
+    change.oldValue = oldValue
+    /** 生成一个 step 变更 */
     const stepId = getUid()
     const step = new Step(stepId, stepIndex++, [change])
+    stepManager.add(step)
+}
+
+export const batchUpdateShapesService = (effectList: UpdatePatchItem[]) => {
+    store.batchUpdateShapes(effectList)
+    const changes = effectList.map(effect => {
+        const change = new Change(ChangeType.UPDATE, effect.id)
+        change.newValue = effect.newVal
+        change.oldValue = effect.oldVal
+        return change
+    })
+    /** 生成一个 step 变更 */
+    const stepId = getUid()
+    const step = new Step(stepId, stepIndex++, changes)
     stepManager.add(step)
 }
