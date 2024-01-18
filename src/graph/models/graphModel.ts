@@ -1,6 +1,6 @@
 import { EventType } from "../shape/constant";
 import { Emitter } from "../util/Emitter";
-import { MoveModel, MoveRange } from "./MoveModel";
+import { MoveModel, MoveRange, StartMoveSource } from "./MoveModel";
 import { ViewModel } from "./ViewModel";
 import { ShapeCompManager } from "./shapeManager";
 import { SelectionModel } from './SelectionModel'

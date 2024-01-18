@@ -53,7 +53,7 @@ export class Change {
 export class Step {
 
 
-    constructor(public stepId: string, public index: number /**序号 */, changes: Change[]) {
+    constructor(public stepId: string, public index: number /**序号 */, public changes: Change[]) {
 
     }
 }

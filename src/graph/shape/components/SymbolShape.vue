@@ -5,11 +5,13 @@ import { createEventHandler } from '../createEventHandler';
 import { GraphModel } from '../../models/graphModel';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
+import { updateShapeService } from '../../service';
 const props = defineProps<{ shape: Shape }>()
 const input = ref(null)
 const graph = inject('graph') as GraphModel;
 const eventHandler = createEventHandler(graph, props);
 const text = ref(props.shape.modelName)
+const prevText = ref(props.shape.modelName)
 const editable = ref(true)
 /** 双击图形时显示编辑 label 输入框 */
 const handleDbClick = () => {
@@ -18,6 +20,9 @@ const handleDbClick = () => {
 const handleSave = () => {
   editable.value = false
   props.shape.modelName = text.value
+  if (text.value !== prevText.value) {
+    updateShapeService(props.shape, { modelName: text.value })
+  }
 }
 const handleInput = (e) => {
   text.value = e.target.value

@@ -1,3 +1,4 @@
+import { StartMoveSource } from "../models/MoveModel";
 import { GraphModel } from "../models/graphModel";
 import { Shape } from "../types";
 import { EventType } from "./constant";
@@ -11,7 +12,7 @@ export function createEventHandler(graph: GraphModel, props: { shape: Shape }) {
     },
     mousedown() {
       console.log('mousedown shape:', props.shape)
-      graph.emitter.emit(EventType.SHAPE_MOUSE_DOWN, window.event, props.shape);
+      graph.emitter.emit(EventType.SHAPE_MOUSE_DOWN, window.event, StartMoveSource.Shape, props.shape);
     },
     mouseup() {
 

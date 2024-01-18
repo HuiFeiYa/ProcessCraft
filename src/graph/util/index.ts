@@ -207,6 +207,12 @@ export const getUid = (() => {
   };
 })();
 
+export const getStepId = (() => {
+  let now = Base36.encode(Date.now() - 1634869060000);
+  let random = Base36.encode(parseInt(Math.random() * 1000000 + ''));
+  return `${now}${random}`;
+})
+
 /**
  * 四舍五入转小数，默认保留两位小数
  * @param num

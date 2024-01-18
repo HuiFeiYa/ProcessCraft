@@ -1,6 +1,8 @@
+import { toRaw } from "vue"
 import { useDrawStore } from "../../editor/store"
-import { Shape, getUid } from "../types"
+import { Shape } from "../types"
 import { Change, ChangeType, Step, stepManager } from "../util/stepManager"
+import { getStepId } from "../util"
 export interface UpdateShapeValue {
     [key: string]: any
 }
@@ -27,14 +29,28 @@ setTimeout(() => {
     store = useDrawStore()
 }, 0);
 
+function convertToRaw(obj) {
+    if (!obj || typeof obj !== 'object') {
+        return obj;
+    }
+
+    const rawObj = toRaw(obj);
+
+    Object.keys(rawObj).forEach(key => {
+        rawObj[key] = convertToRaw(rawObj[key]);
+    });
+
+    return rawObj;
+}
+
 type Shapes = (Shape[] | Set<Shape>)
 /** 添加多个 shape 到 store，并且存储记录到 stepManager */
 export const addShapesService = (shapes: Shapes) => {
     store.addShapes(shapes)
     shapes.forEach(shape => {
-        const stepId = getUid()
+        const stepId = getStepId()
         const change = new Change(ChangeType.INSERT, shape.id)
-        const step = new Step(stepId, stepIndex++, [change])
+        const step = new Step(stepId, stepIndex++, [convertToRaw(change)])
         stepManager.add(step)
     })
 }
@@ -53,8 +69,8 @@ export const updateShapeService = (shape: Shape, newValue: UpdateShapeValue) => 
     change.newValue = newValue
     change.oldValue = oldValue
     /** 生成一个 step 变更 */
-    const stepId = getUid()
-    const step = new Step(stepId, stepIndex++, [change])
+    const stepId = getStepId()
+    const step = new Step(stepId, stepIndex++, [convertToRaw(change)])
     stepManager.add(step)
 }
 
@@ -67,7 +83,7 @@ export const batchUpdateShapesService = (effectList: UpdatePatchItem[]) => {
         return change
     })
     /** 生成一个 step 变更 */
-    const stepId = getUid()
-    const step = new Step(stepId, stepIndex++, changes)
+    const stepId = getStepId()
+    const step = new Step(stepId, stepIndex++, convertToRaw(changes))
     stepManager.add(step)
 }

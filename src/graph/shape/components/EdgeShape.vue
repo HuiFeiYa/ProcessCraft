@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject } from "vue";
+import { computed, inject, toRaw } from "vue";
 import { Shape } from "../../types";
 import { GraphModel } from "../../models/graphModel";
 import { createEventHandler } from "../createEventHandler";
@@ -9,7 +9,6 @@ import { ref } from "vue";
 import { nextTick } from "vue";
 import { cloneDeep } from "lodash";
 import { shapeUtil } from "../ShapeUtil";
-import { useDrawStore } from "../../../editor/store";
 import { reactive } from "vue";
 import { updateShapeService } from "../../service";
 const props = defineProps<{
@@ -17,11 +16,11 @@ const props = defineProps<{
 }>();
 
 const graph = inject<GraphModel>("graph");
-const store = useDrawStore()
 const eventHandler = createEventHandler(graph, props);
 const editable = ref(false);
 const labelDom = ref(null);
 const text = ref(props.shape.modelName);
+const prevText = ref(props.shape.modelName)
 const isShowLabel = ref(!!props.shape.modelName)
 /** 非受控组件 */
 const nameBounds = reactive(props.shape.nameBounds);
@@ -98,7 +97,10 @@ const handleBlur = () => {
     if (!text.value) {
         isShowLabel.value = false
     }
-    updateShapeService(props.shape, { nameBounds })
+    if (prevText.value !== text.value) {
+        updateShapeService(props.shape, { nameBounds })
+        prevText.value = text.value
+    }
 };
 window.addEventListener("mouseup", handleBlur);
 </script>
