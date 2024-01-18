@@ -201,18 +201,18 @@ export class GraphModel {
         })
       }
       /** 最新移动的层级最高 */
+      const newStyle = shape.style
       const isMax = shape.style.zIndex === maxZIndex
-      const newStyle = cloneDeep(shape.style)
       if (isMax) {
         newStyle.zIndex = maxZIndex
       } else {
         newStyle.zIndex = maxZIndex + 1
       }
-      res.oldVal.style = shape.style
-      res.newVal.style = newStyle
+      /** 不参与 step 变更记录，直接修改 shape */
+      // res.oldVal.style = shape.style
+      // res.newVal.style = newStyle
     })
     batchUpdateShapesService(valList)
-
   }
   getMoveRange(moveShapes: Shape[]): Promise<MoveRange> {
     // 判断是否存在只能沿x或y轴移动的元素，没有考虑上面俩

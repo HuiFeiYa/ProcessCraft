@@ -11,24 +11,29 @@ export interface SiderbarItemKeyConfig {
     stereotype: string[];
     operation: string;
     shapeKey: string;
-  }
+}
 export class SiderBarDropBehavior {
-    shapeParentId:string
+    shapeParentId: string
 
-    modelOwnerId:string
-  
-    createdMainShape:Shape
-  
-  
-    createdShapes:Set<Shape> = new Set()
-  
-    affectedShapes:Set<Shape> = new Set()
-  
-    siderbarConfigItem : SiderbarItemKeyConfig
+    modelOwnerId: string
 
-    constructor(public context: SiderBarDropRunner,public siderBarKey: SiderbarItemKey, public point?: Point) {
+    createdMainShape: Shape
+
+
+    createdShapes: Set<Shape> = new Set()
+
+    affectedShapes: Set<Shape> = new Set()
+
+    siderbarConfigItem: SiderbarItemKeyConfig
+    static createShapeUtil(siderBarKey, point: Point) {
+        let shapeOption = shapeFactory.getModelShapeOption(siderBarKey);
+        const shape = Shape.fromOption(shapeOption);
+        shapeUtil.initShape(shape, point)
+        return shape
     }
-    async run() : Promise<void | "stop">{
+    constructor(public context: SiderBarDropRunner, public siderBarKey: SiderbarItemKey, public point?: Point) {
+    }
+    async run(): Promise<void | "stop"> {
         await this.setSiderbarConfigItem();
         // this.setShapeParentId()
         await this.createShape();
@@ -44,13 +49,12 @@ export class SiderBarDropBehavior {
     async setShapeParentId() {
         const parentId = this.context.shape.id;
         this.shapeParentId = parentId;
-      }
+    }
 
-    async createShape () {
+    async createShape() {
         const { siderBarKey } = this;
-        let shapeOption = shapeFactory.getModelShapeOption(siderBarKey);
-        const shape = Shape.fromOption(shapeOption);
-        shapeUtil.initShape(shape,this.point)
+        const shape = SiderBarDropBehavior.createShapeUtil(siderBarKey, this.point)
         this.createdShapes.add(shape);
     }
+
 }

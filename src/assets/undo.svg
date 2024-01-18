@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>topiconundo</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="16" height="16"></rect>
+    </defs>
+    <g id="公共组件" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="顶部固定工具栏" transform="translate(-96.000000, -3.000000)">
+            <g id="路径" transform="translate(96.000000, 3.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="蒙版"></g>
+                <path d="M-0.0245541856,6.00312856 L5.3566706,0.0266729631 L5.16906389,4.39811175 C8.29404298,4.50308628 11.6855461,5.48677051 13.2172052,7.10433007 C14.9064674,8.88833181 15.0803212,11.0923939 14.1134543,12.6930697 C12.6235573,15.1596369 7.13952344,14.6099578 7.13952344,14.6099578 C7.13952344,14.6099578 13.4055787,13.3084166 12.9833473,10.3145157 C12.4441599,6.49131926 7.96193292,6.63735527 5.18511859,6.45434174 L5.17745959,10.6870428 L-0.0245541856,6.00312856 Z" fill="#4EB2F8" mask="url(#mask-2)" transform="translate(7.338817, 7.344438) scale(-1, -1) rotate(-230.000000) translate(-7.338817, -7.344438) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

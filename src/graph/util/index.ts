@@ -254,3 +254,80 @@ export function getTextWidth(str: string, fontSize: number, fontFamily: keyof ty
   }
   return Math.ceil(width / 1000) + 2;
 }
+
+/**
+ * 判断两个对象值是否相同
+ * @param object1 
+ * @param object2 
+ * @returns 
+ */
+export function structuralEquality(object1, object2) {
+  const keys1 = Object.keys(object1);
+  const keys2 = Object.keys(object2);
+
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (const key of keys1) {
+    const val1 = object1[key];
+    const val2 = object2[key];
+    const areObjects = isObject(val1) && isObject(val2);
+
+    if (
+      areObjects && !structuralEquality(val1, val2) ||
+      !areObjects && val1 !== val2
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export function isObject(object) {
+  return object != null && typeof object === 'object';
+}
+
+/**
+ * 对比两个对象，保留它们不同的值
+ * @param obj1 
+ * @param obj2 
+ * @returns 
+ */
+export function recursiveOmit(obj1, obj2) {
+  const result1 = {}; // 用于存储obj1独有的键值对
+  const result2 = {}; // 用于存储obj2独有的键值对
+
+  // Helper function to compare values
+  const compareValues = (key, value1, value2) => {
+    if (value1 === value2) return; // if values are equal, omit them
+    if (typeof value1 === 'object' && typeof value2 === 'object' && !Array.isArray(value1) && !Array.isArray(value2)) {
+      const [childResult1, childResult2] = recursiveOmit(value1, value2);
+      if (Object.keys(childResult1).length !== 0 || Object.keys(childResult2).length !== 0) {
+        result1[key] = childResult1;
+        result2[key] = childResult2;
+      }
+    } else {
+      result1[key] = value1;
+      result2[key] = value2;
+    }
+  };
+
+  // 对比两个对象的键和值
+  for (let key in obj1) {
+    if (obj1.hasOwnProperty(key) && !obj2.hasOwnProperty(key)) {
+      result1[key] = obj1[key]; // key only in obj1
+    } else if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
+      compareValues(key, obj1[key], obj2[key]); // key in both
+    }
+  }
+
+  for (let key in obj2) {
+    if (obj2.hasOwnProperty(key) && !obj1.hasOwnProperty(key)) {
+      result2[key] = obj2[key]; // key only in obj2
+    }
+  }
+
+  return [result1, result2];
+}

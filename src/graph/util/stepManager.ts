@@ -1,3 +1,4 @@
+import { UpdateShapeValue } from "../service";
 
 const dbName = 'history';
 const version = 3;
@@ -46,8 +47,8 @@ export class Change {
     }
 
     /** 新增和删除不需要这两个值 */
-    oldValue?: { [p: string]: any }; // 更新前的key-value对象的 json串，只记录变更的字段即可，undo的时候会用这个keyValue去update对应的table
-    newValue?: { [p: string]: any }; // 更新后的key-value对象的 json串，只记录变更的字段即可，redo的时候会用这个keyValue去update对应的table
+    oldValue?: UpdateShapeValue; // 更新前的key-value对象的 json串，只记录变更的字段即可，undo的时候会用这个keyValue去update对应的table
+    newValue?: UpdateShapeValue; // 更新后的key-value对象的 json串，只记录变更的字段即可，redo的时候会用这个keyValue去update对应的table
 }
 
 export class Step {
@@ -154,6 +155,68 @@ export const stepManager = {
                     }
                 }
 
+            })
+        })
+    },
+    findPre(id) {
+        return dbOperation('readonly', (objectStore) => {
+            return new Promise((res, rej) => {
+
+                const request = objectStore.openCursor();
+                const list = []
+                request.onsuccess = (event) => {
+                    const cursor = event.target.result
+                    if (cursor) {
+                        console.log('查询数据成功', cursor.value)
+                        const value = cursor.value
+                        /**找到目标 */
+                        if (value.stepId === id) {
+                            const prev = value.index === 0 ? value : list[list.length - 1]
+                            res({ step: value, prevStepId: prev.stepId })
+                        } else {
+                            list.push(value)
+                            cursor.continue()
+                        }
+                    } else {
+                        rej('未找到')
+                        console.log('no cursor')
+                    }
+                }
+                request.onerror = (event) => {
+                    rej(event)
+                }
+            })
+        })
+    },
+    findNext(id) {
+        return dbOperation('readonly', (objectStore) => {
+            return new Promise((res, rej) => {
+                const request = objectStore.openCursor();
+                let isFindTarget = false
+                let step
+                request.onsuccess = (event) => {
+                    const cursor = event.target.result
+                    if (cursor) {
+                        console.log('查询数据成功', cursor.value)
+                        const value = cursor.value
+                        if (isFindTarget) {
+                            // res(value)
+                            res({ step, nextStepId: value.stepId })
+                        }
+
+                        /**找到目标 */
+                        if (value.stepId === id) {
+                            isFindTarget = true
+                            step = value
+                        }
+                    } else {
+                        rej('未找到')
+                        console.log('no cursor')
+                    }
+                }
+                request.onerror = (event) => {
+                    rej(event)
+                }
             })
         })
     }

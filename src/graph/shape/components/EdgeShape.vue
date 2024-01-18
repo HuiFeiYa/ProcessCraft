@@ -90,7 +90,6 @@ const handleInput = (e) => {
     nameBounds.height = height
     nameBounds.absX = absX + (parentWidth * offsetX - width) / 2; // 减去文本的宽度
     // 输入时 y 轴高度不需要改变
-    props.shape.modelName = text.value
 };
 const handleBlur = () => {
     editable.value = false;
@@ -98,7 +97,7 @@ const handleBlur = () => {
         isShowLabel.value = false
     }
     if (prevText.value !== text.value) {
-        updateShapeService(props.shape, { nameBounds })
+        updateShapeService(props.shape, { nameBounds, modelName: text.value })
         prevText.value = text.value
     }
 };

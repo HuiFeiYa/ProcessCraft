@@ -129,7 +129,8 @@ export const modelKeyConfig = {
     [SiderbarItemKey.Block]: {
         shapeOption: {
             ...blockOption,
-            shapeKey: ShapeKey.Block
+            shapeKey: ShapeKey.Block,
+            siderbarKey: SiderbarItemKey.Block
         }
     },
     [SiderbarItemKey.ItemFlow]: {
@@ -141,7 +142,8 @@ export const modelKeyConfig = {
                 ...edgeOption.style,
                 dashed: true,
                 targetArrow: ArrowType.Arrow
-            }
+            },
+            siderbarKey: SiderbarItemKey.ItemFlow
         }
     }
 }

@@ -1,7 +1,7 @@
 import { createPinia, defineStore } from 'pinia'
 import { Shape } from '../../graph/types'
 import piniaPersist from 'pinia-plugin-persist'
-import { UpdatePatchItem } from '../../graph/service'
+import { UpdatePatchItem, UpdateShapeValue } from '../../graph/service'
 export const useDrawStore = defineStore('draw', {
     state: () => {
         return {
@@ -29,9 +29,9 @@ export const useDrawStore = defineStore('draw', {
         },
         deleteShape(id: string) {
             this.shapes = this.shapes.filter(shape => shape.id !== id)
-            this.shapeMap.delete(id)
+            delete this.shapeMap[id]
         },
-        updateShape(id: string, newVal: UpdatePatchItem) {
+        updateShape(id: string, newVal: UpdateShapeValue) {
             const index = this.shapes.findIndex(shape => shape.id === id)
             if (index !== -1) {
                 this.shapes[index] = Object.assign({}, this.shapes[index], newVal)
