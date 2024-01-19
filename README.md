@@ -1,28 +1,41 @@
-# Vue 3 + Vite
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+# ProcessCraft
 
-## Recommended IDE Setup
+ProcessCraft 是一个基于 SVG 的流程图设计器，它允许用户通过直观的拖拽操作来创建和管理图形物料。用户可以手动拖拽图形进行位置调整，以满足精确的布局需求。
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## 特性
 
+- **图形物料库**：包含矩形、直线等基本图形物料，用户可以根据需要选择并拖拽到画布上。
+- **图形关联**：图形之间可以建立关联，形成清晰的流程指示。
+- **Undo/Redo**：支持撤销（undo）和重做（redo）操作，方便用户进行编辑修改。
+- **文本编辑**：支持在线上和矩形上进行直接的文本输入和编辑。
 
-## pinia
-* 添加 store
-* 在开始的时候读取 indexDb 数据
-* 在关闭时写入indexDb
+## 快速开始
 
-## 模块
+1. 克隆仓库到本地：
 
-* 图形更新  models/graphModel.ts, 数据都会同步到 store
-* siderbarKey 配置项 src/graph/shape/behavior/config.ts
-* 模型配置 modelKeyConfig src/graph/shape/shapeOption/commonShapeOption.ts
-* 创建图形 src/graph/shape/behavior/SiderbarDropBehavior.ts
+   ```bash
+   git clone [https://gitee.com/song_yuan_qiao/process-craft.git]
+   ```
 
-### behavior
-* siderbarkey 行为配置 src/graph/shape/behavior/config.ts:13
+2. 进入项目目录安装依赖：
 
-## graph
-* 根据 subShapeType 使用对应组件， 注册 components 处 src/graph/GraphView.vue:13
-* shapeComps src/graph/shape/index.ts:4
-* 图形关系绑定 src/graph/models/EdgePointMoveModel.ts:113
+   ```bash
+   cd ProcessCraft
+   npm install
+   ```
+
+3. 启动项目：
+
+   ```bash
+   npm run dev
+   ```
+
+4. 打开浏览器并访问 `http://localhost:5173` (或者是其他启动后显示的地址)。
+
+## 使用指南
+
+- 点击工具栏中的图形按钮，然后移至画布上点击或拖动以添加图形。
+- 选取任一图形，拖动以改变其位置。
+- 使用顶部的“撤销”和“重做”按钮来操作您的更改历史。
+- 直接点击图形上的文本即可进行编辑。
