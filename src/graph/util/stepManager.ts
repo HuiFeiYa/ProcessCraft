@@ -239,9 +239,6 @@ export const stepManager = {
                             objectStore.delete(value.stepId)
                         }
                         cursor.continue()
-                    } else {
-                        rej('未找到')
-                        console.log('no cursor')
                     }
                 }
                 request.onerror = (event) => {
@@ -250,7 +247,7 @@ export const stepManager = {
 
                 if (transaction) {
                     transaction.oncomplete = () => {
-                        console.log('遍历完成')
+                        console.log('deleteAfterIndex 遍历完成')
                         res('success')
                     }
                     transaction.onerror = function (e) {

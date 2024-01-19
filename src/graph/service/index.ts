@@ -173,12 +173,13 @@ export const batchUpdateShapesService = (effectList: UpdatePatchItem[]) => {
     /** 判断更新前后的值是否相同，只更新不相同的 */
     const validEffectList = effectList.map(effect => convertToRaw(effect)).filter(effect => {
         return !structuralEquality(effect.newVal, effect.oldVal)
-    }).map(effect => {
-        const [newVal, oldVal] = recursiveOmit(effect.newVal, effect.oldVal)
-        effect.newVal = newVal
-        effect.oldVal = oldVal
-        return effect
     })
+    // .map(effect => {
+    //     const [newVal, oldVal] = recursiveOmit(effect.newVal, effect.oldVal)
+    //     effect.newVal = newVal
+    //     effect.oldVal = oldVal
+    //     return effect
+    // })
     if (validEffectList.length === 0) return
 
     store.batchUpdateShapes(validEffectList)
