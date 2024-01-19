@@ -3,9 +3,9 @@ import { computed } from 'vue';
 import { GraphModel } from '../../graph/models/graphModel';
 import { useDrawStore } from '../store';
 import { SubShapeType } from '../../graph/types';
-import { currentStep } from '../../graph/service';
+import { StepOperation, currentStep } from '../../graph/service';
 import { Change, ChangeType, Step, stepManager } from '../../graph/util/stepManager';
-import { SiderBarDropBehavior } from '../../graph/shape/behavior/SiderbarDropBehavior';
+import { SiderBarDropRunner } from '../../graph/shape/behavior/SiderBarDropRunner';
 const store = useDrawStore()
 const props = defineProps<{ graph: GraphModel }>()
 const selectedShapes = computed(() => {
@@ -14,6 +14,7 @@ const selectedShapes = computed(() => {
 const hasSelectedShape = computed(() => {
     return selectedShapes.value.length > 0
 })
+const dropRunner = new SiderBarDropRunner()
 const deleteHandler = () => {
     if (hasSelectedShape) {
         const deleteIds = []
@@ -54,14 +55,11 @@ const undoHandler = () => {
     if (currentStep.hasPrev) {
         stepManager.findPre(currentStep.stepId).then((result: { step: Step, prevStepId: string }) => {
             const { prevStepId, step } = result
-            currentStep.hasNext = true
-            currentStep.stepIndex--
-            currentStep.hasPrev = currentStep.stepIndex > 0
-            currentStep.stepId = prevStepId
             /** 回退到之前修改 */
             const changes = step.changes;
+            // 最后的变更最先回退
             changes.reverse()
-            changes.forEach((change: Change) => {
+            changes.forEach(async (change: Change) => {
                 switch (change.type) {
                     /** 之前是新增，回退这边要删除 */
                     case ChangeType.INSERT: {
@@ -69,8 +67,10 @@ const undoHandler = () => {
                         break;
                     }
                     case ChangeType.DELETE: {
-                        const { oldValue: { siderBarKey, point } } = change
-                        const shape = SiderBarDropBehavior.createShapeUtil(siderBarKey, point)
+                        const { oldValue: { siderbarKey, point, shapeId } } = change
+                        const createdShapes = await dropRunner.run(siderbarKey, point)
+                        const shape = createdShapes[0]
+                        shape.id = shapeId
                         store.addShapes([shape])
                         break;
                     }
@@ -80,18 +80,47 @@ const undoHandler = () => {
                     }
                 }
             })
+            currentStep.freshCurrentStep(prevStepId, StepOperation.undo)
         })
     }
 }
 
 const redoHandler = () => {
-
+    if (currentStep.hasNext) {
+        stepManager.findNext(currentStep.stepId).then((step: Step) => {
+            const changes = step.changes;
+            changes.forEach(async (change: Change) => {
+                switch (change.type) {
+                    /** 之前是新增，回退这边要删除 */
+                    case ChangeType.INSERT: {
+                        const { newValue: { siderbarKey, point, shapeId } } = change
+                        const createdShapes = await dropRunner.run(siderbarKey, point)
+                        const shape = createdShapes[0]
+                        shape.id = shapeId
+                        store.addShapes([shape])
+                        break;
+                    }
+                    case ChangeType.DELETE: {
+                        store.deleteShape(change.shapeId)
+                        break;
+                    }
+                    case ChangeType.UPDATE: {
+                        const { newValue, shapeId } = change
+                        store.updateShape(shapeId, newValue)
+                    }
+                }
+            })
+            currentStep.freshCurrentStep(step.stepId, StepOperation.redo)
+        })
+    }
 }
 
 const resetHandler = () => {
     store.$reset()
+    stepManager.clear()
 }
 </script>
+
 <template>
     <div class="toolbar">
 
@@ -138,7 +167,7 @@ const resetHandler = () => {
     padding: 0 10px;
 }
 
-.redo img {
+.undo img {
     color: #c1c5cb;
 }
 </style>

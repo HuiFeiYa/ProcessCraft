@@ -1,5 +1,6 @@
 import { StartMoveSource } from "../graph/models/MoveModel"
 import { GraphModel } from "../graph/models/graphModel"
+import { addShapesService } from "../graph/service"
 import { SiderBarDropRunner } from "../graph/shape/behavior/SiderBarDropRunner"
 import { EventType, MetaclassType, SiderbarItemKey } from "../graph/shape/constant"
 import { Shape } from "../graph/types"
@@ -92,7 +93,7 @@ export class SiderBarDropModel {
   async dropSiderbarKeyToShape(evt: MouseEvent, shape: Shape, point: Point, sidebarKey: SiderbarItemKey) {
     // 获取对应的behavior，创建对应的shape
     const createdShapes = await this.dropRunner.run(sidebarKey, point)
-
+    addShapesService(createdShapes)
     // 默认选中创建的元素
     this.graph.moveModel.startMove(evt, StartMoveSource.SiderBar, createdShapes[0])
   }

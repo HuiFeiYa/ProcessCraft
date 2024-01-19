@@ -25,7 +25,7 @@ export class GraphOption implements IGraphOption {
   }
   /*** 编辑文案更新到 shape */
   saveText(shape: Shape, text: string) {
-    updateShapeService(shape, { modelName: text })
+    updateShapeService(shape.id, { modelName: text }, { modelName: shape.modelName })
   }
   getEditingText(shape: Shape) {
     if (shape.subShapeType === SubShapeType.Block) {

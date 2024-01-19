@@ -31,7 +31,6 @@ export class SiderBarDropRunner {
                 this.createdShapes.add(shape)
             })
         }
-        addShapesService(this.createdShapes)
         const createdShapes = [...this.createdShapes];
         this.createdShapes = new Set()
         return createdShapes

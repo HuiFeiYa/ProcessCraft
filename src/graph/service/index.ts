@@ -23,7 +23,57 @@ class CurrentStep {
     hasNext = false
     stepId = '' // 指针指向 step 记录
     stepSize = 0 // 总的 step 数，用于判断是否有 next
-    stepIndex = 0 /** 用于判断是否有 prev */
+    nextStepIndex = 0 /** 用于判断是否有 prev */
+    /** 更新 currentStep 信息 */
+    freshCurrentStep(stepId: string, operation = StepOperation.add) {
+
+        /** 第一次操作更新 currentStep 状态 */
+        if (!this.hasPrev && this.nextStepIndex === 0) {
+            this.hasPrev = true
+        }
+        this.stepId = stepId
+        /** 
+         * 回退过新增删除之前的 nextStepIndex 之后的
+         * 从 nextStepIndex + 1  重新创建新的 step
+         */
+        switch (operation) {
+            case StepOperation.add: {
+                if (this.hasNext) {
+                    this.nextStepIndex++
+                    this.stepSize = this.nextStepIndex
+                    this.hasNext = this.nextStepIndex !== this.stepSize
+                    this.hasPrev = this.nextStepIndex !== 0
+                } else {
+                    this.stepSize++
+                    this.nextStepIndex++
+                    this.hasNext = this.nextStepIndex !== this.stepSize
+                    this.hasPrev = this.nextStepIndex !== 0
+                }
+                break
+            }
+            case StepOperation.redo: {
+                this.nextStepIndex++
+                this.hasNext = this.nextStepIndex !== this.stepSize
+                this.hasPrev = true
+                break
+            }
+            case StepOperation.undo: {
+                // undo stepSize 不变，数据会在 undo 时候使用
+                this.nextStepIndex--
+                this.hasNext = true
+                this.hasPrev = this.nextStepIndex !== 0
+                break
+            }
+        }
+    }
+    /**
+     * 更新时调用，如何更新前发现有 next 需要清空 next 之后的记录
+     */
+    deleteAfterIndex() {
+        if (this.hasNext) {
+            stepManager.deleteAfterIndex(this.nextStepIndex - 1)
+        }
+    }
 }
 export const currentStep = reactive(new CurrentStep())
 //@ts-ignore
@@ -31,7 +81,7 @@ window.currentStep = currentStep
 stepManager.findAll().then((list: Step[]) => {
     const step = list[list.length - 1]
     if (step) {
-        currentStep.stepIndex = step.index
+        currentStep.nextStepIndex = step.index
         currentStep.stepId = step.stepId
         currentStep.hasPrev = step.index > 0
         currentStep.hasNext = step.index < list.length - 1
@@ -60,20 +110,13 @@ function convertToRaw(obj) {
 
     return rawObj;
 }
-
-/** 更新 currentStep 信息 */
-const freshCurrentStep = (stepId: string) => {
-    /** 回退过，然后再新增 */
-    if (currentStep.hasNext) {
-        currentStep.hasNext = false
-    }
-    /** 第一次操作更新 currentStep 状态 */
-    if (!currentStep.hasPrev && currentStep.stepIndex === 0) {
-        currentStep.hasPrev = true
-    }
-    currentStep.stepSize++
-    currentStep.stepId = stepId
+export enum StepOperation {
+    add = 'add',
+    update = 'update',
+    undo = 'undo',
+    redo = 'redo'
 }
+
 type Shapes = (Shape[] | Set<Shape>)
 /** 添加多个 shape 到 store，并且存储记录到 stepManager */
 export const addShapesService = (shapes: Shapes) => {
@@ -83,35 +126,43 @@ export const addShapesService = (shapes: Shapes) => {
         const change = new Change(ChangeType.INSERT, shape.id)
         change.newValue = {
             siderbarKey: shape.siderbarKey,
-            point: new Point(shape.bounds.absX, shape.bounds.absY)
+            point: new Point(shape.bounds.absX, shape.bounds.absY),
+            shapeId: shape.id
         }
-        freshCurrentStep(stepId)
-        const step = new Step(stepId, currentStep.stepIndex, [convertToRaw(change)])
+        const step = new Step(stepId, currentStep.nextStepIndex, [convertToRaw(change)])
+        currentStep.deleteAfterIndex()
         stepManager.add(step)
+        currentStep.freshCurrentStep(stepId)
     })
 }
+
 /**
- * 更新单个 shape
- * @param shape
+ * 更新 shape
+ * @param id 
+ * @param newValue 
+ * @param oldValue 
+ * @param isInitStep 是否要生成一个 step 记录
+ * @returns 
  */
-export const updateShapeService = (shape: Shape, newValue: UpdateShapeValue) => {
-    const oldValue = {}
-    for (const key in newValue) {
-        oldValue[key] = shape[key]
+export const updateShapeService = (id: string, newValue: UpdateShapeValue, oldValue: UpdateShapeValue, isInitStep = true) => {
+    if (isInitStep) {
+        if (structuralEquality(oldValue, newValue)) {
+            return
+        }
+        store.updateShape(id, newValue)
+        /** 设置单个 change，一次更新，可能包含多个图形的更新 */
+        const change = new Change(ChangeType.UPDATE, id)
+        change.newValue = newValue
+        change.oldValue = oldValue
+        /** 生成一个 step 变更 */
+        const stepId = getStepId()
+        const step = new Step(stepId, currentStep.nextStepIndex, [convertToRaw(change)])
+        currentStep.deleteAfterIndex()
+        stepManager.add(step)
+        currentStep.freshCurrentStep(stepId)
+    } else {
+        store.updateShape(id, newValue)
     }
-    if (structuralEquality(oldValue, newValue)) {
-        return
-    }
-    store.updateShape(shape.id, newValue)
-    /** 设置单个 change，一次更新，可能包含多个图形的更新 */
-    const change = new Change(ChangeType.UPDATE, shape.id)
-    change.newValue = newValue
-    change.oldValue = oldValue
-    /** 生成一个 step 变更 */
-    const stepId = getStepId()
-    freshCurrentStep(stepId)
-    const step = new Step(stepId, currentStep.stepIndex, [convertToRaw(change)])
-    stepManager.add(step)
 }
 
 /**
@@ -139,7 +190,8 @@ export const batchUpdateShapesService = (effectList: UpdatePatchItem[]) => {
     })
     /** 生成一个 step 变更 */
     const stepId = getStepId()
-    freshCurrentStep(stepId)
-    const step = new Step(stepId, currentStep.stepIndex, changes)
+    const step = new Step(stepId, currentStep.nextStepIndex, changes)
+    currentStep.deleteAfterIndex()
     stepManager.add(step)
+    currentStep.freshCurrentStep(stepId)
 }

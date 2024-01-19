@@ -171,8 +171,8 @@ export const stepManager = {
                         const value = cursor.value
                         /**找到目标 */
                         if (value.stepId === id) {
-                            const prev = value.index === 0 ? value : list[list.length - 1]
-                            res({ step: value, prevStepId: prev.stepId })
+                            const prev = list[list.length - 1]
+                            res({ step: value, prevStepId: prev?.stepId })
                         } else {
                             list.push(value)
                             cursor.continue()
@@ -193,28 +193,88 @@ export const stepManager = {
             return new Promise((res, rej) => {
                 const request = objectStore.openCursor();
                 let isFindTarget = false
-                let step
                 request.onsuccess = (event) => {
                     const cursor = event.target.result
                     if (cursor) {
                         console.log('查询数据成功', cursor.value)
                         const value = cursor.value
+                        if (id === undefined) {
+                            res(value) // 说明是回退到头了
+                            return
+                        }
+                        // 目标下一个元素
                         if (isFindTarget) {
-                            // res(value)
-                            res({ step, nextStepId: value.stepId })
+                            res(value)
+                            return
                         }
 
                         /**找到目标 */
                         if (value.stepId === id) {
                             isFindTarget = true
-                            step = value
                         }
+                        cursor.continue()
                     } else {
                         rej('未找到')
                         console.log('no cursor')
                     }
                 }
                 request.onerror = (event) => {
+                    rej(event)
+                }
+            })
+        })
+    },
+    deleteAfterIndex(index: number) {
+        return dbOperation('readwrite', (objectStore, transaction) => {
+            return new Promise((res, rej) => {
+
+                const request = objectStore.openCursor();
+                const list = []
+                request.onsuccess = (event) => {
+                    const cursor = event.target.result
+                    if (cursor) {
+                        console.log('查询数据成功', cursor.value)
+                        const value = cursor.value as Step
+                        if (value.index > index) {
+                            objectStore.delete(value.stepId)
+                        }
+                        cursor.continue()
+                    } else {
+                        rej('未找到')
+                        console.log('no cursor')
+                    }
+                }
+                request.onerror = (event) => {
+                    rej(event)
+                }
+
+                if (transaction) {
+                    transaction.oncomplete = () => {
+                        console.log('遍历完成')
+                        res('success')
+                    }
+                    transaction.onerror = function (e) {
+                        rej(e)
+                    }
+                }
+            })
+        })
+    },
+    clear() {
+        return dbOperation('readwrite', objectStore => {
+            return new Promise((res, rej) => {
+                // 清空 objectStore
+                const clearRequest = objectStore.clear();
+
+                clearRequest.onsuccess = function (event) {
+                    // 处理成功清空 objectStore 后的逻辑
+                    console.log('ObjectStore has been cleared.');
+                    res('success')
+                };
+
+                clearRequest.onerror = function (event) {
+                    // 处理error
+                    console.error('ClearRequest error:', event);
                     rej(event)
                 }
             })

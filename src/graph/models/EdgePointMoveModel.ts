@@ -147,41 +147,45 @@ export class EdgePointMoveModel {
             this.initPreviewState();
             return;
         }
-        let changes: UpdateShapeValue = {}
+        let newVal: UpdateShapeValue = {}
         if (this.isSourcePoint && this.sourceShape || this.isTargetPoint && this.targetShape) {
             // 剪切元素上多余的线，找到最近的点，更新waypoint
             const newPoints = this.updateClosestWaypoint(this.previewwaypoint)
             // 更新，vertex 渲染最新控制点
-            changes.waypoint = this.previewwaypoint = newPoints
+            newVal.waypoint = this.previewwaypoint = newPoints
         } else {
-            changes.waypoint = this.previewwaypoint
+            newVal.waypoint = this.previewwaypoint
         }
         /** 更新 edgeShape 的sourceId、targetId */
         if (this.movingShape.subShapeType === SubShapeType.CommonEdge) {
             if (this.isSourcePoint) {
                 if (this.sourceShape) {
-                    changes.sourceId = this.sourceShape.id
+                    newVal.sourceId = this.sourceShape.id
                 } else {
-                    changes.sourceId = undefined
+                    newVal.sourceId = undefined
                 }
-                changes.bounds = {
+                newVal.bounds = {
                     ...this.movingShape.bounds,
-                    absX: changes.waypoint[0].x,
-                    absY: changes.waypoint[0].y
+                    absX: newVal.waypoint[0].x,
+                    absY: newVal.waypoint[0].y
                 }
             }
 
             if (this.isTargetPoint) {
                 if (this.targetShape) {
-                    changes.targetId = this.targetShape.id
+                    newVal.targetId = this.targetShape.id
                 } else {
-                    changes.targetId = undefined
+                    newVal.targetId = undefined
                 }
             }
         }
 
         // 数据存储，持久化数据同步
-        updateShapeService(this.movingShape, changes)
+        const oldValue = {}
+        for (const key in newVal) {
+            oldValue[key] = this.movingShape[key]
+        }
+        updateShapeService(this.movingShape.id, newVal, oldValue)
         this.initPreviewState()
     }
     updatePreviewPath() {

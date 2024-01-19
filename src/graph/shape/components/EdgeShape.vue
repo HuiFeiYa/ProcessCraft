@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, toRaw } from "vue";
-import { Shape } from "../../types";
+import { Bounds, Shape } from "../../types";
 import { GraphModel } from "../../models/graphModel";
 import { createEventHandler } from "../createEventHandler";
 import { waypointUtil } from "../../util/WaypointUtil";
@@ -21,7 +21,7 @@ const editable = ref(false);
 const labelDom = ref(null);
 const text = ref(props.shape.modelName);
 const prevText = ref(props.shape.modelName)
-const isShowLabel = ref(!!props.shape.modelName)
+const prevNameBounds = ref(new Bounds())
 /** 非受控组件 */
 const nameBounds = reactive(props.shape.nameBounds);
 const computedData = computed(() => {
@@ -39,7 +39,7 @@ const style = computed(() => {
 
 const labelStyle = computed(() => {
     const { bounds: { absX: parentAbsX, absY: parentAbsY }, waypoint } = props.shape
-    const { width, height, offsetX, offsetY } = nameBounds
+    const { width, height, offsetX, offsetY } = props.shape.nameBounds
     const firstPoint = waypoint[0]
     const lastPoint = waypoint[waypoint.length - 1]
     // 编辑状态下有 padding
@@ -74,7 +74,6 @@ function select(dom) {
 }
 
 const handleDbClick = () => {
-    isShowLabel.value = true
     editable.value = true;
     // fix 修改 contenteditable 后选中文案无法直接编辑问题
     nextTick(() => {
@@ -82,22 +81,28 @@ const handleDbClick = () => {
         labelDom.value.focus();
     });
 };
+const handleFocus = (e) => {
+    prevNameBounds.value = cloneDeep(props.shape.nameBounds)
+    prevText.value = e.target.innerHTML
+}
 const handleInput = (e) => {
     text.value = e.target.innerHTML;
-    const { nameBounds: { offsetX, offsetY }, bounds: { width: parentWidth, height: parentHeight, absX } } = props.shape;
+    const { nameBounds: { offsetX }, bounds: { width: parentWidth, absX } } = props.shape;
     const { width, height } = shapeUtil.getTextSize(text.value, props.shape.nameStyle.fontSize)
-    nameBounds.width = width
-    nameBounds.height = height
-    nameBounds.absX = absX + (parentWidth * offsetX - width) / 2; // 减去文本的宽度
+    updateShapeService(props.shape.id, {
+        nameBounds: {
+            ...props.shape.nameBounds,
+            width,
+            height,
+            absX: absX + (parentWidth * offsetX - width) / 2 // 减去文本的宽度
+        }
+    }, null, false)
     // 输入时 y 轴高度不需要改变
 };
 const handleBlur = () => {
     editable.value = false;
-    if (!text.value) {
-        isShowLabel.value = false
-    }
     if (prevText.value !== text.value) {
-        updateShapeService(props.shape, { nameBounds, modelName: text.value })
+        updateShapeService(props.shape.id, { nameBounds: props.shape.nameBounds, modelName: text.value }, { nameBounds: prevNameBounds.value, modelName: props.shape.modelName })
         prevText.value = text.value
     }
 };
@@ -118,11 +123,11 @@ window.addEventListener("mouseup", handleBlur);
             <!-- 操作线，设置宽度为10，透明方便拖拽 -->
             <path :d="computedData.svgPath" fill="none" :stroke-width="10" stroke="rgba(0,0,0,0)" stroke-linejoin="round" />
         </g>
-        <foreignObject v-if="isShowLabel" :width="labelStyle.width" :height="labelStyle.height" :x="labelStyle.absX"
-            :y="labelStyle.absY" @click.stop @mousedown.stop @mouseup.stop @drop.stop>
+        <foreignObject :width="labelStyle.width" :height="labelStyle.height" :x="labelStyle.absX" :y="labelStyle.absY"
+            @click.stop @mousedown.stop @mouseup.stop @drop.stop>
             <div ref="labelDom" class="label" :class="{ edit: editable }" :contenteditable="editable" autofocus
-                @input="handleInput" @blur="handleBlur">
-                {{ text }}
+                @focus="handleFocus" @input="handleInput" @blur="handleBlur">
+                {{ shape.modelName }}
             </div>
         </foreignObject>
     </g>

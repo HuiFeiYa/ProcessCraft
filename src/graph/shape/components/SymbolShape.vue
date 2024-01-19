@@ -19,13 +19,12 @@ const handleDbClick = () => {
 }
 const handleSave = () => {
   editable.value = false
-  props.shape.modelName = text.value
   if (text.value !== prevText.value) {
-    updateShapeService(props.shape, { modelName: text.value })
+    updateShapeService(props.shape.id, { modelName: text.value }, { modelName: props.shape.modelName })
   }
 }
 const handleInput = (e) => {
-  text.value = e.target.value
+  text.value = e.target.innerHTML
 }
 onMounted(() => {
   input.value?.focus()
@@ -41,7 +40,7 @@ onMounted(() => {
       <div class="textarea" ref="input"
         style="height:100% ;background: linear-gradient(to right, rgb(221, 205, 158), rgb(253, 247, 223)); "
         :contenteditable="editable" @input="handleInput" @blur="handleSave">
-        {{ text }}
+        {{ shape.modelName }}
       </div>
     </foreignObject>
   </g>

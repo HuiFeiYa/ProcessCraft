@@ -85,7 +85,6 @@ export interface ShapeOption {
 
   // flowDirection?:FlowDirection
 
-  // direction?:Direction
   waypoint?: Point[] // 包括sourcePoint和targetPoint
 
   sourceId?: string
