@@ -12,7 +12,7 @@ const handleCreate = (index: CreatePointType) => {
 /** 控制点宽度 */
 const width = 16;
 const height = 16;
-const space = 5;
+const space = 1;
 </script>
 <template>
   <g style="pointer-events: all">
@@ -48,7 +48,7 @@ const space = 5;
       :width="width"
       :height="height"
       fill="#000"
-      :style="{ transform: `translate( ${width / 2}px,-${height / 2}px)` }"
+      :style="{ transform: `translate( ${space}px,-${height / 2}px)` }"
       @mousedown="handleCreate(2)"
     >
       <el-icon class="create"><CirclePlus /></el-icon>
@@ -71,6 +71,8 @@ const space = 5;
 .create {
   color: #7ebfde !important;
   font-weight: 500;
+  background-color: #fff;
+  padding: 1px;
 }
 .create:hover {
   color: #0795d6 !important;

@@ -113,7 +113,8 @@ const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
   const shape = await props.graph.quickCreateSymbol(
     siderBarkey,
     waypoint[waypoint.length - 1],
-    edgeIndex.value
+    edgeIndex.value,
+    selectShape
   );
   edgeIndex.value = "";
   quickCreateEndPoint.value = null;

@@ -14,7 +14,13 @@ const symbolShapes = siderBarList.filter((item) => {
 });
 </script>
 <template>
-  <foreignObject width="100" height="100" :x="x" :y="y" class="shape-dashboard">
+  <foreignObject
+    width="100"
+    height="100"
+    :x="x + 6"
+    :y="y"
+    class="shape-dashboard"
+  >
     <div>
       <img
         v-for="item of symbolShapes"

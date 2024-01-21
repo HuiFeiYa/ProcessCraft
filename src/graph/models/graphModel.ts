@@ -269,13 +269,13 @@ export class GraphModel {
       dyMax,
     });
   }
-  createEdgeShape(siderBarKey: SiderbarItemKey, point1: Point, point2: Point) {
-    let shapeOption = shapeFactory.getModelShapeOption(siderBarKey);
-    const shape = Shape.fromOption(shapeOption);
-    /** 默认创建一条水平线，长度为 100 */
-    shapeUtil.initEdgeShape(shape, [point1, point2]);
-    return shape;
-  }
+
+  /**
+   * 创建 edgeShape，并更新 edgeShape 的 sourceId
+   * @param shape
+   * @param index
+   * @returns
+   */
   async quickCreateEdge(shape: Shape, index: CreatePointType) {
     const {
       bounds: { absX, absY, width, height },
@@ -286,21 +286,32 @@ export class GraphModel {
       case CreatePointType.Top: {
         const startPoint = new Point(absX + width / 2, absY);
         const endPoint = new Point(absX + width / 2, absY - LENGTH);
-        const edgeShape = this.createEdgeShape(
+        const edgeShape = shapeUtil.createEdgeShape(
           SiderbarItemKey.ItemFlow,
           startPoint,
           endPoint
         );
+        /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
+        edgeShape.sourceId = shape.id;
         addShapesService([edgeShape]);
         this.selectionModel.setSelection([edgeShape]);
         return endPoint;
       }
     }
   }
+  /**
+   * 创建 symbol 图形，并更新 edgeShape 的targetId
+   * @param siderBarkey
+   * @param endPoint
+   * @param index
+   * @param edgeShape
+   * @returns
+   */
   async quickCreateSymbol(
     siderBarkey: SiderbarItemKey,
     endPoint: Point,
-    index: CreatePointType
+    index: CreatePointType,
+    edgeShape: Shape
   ) {
     const width = 100;
     const height = 100;
@@ -310,9 +321,9 @@ export class GraphModel {
           endPoint.x - width / 2,
           endPoint.y - height / 2
         );
-        let shapeOption = shapeFactory.getModelShapeOption(siderBarkey);
-        const shape = Shape.fromOption(shapeOption);
-        shapeUtil.initShape(shape, startPoint);
+        const shape = shapeUtil.createSymbolShape(siderBarkey, startPoint);
+        /** 创建 shape， edge 的 target 指向该图形 */
+        edgeShape.targetId = shape.id;
         addShapesService([shape]);
         this.selectionModel.setSelection([shape]);
         return shape;
