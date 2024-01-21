@@ -8,16 +8,28 @@ import SelectionVertex from "./shape/interaction/SelectionVertex.vue";
 import ShapeResizePreview from "./shape/interaction/ShapeResizePreview.vue";
 import EdgeMovePreview from "./shape/interaction/EdgeMovePreview.vue";
 import Markers from "./shape/interaction/Markers.vue";
-import { EventType, VertexType, CreatePointType } from "./shape/constant";
+import {
+  EventType,
+  VertexType,
+  CreatePointType,
+  SiderbarItemKey,
+} from "./shape/constant";
 import { ShapeType } from "./types";
 import { useDrawStore } from "../editor/store";
 import QuickCreatePoint from "./shape/interaction/QuickCreatePoint.vue";
+import ShapeDashboard from "./shape/interaction/shapeDashboard.vue";
 import { SubShapeType } from "./types/index";
+import { Point } from "./util/Point";
 const store = useDrawStore();
 const props = defineProps<{ graph: GraphModel }>();
 provide("graph", props.graph);
 props.graph.registerShapeComps(shapeComps);
 const viewDom = ref<HTMLDivElement | null>(null);
+/** 快速创建 edge ，的重点，用于 shapeDashboard 定位 */
+const quickCreateEndPoint = ref<Point>(null);
+
+/** 快速创建线的方向 */
+const edgeIndex = ref();
 onMounted(() => {
   if (!viewDom.value) return;
   props.graph.viewModel.setViewDom(viewDom.value);
@@ -84,8 +96,27 @@ function handleDragOver() {}
 const handleDrop = () => {};
 
 /** 快速创建线 */
-const handleQuickCreate = (index: CreatePointType) => {
-  props.graph.quickCreate(selectedShapes.value[0], index);
+const handleQuickCreate = async (index: CreatePointType) => {
+  const endPoint = await props.graph.quickCreateEdge(
+    selectedShapes.value[0],
+    index
+  );
+  edgeIndex.value = index;
+  quickCreateEndPoint.value = endPoint;
+  // 弹框，选择继续要创建的元素
+};
+
+/** 快速创建指定图形 */
+const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
+  const selectShape = selectedShapes.value[0];
+  const waypoint = selectShape.waypoint;
+  const shape = await props.graph.quickCreateSymbol(
+    siderBarkey,
+    waypoint[waypoint.length - 1],
+    edgeIndex.value
+  );
+  edgeIndex.value = "";
+  quickCreateEndPoint.value = null;
 };
 </script>
 <template>
@@ -163,6 +194,12 @@ const handleQuickCreate = (index: CreatePointType) => {
           :bounds="selectedShapes[0].bounds"
           @create="handleQuickCreate"
         ></QuickCreatePoint>
+        <ShapeDashboard
+          v-if="quickCreateEndPoint"
+          :x="quickCreateEndPoint.x"
+          :y="quickCreateEndPoint.y"
+          @create-shape="handleCreateShape"
+        />
       </g>
     </svg>
   </div>

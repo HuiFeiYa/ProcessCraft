@@ -23,6 +23,7 @@ import { CreateEdgeOnDiagramBehavior } from "../shape/behavior/CreateEdgeOnDiagr
 import { shapeFactory } from "../shape/ShapeFactory";
 import { shapeUtil } from "../shape/ShapeUtil";
 import { nextTick } from "vue";
+import { SiderBarDropBehavior } from "../shape/behavior/SiderbarDropBehavior";
 export const emitter = new Emitter();
 export class GraphModel {
   disabled = false;
@@ -275,7 +276,7 @@ export class GraphModel {
     shapeUtil.initEdgeShape(shape, [point1, point2]);
     return shape;
   }
-  async quickCreate(shape: Shape, index: CreatePointType) {
+  async quickCreateEdge(shape: Shape, index: CreatePointType) {
     const {
       bounds: { absX, absY, width, height },
     } = shape;
@@ -291,10 +292,30 @@ export class GraphModel {
           endPoint
         );
         addShapesService([edgeShape]);
-        nextTick(() => {
-          this.selectionModel.setSelection([edgeShape]);
-          //   emitter.emit(EventType.SHAPE_CLICK, window.event, edgeShape);
-        });
+        this.selectionModel.setSelection([edgeShape]);
+        return endPoint;
+      }
+    }
+  }
+  async quickCreateSymbol(
+    siderBarkey: SiderbarItemKey,
+    endPoint: Point,
+    index: CreatePointType
+  ) {
+    const width = 100;
+    const height = 100;
+    switch (index) {
+      case CreatePointType.Top: {
+        const startPoint = new Point(
+          endPoint.x - width / 2,
+          endPoint.y - height / 2
+        );
+        let shapeOption = shapeFactory.getModelShapeOption(siderBarkey);
+        const shape = Shape.fromOption(shapeOption);
+        shapeUtil.initShape(shape, startPoint);
+        addShapesService([shape]);
+        this.selectionModel.setSelection([shape]);
+        return shape;
       }
     }
   }

@@ -2,31 +2,10 @@
 import { ref } from "vue";
 import { SiderBarItem } from "../SiderBarDropModel";
 import { GraphTab } from "../project/GraphTab";
-import { SiderbarItemKey } from "../../graph/shape/constant";
+import { siderBarList } from "../../graph/shape/constant";
 const props = defineProps<{ tab: GraphTab }>();
 const active = ref("common");
-const siderBarList: SiderBarItem[] = [
-  {
-    modelId: "SysML::Blocks::Block",
-    operation: "",
-    dropdownTag: "",
-    showData: {
-      name: "矩形",
-      icon: "src/assets/Block.svg",
-      siderBarkey: SiderbarItemKey.Block,
-    },
-  },
-  {
-    modelId: "SysML::ItemFlow",
-    operation: "",
-    dropdownTag: "",
-    showData: {
-      name: "直线",
-      icon: "src/assets/ItemFlow.svg",
-      siderBarkey: SiderbarItemKey.ItemFlow,
-    },
-  },
-];
+
 const onMousedown = (event: MouseEvent, item: SiderBarItem) => {
   props.tab.siderBarDropModel.onMouseDown(item);
 };

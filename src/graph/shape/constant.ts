@@ -1,3 +1,6 @@
+import { SiderBarItem } from "../../editor/SiderBarDropModel";
+import { SubShapeType } from "../types";
+
 export enum EdgeMoveType {
   Segment, // 线段拖动
   Waypoint, // waypoint拖动
@@ -77,3 +80,25 @@ export enum ArrowType {
   TriangleHollowArrow = "TriangleHollowArrow",
   TriangleSolidArrow = "TriangleSolidArrow",
 }
+export const siderBarList: SiderBarItem[] = [
+  {
+    modelId: "SysML::Blocks::Block",
+    operation: "",
+    dropdownTag: "",
+    showData: {
+      name: "矩形",
+      icon: "src/assets/Block.svg",
+      siderBarkey: SiderbarItemKey.Block,
+    },
+  },
+  {
+    modelId: "SysML::ItemFlow",
+    operation: "",
+    dropdownTag: "",
+    showData: {
+      name: "直线",
+      icon: "src/assets/ItemFlow.svg",
+      siderBarkey: SiderbarItemKey.ItemFlow,
+    },
+  },
+];
