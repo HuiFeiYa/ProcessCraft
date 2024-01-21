@@ -26,9 +26,7 @@ const handleSave = () => {
 const handleInput = (e) => {
   text.value = e.target.innerHTML
 }
-onMounted(() => {
-  input.value?.focus()
-})
+
 </script>
 <template>
   <g @click.stop @mousedown.stop @mouseup.stop @mousemove.stop @dragenter.stop dragenter stop @dragleave.stop @drop.stop

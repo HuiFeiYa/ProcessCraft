@@ -2,7 +2,7 @@ export enum EdgeMoveType {
   Segment, // 线段拖动
   Waypoint, // waypoint拖动
   SourcePoint, // 起点拖动
-  TargetPoint // 终点拖动
+  TargetPoint, // 终点拖动
 }
 
 /**
@@ -10,7 +10,7 @@ export enum EdgeMoveType {
  */
 export enum MarkerColor {
   valid = "#1890FF",
-  invalid = "#FF181F"
+  invalid = "#FF181F",
 }
 
 export enum EventType {
@@ -45,17 +45,23 @@ export enum VertexType {
   leftTop = 1,
   rightTop = 2,
   rightBottom = 3,
-  leftBottom = 4
+  leftBottom = 4,
+}
+export enum CreatePointType {
+  Top = 1,
+  Bottom = 2,
+  Left = 3,
+  Right = 4,
 }
 
 export enum SiderbarItemKey {
-  Block = 'Block',
-  ItemFlow = "ItemFlow"
+  Block = "Block",
+  ItemFlow = "ItemFlow",
 }
 
 export enum MetaclassType {
   Class = "Class",
-  ItemFlow = "ItemFlow"
+  ItemFlow = "ItemFlow",
 }
 
 export enum StType {
@@ -69,5 +75,5 @@ export enum ArrowType {
   DiamondSolidArrow = "DiamondSolidArrow",
   Arrow = "Arrow",
   TriangleHollowArrow = "TriangleHollowArrow",
-  TriangleSolidArrow = "TriangleSolidArrow"
+  TriangleSolidArrow = "TriangleSolidArrow",
 }

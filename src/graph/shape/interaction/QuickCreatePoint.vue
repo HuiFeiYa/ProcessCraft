@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { Bounds } from "../../types";
+import { CreatePointType } from "../constant";
 
 const props = defineProps<{ bounds: Bounds }>();
-const handleCreate = () => {};
+const emit = defineEmits<{
+  (e: "create", index: CreatePointType): void;
+}>();
+const handleCreate = (index: CreatePointType) => {
+  emit("create", index);
+};
 /** 控制点宽度 */
 const width = 16;
 const height = 16;
@@ -18,7 +24,7 @@ const space = 5;
       :width="width"
       :height="height"
       :style="{ transform: `translate(-${width / 2}px, ${-height - space}px)` }"
-      @mousedown="handleCreate"
+      @mousedown="handleCreate(1)"
     >
       <el-icon class="create"><CirclePlus /></el-icon>
     </foreignObject>
@@ -31,7 +37,7 @@ const space = 5;
       :height="height"
       fill="#000"
       :style="{ transform: `translate(-${width / 2}px, ${space}px` }"
-      @mousedown="handleCreate"
+      @mousedown="handleCreate(3)"
     >
       <el-icon class="create"><CirclePlus /></el-icon>
     </foreignObject>
@@ -43,7 +49,7 @@ const space = 5;
       :height="height"
       fill="#000"
       :style="{ transform: `translate( ${width / 2}px,-${height / 2}px)` }"
-      @mousedown="handleCreate"
+      @mousedown="handleCreate(2)"
     >
       <el-icon class="create"><CirclePlus /></el-icon>
     </foreignObject>
@@ -55,7 +61,7 @@ const space = 5;
       :height="height"
       fill="#000"
       :style="{ transform: `translate(-${width + space}px,-${height / 2}px)` }"
-      @mousedown="handleCreate"
+      @mousedown="handleCreate(4)"
     >
       <el-icon class="create"><CirclePlus /></el-icon>
     </foreignObject>
@@ -63,10 +69,10 @@ const space = 5;
 </template>
 <style>
 .create {
-  color: #7ebfde;
+  color: #7ebfde !important;
   font-weight: 500;
 }
 .create:hover {
-  color: #0795d6;
+  color: #0795d6 !important;
 }
 </style>

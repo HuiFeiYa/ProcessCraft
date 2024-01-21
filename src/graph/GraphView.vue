@@ -8,7 +8,7 @@ import SelectionVertex from "./shape/interaction/SelectionVertex.vue";
 import ShapeResizePreview from "./shape/interaction/ShapeResizePreview.vue";
 import EdgeMovePreview from "./shape/interaction/EdgeMovePreview.vue";
 import Markers from "./shape/interaction/Markers.vue";
-import { EventType, VertexType } from "./shape/constant";
+import { EventType, VertexType, CreatePointType } from "./shape/constant";
 import { ShapeType } from "./types";
 import { useDrawStore } from "../editor/store";
 import QuickCreatePoint from "./shape/interaction/QuickCreatePoint.vue";
@@ -82,6 +82,11 @@ function handleMousemoveOut(event: MouseEvent) {
 function handleDragOver() {}
 
 const handleDrop = () => {};
+
+/** 快速创建线 */
+const handleQuickCreate = (index: CreatePointType) => {
+  props.graph.quickCreate(selectedShapes.value[0], index);
+};
 </script>
 <template>
   <div class="graph-view" ref="viewDom">
@@ -156,6 +161,7 @@ const handleDrop = () => {};
         <QuickCreatePoint
           v-if="showQuickCreatePoint"
           :bounds="selectedShapes[0].bounds"
+          @create="handleQuickCreate"
         ></QuickCreatePoint>
       </g>
     </svg>
