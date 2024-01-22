@@ -304,7 +304,7 @@ export class GraphModel {
         edgeShape.sourceId = shape.id;
         addShapesService([edgeShape]);
         this.selectionModel.setSelection([edgeShape]);
-        return endPoint;
+        return edgeShape;
       }
     }
   }

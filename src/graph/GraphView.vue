@@ -14,7 +14,7 @@ import {
   CreatePointType,
   SiderbarItemKey,
 } from "./shape/constant";
-import { ShapeType } from "./types";
+import { Shape, ShapeType } from "./types";
 import { useDrawStore } from "../editor/store";
 import QuickCreatePoint from "./shape/interaction/QuickCreatePoint.vue";
 import ShapeDashboard from "./shape/interaction/shapeDashboard.vue";
@@ -26,8 +26,7 @@ provide("graph", props.graph);
 props.graph.registerShapeComps(shapeComps);
 const viewDom = ref<HTMLDivElement | null>(null);
 /** 快速创建 edge ，的重点，用于 shapeDashboard 定位 */
-const quickCreateEndPoint = ref<Point>(null);
-
+const quickCreateEdgeShape = ref<Shape>(null)
 /** 快速创建线的方向 */
 const edgeIndex = ref();
 onMounted(() => {
@@ -52,6 +51,17 @@ const showSelectionVertex = computed(() => {
   );
 });
 
+const edgeEndPoint = computed(() => {
+  if (quickCreateEdgeShape) {
+    const waypoint = quickCreateEdgeShape.value.waypoint
+    return waypoint[waypoint.length - 1]
+  } else {
+    return {
+      x: 0,
+      y: 0
+    }
+  }
+})
 const showQuickCreatePoint = computed(() => {
   if (
     selectedShapes.value.length === 1 &&
@@ -97,28 +107,29 @@ const handleDrop = () => { };
 
 /** 快速创建线 */
 const handleQuickCreate = async (index: CreatePointType) => {
-  const endPoint = await props.graph.quickCreateEdge(
+  const edgeShape = await props.graph.quickCreateEdge(
     selectedShapes.value[0],
     index
   );
   edgeIndex.value = index;
-  quickCreateEndPoint.value = endPoint;
+  quickCreateEdgeShape.value = edgeShape
   // 弹框，选择继续要创建的元素
   props.graph.isShowShapeDashboard = true
 };
 
 /** 快速创建指定图形 */
 const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
-  const selectShape = selectedShapes.value[0];
-  const waypoint = selectShape.waypoint;
+  const edge = quickCreateEdgeShape.value
+  const waypoint = edge.waypoint
   const shape = await props.graph.quickCreateSymbol(
     siderBarkey,
     waypoint[waypoint.length - 1],
     edgeIndex.value,
-    selectShape
+    edge
   );
   edgeIndex.value = "";
-  quickCreateEndPoint.value = null;
+  quickCreateEdgeShape.value = null;
+  props.graph.isShowShapeDashboard = false
 };
 </script>
 <template>
@@ -159,7 +170,7 @@ const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
         <!-- <LabelEditor v-if="graph.labelEditorModel.showPreview" :editor-model="graph.labelEditorModel" /> -->
         <QuickCreatePoint v-if="showQuickCreatePoint" :bounds="selectedShapes[0].bounds" @create="handleQuickCreate">
         </QuickCreatePoint>
-        <ShapeDashboard v-if="graph.isShowShapeDashboard" :x="quickCreateEndPoint.x" :y="quickCreateEndPoint.y"
+        <ShapeDashboard v-if="graph.isShowShapeDashboard" :x="edgeEndPoint.x" :y="edgeEndPoint.y"
           @create-shape="handleCreateShape" />
       </g>
     </svg>
