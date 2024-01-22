@@ -1,13 +1,11 @@
 import { Shape } from "../../types";
-import { Point } from "../../util/Point";
-import { shapeUtil } from "../ShapeUtil";
 import { SiderbarItemKey } from "../constant";
-import { SiderBarDropBehavior } from "./SiderbarDropBehavior";
+import { SiderBarDropBehavior, SiderBarKeyOptions } from "./SiderbarDropBehavior";
 import { behaviorConfigs } from "./config";
 
 
 import { useDrawStore } from '../../../editor/store/index'
-import { addShapesService } from "../../service";
+import { } from "../../service";
 export class SiderBarDropRunner {
     public shape: Shape
     createdShapes: Set<Shape> = new Set()
@@ -19,11 +17,10 @@ export class SiderBarDropRunner {
         // this.shape = shapeMap.get(this.shapeId)
     }
     // 调用处 dropSiderbarKeyToShape 函数，放置图形时 src/editor/SiderBarDropModel.ts:91
-    async run(siderBarKey: SiderbarItemKey, point?: Point) {
+    async run(siderBarKey: SiderbarItemKey, options: SiderBarKeyOptions) {
         const store = useDrawStore()
-
         await this.init()
-        const behaviors = this.getMatchedBehaviors(siderBarKey, point);
+        const behaviors = this.getMatchedBehaviors(siderBarKey, options);
         for (let behavior of behaviors) {
             const result = await behavior.run();
             if (result === 'stop') break; // 可能执行到一半后需不要继续执行了，（例如需要用户二次确认）
@@ -35,12 +32,12 @@ export class SiderBarDropRunner {
         this.createdShapes = new Set()
         return createdShapes
     }
-    getMatchedBehaviors(siderBarKey: SiderbarItemKey, point?: Point) {
+    getMatchedBehaviors(siderBarKey: SiderbarItemKey, options: SiderBarKeyOptions) {
         const behaviors: SiderBarDropBehavior[] = [];
         behaviorConfigs.forEach(config => {
             if (config.siderbarItemKeys.includes(siderBarKey)) {
                 const Behavior = config.behavior
-                behaviors.push(new Behavior(this, siderBarKey, point))
+                behaviors.push(new Behavior(this, siderBarKey, options))
             }
         })
         return behaviors

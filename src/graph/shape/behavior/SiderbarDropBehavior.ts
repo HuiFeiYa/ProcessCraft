@@ -1,5 +1,4 @@
-import { Shape } from "../../types"
-import { ShapeOption } from "../../types/shapeOption";
+import { Shape, SubShapeType } from "../../types"
 import { Point } from "../../util/Point";
 import { shapeFactory } from "../ShapeFactory";
 import { shapeUtil } from "../ShapeUtil";
@@ -11,6 +10,10 @@ export interface SiderbarItemKeyConfig {
     stereotype: string[];
     operation: string;
     shapeKey: string;
+}
+
+export interface SiderBarKeyOptions {
+    point?: Point, waypoint?: Point[]
 }
 export class SiderBarDropBehavior {
     shapeParentId: string
@@ -25,17 +28,15 @@ export class SiderBarDropBehavior {
     affectedShapes: Set<Shape> = new Set()
 
     siderbarConfigItem: SiderbarItemKeyConfig
-    static createShapeUtil(siderBarKey, point: Point) {
-        let shapeOption = shapeFactory.getModelShapeOption(siderBarKey);
-        const shape = Shape.fromOption(shapeOption);
-        shapeUtil.initShape(shape, point)
-        return shape
-    }
-    constructor(public context: SiderBarDropRunner, public siderBarKey: SiderbarItemKey, public point?: Point) {
+    point: Point
+    waypoint: Point[]
+    constructor(public context: SiderBarDropRunner, public siderBarKey: SiderbarItemKey, options: SiderBarKeyOptions) {
+        const { point, waypoint } = options
+        this.point = point
+        this.waypoint = waypoint
     }
     async run(): Promise<void | "stop"> {
         await this.setSiderbarConfigItem();
-        // this.setShapeParentId()
         await this.createShape();
     }
     async setSiderbarConfigItem() {
@@ -53,7 +54,7 @@ export class SiderBarDropBehavior {
 
     async createShape() {
         const { siderBarKey } = this;
-        const shape = SiderBarDropBehavior.createShapeUtil(siderBarKey, this.point)
+        const shape = shapeUtil.createShape(siderBarKey, { point: this.point })
         this.createdShapes.add(shape);
     }
 

@@ -128,12 +128,13 @@ type Shapes = Shape[] | Set<Shape>;
 /** 添加多个 shape 到 store，并且存储记录到 stepManager */
 export const addShapesService = (shapes: Shapes) => {
   store.addShapes(shapes);
-  shapes.forEach((shape) => {
+  shapes.forEach((shape: Shape) => {
     const stepId = getStepId();
     const change = new Change(ChangeType.INSERT, shape.id);
     change.newValue = {
       siderbarKey: shape.siderbarKey,
-      point: new Point(shape.bounds.absX, shape.bounds.absY),
+      bounds: shape.bounds,
+      waypoint: shape.waypoint,
       shapeId: shape.id,
     };
     const step = new Step(stepId, currentStep.nextStepIndex, [

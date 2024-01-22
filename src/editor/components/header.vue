@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { GraphModel } from "../../graph/models/graphModel";
 import { useDrawStore } from "../store";
 import { SubShapeType } from "../../graph/types";
-import { StepOperation, currentStep } from "../../graph/service";
+import { StepOperation, UpdateShapeValue, currentStep } from "../../graph/service";
 import {
   Change,
   ChangeType,
@@ -11,6 +11,10 @@ import {
   stepManager,
 } from "../../graph/util/stepManager";
 import { SiderBarDropRunner } from "../../graph/shape/behavior/SiderBarDropRunner";
+import { SiderbarItemKey } from "../../graph/shape/constant";
+import { Point } from "../../graph/util/Point";
+import { SiderBarDropBehavior } from "../../graph/shape/behavior/SiderbarDropBehavior";
+import { shapeUtil } from "../../graph/shape/ShapeUtil";
 const store = useDrawStore();
 const props = defineProps<{ graph: GraphModel }>();
 const selectedShapes = computed(() => {
@@ -53,7 +57,12 @@ const deleteHandler = () => {
     props.graph.selectionModel.clearSelection();
   }
 };
-
+const restoreShape = async (value: UpdateShapeValue) => {
+  const { siderbarKey, point, shapeId, waypoint } = value
+  const shape = shapeUtil.createShape(siderbarKey, { point, waypoint })
+  shape.id = shapeId;
+  return shape
+}
 const undoHandler = () => {
   /** 可以回退的情况下 */
   if (currentStep.hasPrev) {
@@ -73,12 +82,8 @@ const undoHandler = () => {
               break;
             }
             case ChangeType.DELETE: {
-              const {
-                oldValue: { siderbarKey, point, shapeId },
-              } = change;
-              const createdShapes = await dropRunner.run(siderbarKey, point);
-              const shape = createdShapes[0];
-              shape.id = shapeId;
+              const { oldValue } = change;
+              const shape = await restoreShape(oldValue)
               store.addShapes([shape]);
               break;
             }
@@ -101,12 +106,8 @@ const redoHandler = () => {
         switch (change.type) {
           /** 之前是新增，回退这边要删除 */
           case ChangeType.INSERT: {
-            const {
-              newValue: { siderbarKey, point, shapeId },
-            } = change;
-            const createdShapes = await dropRunner.run(siderbarKey, point);
-            const shape = createdShapes[0];
-            shape.id = shapeId;
+            const { newValue } = change;
+            const shape = await restoreShape(newValue)
             store.addShapes([shape]);
             break;
           }
@@ -139,27 +140,16 @@ const resetHandler = () => {
     </el-tooltip>
     <el-tooltip effect="dark" content="撤销" placement="top-start">
       <el-button text @click="undoHandler" :disabled="!currentStep.hasPrev">
-        <el-image
-          src="src/assets/undo.svg"
-          :style="currentStep.hasPrev ? {} : { filter: 'grayscale(85%)' }"
-        ></el-image>
+        <el-image src="src/assets/undo.svg" :style="currentStep.hasPrev ? {} : { filter: 'grayscale(85%)' }"></el-image>
       </el-button>
     </el-tooltip>
     <el-tooltip effect="dark" content="重做" placement="top-start">
       <el-button text :disabled="!currentStep.hasNext" @click="redoHandler">
-        <el-image
-          src="src/assets/redo.svg"
-          :style="currentStep.hasNext ? {} : { filter: 'grayscale(85%)' }"
-        ></el-image>
+        <el-image src="src/assets/redo.svg" :style="currentStep.hasNext ? {} : { filter: 'grayscale(85%)' }"></el-image>
       </el-button>
     </el-tooltip>
     <el-tooltip effect="dark" content="删除元素" placement="top-start">
-      <el-button
-        :disabled="!hasSelectedShape"
-        icon="delete"
-        text
-        @click="deleteHandler"
-      ></el-button>
+      <el-button :disabled="!hasSelectedShape" icon="delete" text @click="deleteHandler"></el-button>
     </el-tooltip>
   </div>
 </template>

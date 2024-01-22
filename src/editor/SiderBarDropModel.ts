@@ -92,7 +92,7 @@ export class SiderBarDropModel {
   }
   async dropSiderbarKeyToShape(evt: MouseEvent, shape: Shape, point: Point, sidebarKey: SiderbarItemKey) {
     // 获取对应的behavior，创建对应的shape
-    const createdShapes = await this.dropRunner.run(sidebarKey, point)
+    const createdShapes = await this.dropRunner.run(sidebarKey, { point })
     addShapesService(createdShapes)
     // 默认选中创建的元素
     this.graph.moveModel.startMove(evt, StartMoveSource.SiderBar, createdShapes[0])

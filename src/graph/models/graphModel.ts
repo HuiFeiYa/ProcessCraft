@@ -286,11 +286,9 @@ export class GraphModel {
       case CreatePointType.Top: {
         const startPoint = new Point(absX + width / 2, absY);
         const endPoint = new Point(absX + width / 2, absY - LENGTH);
-        const edgeShape = shapeUtil.createEdgeShape(
-          SiderbarItemKey.ItemFlow,
-          startPoint,
-          endPoint
-        );
+        const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
+          waypoint: [startPoint, endPoint]
+        })
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
         addShapesService([edgeShape]);
@@ -321,7 +319,7 @@ export class GraphModel {
           endPoint.x - width / 2,
           endPoint.y - height / 2
         );
-        const shape = shapeUtil.createSymbolShape(siderBarkey, startPoint);
+        const shape = shapeUtil.createShape(siderBarkey, { point: startPoint })
         /** 创建 shape， edge 的 target 指向该图形 */
         edgeShape.targetId = shape.id;
         addShapesService([shape]);

@@ -3,6 +3,7 @@
 import { MoveRange } from "../models/MoveModel";
 import { VertexType } from "../models/ResizeModel";
 import { GraphModel } from "../models/graphModel";
+import { SiderbarItemKey } from "../shape/constant";
 import { Point } from "../util/Point";
 import { FontStyle, ShapeOption, StyleObject } from "./shapeOption";
 import { cloneDeep } from 'lodash'
@@ -629,6 +630,8 @@ export class Shape {
   shapeKey: ShapeKey;
   children?: Shape[];
   waypoint: Point[]
+
+  siderbarKey?: SiderbarItemKey
 
   /** todo 添加画布等信息 */
   static fromOption(shapeOption: ShapeOption) {
