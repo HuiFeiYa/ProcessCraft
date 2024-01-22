@@ -318,6 +318,30 @@ export class GraphModel {
         this.selectionModel.setSelection([edgeShape]);
         return edgeShape;
       }
+      case CreatePointType.Right: {
+        const startPoint = new Point(absX + width, absY + height / 2)
+        const endPoint = new Point(absX + width + LENGTH, absY + height / 2)
+        const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
+          waypoint: [startPoint, endPoint],
+        });
+        /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
+        edgeShape.sourceId = shape.id;
+        addShapesService([edgeShape]);
+        this.selectionModel.setSelection([edgeShape]);
+        return edgeShape;
+      }
+      case CreatePointType.Left: {
+        const startPoint = new Point(absX, absY + height / 2)
+        const endPoint = new Point(absX - LENGTH, absY + height / 2)
+        const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
+          waypoint: [startPoint, endPoint],
+        });
+        /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
+        edgeShape.sourceId = shape.id;
+        addShapesService([edgeShape]);
+        this.selectionModel.setSelection([edgeShape]);
+        return edgeShape;
+      }
     }
   }
   /**
@@ -335,18 +359,27 @@ export class GraphModel {
     edgeShape: Shape
   ) {
     const width = 100;
-    const height = 100;
+    const height = 50;
+    const LENGTH = 100;
     switch (index) {
       case CreatePointType.Top: {
         const startPoint = new Point(
           endPoint.x - width / 2,
-          endPoint.y - height / 2
+          endPoint.y - height 
         );
         return this.createShapeByPoint(startPoint, edgeShape, siderBarkey);
       }
       case CreatePointType.Bottom: {
         const startPoint = new Point(endPoint.x - width / 2, endPoint.y);
         return this.createShapeByPoint(startPoint, edgeShape, siderBarkey);
+      }
+      case CreatePointType.Right: {
+        const startPoint = new Point(endPoint.x,endPoint.y - height/2)
+        return this.createShapeByPoint(startPoint, edgeShape, siderBarkey)
+      }
+      case CreatePointType.Left: {
+        const startPoint = new Point(endPoint.x - width,endPoint.y - height/2)
+        return this.createShapeByPoint(startPoint, edgeShape, siderBarkey)
       }
     }
   }
