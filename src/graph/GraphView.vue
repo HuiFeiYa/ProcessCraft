@@ -76,7 +76,7 @@ function handleVertexMousedown(event: MouseEvent, index: VertexType) {
     }
   }
 }
-function handleClickOut() {}
+function handleClickOut() { }
 // 监听画布上点击事件，用于清空选中状态
 function handleMousedownOut(event: MouseEvent) {
   props.graph.emitter.emit(EventType.SHAPE_MOUSE_DOWN, event, undefined);
@@ -91,9 +91,9 @@ function handleMouseupOut() {
 function handleMousemoveOut(event: MouseEvent) {
   props.graph.emitter.emit(EventType.SHAPE_MOUSE_MOVE, event, undefined);
 }
-function handleDragOver() {}
+function handleDragOver() { }
 
-const handleDrop = () => {};
+const handleDrop = () => { };
 
 /** 快速创建线 */
 const handleQuickCreate = async (index: CreatePointType) => {
@@ -104,6 +104,7 @@ const handleQuickCreate = async (index: CreatePointType) => {
   edgeIndex.value = index;
   quickCreateEndPoint.value = endPoint;
   // 弹框，选择继续要创建的元素
+  props.graph.isShowShapeDashboard = true
 };
 
 /** 快速创建指定图形 */
@@ -126,20 +127,10 @@ const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
           展示层
           * 整个画布的事件监听
         -->
-    <svg
-      version="1.1"
-      xmlns="http://www.w3.org/2000/svg"
-      transform-origin="0 0"
-      style="min-width: 100%; min-height: 100%"
-      :width="graph.viewModel.bounds.width"
-      :height="graph.viewModel.bounds.height"
-      @click="handleClickOut"
-      @mousedown="handleMousedownOut"
-      @mouseup="handleMouseupOut"
-      @mousemove="handleMousemoveOut"
-      @dragover="handleDragOver"
-      @drop.stop="handleDrop"
-    >
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" transform-origin="0 0" style="min-width: 100%; min-height: 100%"
+      :width="graph.viewModel.bounds.width" :height="graph.viewModel.bounds.height" @click="handleClickOut"
+      @mousedown="handleMousedownOut" @mouseup="handleMouseupOut" @mousemove="handleMousemoveOut"
+      @dragover="handleDragOver" @drop.stop="handleDrop">
       <g style="width: 100%; height: 100%; background-color: white">
         <DiagramShape :graph="graph" :shape="graph.rootShape" />
       </g>
@@ -148,59 +139,28 @@ const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
       交互层
       * 设置了pointer-events， 元素永远不会成为鼠标事件的target (en-US)。其后端元素可以捕获
      -->
-    <svg
-      version="1.1"
-      xmlns="http://www.w3.org/2000/svg"
-      style="
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" style="
         min-width: 100%;
         min-height: 100%;
         position: absolute;
         top: 0;
         left: 0;
         pointer-events: none;
-      "
-      transform-origin="0 0"
-      :width="graph.viewModel.bounds.width"
-      :height="graph.viewModel.bounds.height"
-    >
+      " transform-origin="0 0" :width="graph.viewModel.bounds.width" :height="graph.viewModel.bounds.height">
       <g>
-        <Shape-move-preview
-          v-if="graph.moveModel.showMovingPreview"
-          :shapes="graph.moveModel.movingShapes"
-          :dx="graph.moveModel.previewDx"
-          :dy="graph.moveModel.previewDy"
-        />
-        <Shape-resize-preview
-          v-if="graph.resizeModel.showResizePreview"
-          :bounds="graph.resizeModel.previewBounds"
-        />
-        <selection-vertex
-          v-if="showSelectionVertex"
-          :selection="selectedShapes"
-          :resize-model="graph.resizeModel"
-          @vertex-mousedown="handleVertexMousedown"
-        />
-        <edge-move-preview
-          v-if="graph.edgePointMoveModel.showPreview"
-          :shape="graph.edgePointMoveModel.movingShape"
-          :previewPath="graph.edgePointMoveModel.previewPath"
-        />
-        <Markers
-          v-if="graph.markerModel.markerMap.size"
-          :markerMap="graph.markerModel.markerMap"
-        />
+        <Shape-move-preview v-if="graph.moveModel.showMovingPreview" :shapes="graph.moveModel.movingShapes"
+          :dx="graph.moveModel.previewDx" :dy="graph.moveModel.previewDy" />
+        <Shape-resize-preview v-if="graph.resizeModel.showResizePreview" :bounds="graph.resizeModel.previewBounds" />
+        <selection-vertex v-if="showSelectionVertex" :selection="selectedShapes" :resize-model="graph.resizeModel"
+          @vertex-mousedown="handleVertexMousedown" />
+        <edge-move-preview v-if="graph.edgePointMoveModel.showPreview" :shape="graph.edgePointMoveModel.movingShape"
+          :previewPath="graph.edgePointMoveModel.previewPath" />
+        <Markers v-if="graph.markerModel.markerMap.size" :markerMap="graph.markerModel.markerMap" />
         <!-- <LabelEditor v-if="graph.labelEditorModel.showPreview" :editor-model="graph.labelEditorModel" /> -->
-        <QuickCreatePoint
-          v-if="showQuickCreatePoint"
-          :bounds="selectedShapes[0].bounds"
-          @create="handleQuickCreate"
-        ></QuickCreatePoint>
-        <ShapeDashboard
-          v-if="quickCreateEndPoint"
-          :x="quickCreateEndPoint.x"
-          :y="quickCreateEndPoint.y"
-          @create-shape="handleCreateShape"
-        />
+        <QuickCreatePoint v-if="showQuickCreatePoint" :bounds="selectedShapes[0].bounds" @create="handleQuickCreate">
+        </QuickCreatePoint>
+        <ShapeDashboard v-if="graph.isShowShapeDashboard" :x="quickCreateEndPoint.x" :y="quickCreateEndPoint.y"
+          @create-shape="handleCreateShape" />
       </g>
     </svg>
   </div>

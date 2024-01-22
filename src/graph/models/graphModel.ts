@@ -5,7 +5,6 @@ import { ViewModel } from "./ViewModel";
 import { ShapeCompManager } from "./shapeManager";
 import { SelectionModel } from "./SelectionModel";
 import { IGraphOption, Shape, ShapeKey, SubShapeType } from "../types";
-import { GraphOption } from "../../editor/graphOption";
 import { useDrawStore } from "../../editor/store";
 import { ResizeModel } from "./ResizeModel";
 import { EdgePointMoveModel } from "./EdgePointMoveModel";
@@ -13,17 +12,12 @@ import { MarkerModel } from "./MarkerModel";
 import { cloneDeep } from "lodash";
 import { LabelEditorModel } from "./LabelEditorModel";
 import {
-  UpdatePatchItem,
   addShapesService,
   batchUpdateShapesService,
   patchItemFactory,
 } from "../service";
 import { Point } from "../util/Point";
-import { CreateEdgeOnDiagramBehavior } from "../shape/behavior/CreateEdgeOnDiagramBehavior";
-import { shapeFactory } from "../shape/ShapeFactory";
 import { shapeUtil } from "../shape/ShapeUtil";
-import { nextTick } from "vue";
-import { SiderBarDropBehavior } from "../shape/behavior/SiderbarDropBehavior";
 export const emitter = new Emitter();
 export class GraphModel {
   disabled = false;
@@ -89,6 +83,11 @@ export class GraphModel {
    * children索引， id -> children，(父图形ID对应的其多个子图形)
    */
   indexParent: Map<string | null, Shape[]> = new Map();
+
+  /**
+   * 是否展示 ShapeDashboard
+   */
+  isShowShapeDashboard = false
   init() {
     this.initEvents();
   }
@@ -104,6 +103,18 @@ export class GraphModel {
       EventType.NAME_LABEL_CLICK,
       this.labelEditorModel.onShapeNameLabelClick.bind(this.labelEditorModel)
     );
+
+    // 移动事件监听
+    this.emitter.on(
+      EventType.SHAPE_MOUSE_DOWN,
+      this.handleMousedown.bind(this)
+    );
+  }
+
+  handleMousedown(e, source: StartMoveSource) {
+    if (source !== StartMoveSource.QuickCreatePoint) {
+      this.isShowShapeDashboard = false
+    }
   }
   /**
    * 注册图形组件 {key:组件的subShapeType, comp:vue组件}

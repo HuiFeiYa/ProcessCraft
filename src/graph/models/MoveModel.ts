@@ -12,6 +12,7 @@ export type MoveRange = {
 export enum StartMoveSource {
     SiderBar = 'SiderBar', // SiderBar 拖拽移动
     Shape = 'Shape', // 图形移动
+    QuickCreatePoint = 'QuickCreatePoint'
 }
 export class MoveModel {
     movingShapes: Shape[] = [] // 被移动的shapes
