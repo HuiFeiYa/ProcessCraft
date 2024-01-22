@@ -52,9 +52,9 @@ export enum VertexType {
 }
 export enum CreatePointType {
   Top = 1,
-  Bottom = 2,
-  Left = 3,
-  Right = 4,
+  Right = 2,
+  Bottom = 3,
+  Left = 4,
 }
 
 export enum SiderbarItemKey {

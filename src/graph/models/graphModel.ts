@@ -87,7 +87,7 @@ export class GraphModel {
   /**
    * 是否展示 ShapeDashboard
    */
-  isShowShapeDashboard = false
+  isShowShapeDashboard = false;
   init() {
     this.initEvents();
   }
@@ -113,7 +113,7 @@ export class GraphModel {
 
   handleMousedown(e, source: StartMoveSource) {
     if (source !== StartMoveSource.QuickCreatePoint) {
-      this.isShowShapeDashboard = false
+      this.isShowShapeDashboard = false;
     }
   }
   /**
@@ -298,8 +298,20 @@ export class GraphModel {
         const startPoint = new Point(absX + width / 2, absY);
         const endPoint = new Point(absX + width / 2, absY - LENGTH);
         const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
-          waypoint: [startPoint, endPoint]
-        })
+          waypoint: [startPoint, endPoint],
+        });
+        /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
+        edgeShape.sourceId = shape.id;
+        addShapesService([edgeShape]);
+        this.selectionModel.setSelection([edgeShape]);
+        return edgeShape;
+      }
+      case CreatePointType.Bottom: {
+        const startPoint = new Point(absX + width / 2, absY + height);
+        const endPoint = new Point(absX + width / 2, absY + height + LENGTH);
+        const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
+          waypoint: [startPoint, endPoint],
+        });
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
         addShapesService([edgeShape]);
@@ -330,13 +342,34 @@ export class GraphModel {
           endPoint.x - width / 2,
           endPoint.y - height / 2
         );
-        const shape = shapeUtil.createShape(siderBarkey, { point: startPoint })
-        /** 创建 shape， edge 的 target 指向该图形 */
-        edgeShape.targetId = shape.id;
-        addShapesService([shape]);
-        this.selectionModel.setSelection([shape]);
-        return shape;
+        return this.createShapeByPoint(startPoint, edgeShape, siderBarkey);
+      }
+      case CreatePointType.Bottom: {
+        const startPoint = new Point(endPoint.x - width / 2, endPoint.y);
+        return this.createShapeByPoint(startPoint, edgeShape, siderBarkey);
       }
     }
+  }
+  /**
+   * 根据 edge 位置创建对应 target 的图形
+   * @param point
+   * @param edgeShape
+   * @param siderBarkey
+   * @returns
+   */
+  createShapeByPoint(
+    point: Point,
+    edgeShape: Shape,
+    siderBarkey: SiderbarItemKey
+  ) {
+    const shape = shapeUtil.createShape(siderBarkey, { point });
+    /** 创建 shape， edge 的 target 指向该图形 */
+    edgeShape.targetId = shape.id;
+    /** 更新 shape bounds  */
+    shape.bounds.absX = point.x;
+    shape.bounds.absY = point.y;
+    addShapesService([shape]);
+    this.selectionModel.setSelection([shape]);
+    return shape;
   }
 }

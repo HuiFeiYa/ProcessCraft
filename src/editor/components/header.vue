@@ -3,7 +3,11 @@ import { computed } from "vue";
 import { GraphModel } from "../../graph/models/graphModel";
 import { useDrawStore } from "../store";
 import { SubShapeType } from "../../graph/types";
-import { StepOperation, UpdateShapeValue, currentStep } from "../../graph/service";
+import {
+  StepOperation,
+  UpdateShapeValue,
+  currentStep,
+} from "../../graph/service";
 import {
   Change,
   ChangeType,
@@ -58,11 +62,14 @@ const deleteHandler = () => {
   }
 };
 const restoreShape = async (value: UpdateShapeValue) => {
-  const { siderbarKey, point, shapeId, waypoint } = value
-  const shape = shapeUtil.createShape(siderbarKey, { point, waypoint })
+  const { siderbarKey, bounds, shapeId, waypoint } = value;
+  const shape = shapeUtil.createShape(siderbarKey, {
+    point: new Point(bounds.absX, bounds.absY),
+    waypoint,
+  });
   shape.id = shapeId;
-  return shape
-}
+  return shape;
+};
 const undoHandler = () => {
   /** 可以回退的情况下 */
   if (currentStep.hasPrev) {
@@ -83,7 +90,7 @@ const undoHandler = () => {
             }
             case ChangeType.DELETE: {
               const { oldValue } = change;
-              const shape = await restoreShape(oldValue)
+              const shape = await restoreShape(oldValue);
               store.addShapes([shape]);
               break;
             }
@@ -107,7 +114,7 @@ const redoHandler = () => {
           /** 之前是新增，回退这边要删除 */
           case ChangeType.INSERT: {
             const { newValue } = change;
-            const shape = await restoreShape(newValue)
+            const shape = await restoreShape(newValue);
             store.addShapes([shape]);
             break;
           }
@@ -140,16 +147,27 @@ const resetHandler = () => {
     </el-tooltip>
     <el-tooltip effect="dark" content="撤销" placement="top-start">
       <el-button text @click="undoHandler" :disabled="!currentStep.hasPrev">
-        <el-image src="src/assets/undo.svg" :style="currentStep.hasPrev ? {} : { filter: 'grayscale(85%)' }"></el-image>
+        <el-image
+          src="src/assets/undo.svg"
+          :style="currentStep.hasPrev ? {} : { filter: 'grayscale(85%)' }"
+        ></el-image>
       </el-button>
     </el-tooltip>
     <el-tooltip effect="dark" content="重做" placement="top-start">
       <el-button text :disabled="!currentStep.hasNext" @click="redoHandler">
-        <el-image src="src/assets/redo.svg" :style="currentStep.hasNext ? {} : { filter: 'grayscale(85%)' }"></el-image>
+        <el-image
+          src="src/assets/redo.svg"
+          :style="currentStep.hasNext ? {} : { filter: 'grayscale(85%)' }"
+        ></el-image>
       </el-button>
     </el-tooltip>
     <el-tooltip effect="dark" content="删除元素" placement="top-start">
-      <el-button :disabled="!hasSelectedShape" icon="delete" text @click="deleteHandler"></el-button>
+      <el-button
+        :disabled="!hasSelectedShape"
+        icon="delete"
+        text
+        @click="deleteHandler"
+      ></el-button>
     </el-tooltip>
   </div>
 </template>
