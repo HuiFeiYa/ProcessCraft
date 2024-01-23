@@ -10,7 +10,7 @@
 - siderbarKey 配置项 src/graph/shape/behavior/config.ts
 - 模型配置 modelKeyConfig src/graph/shape/shapeOption/commonShapeOption.ts
 - 创建图形 src/graph/shape/behavior/SiderbarDropBehavior.ts:38
-
+* 画布坐标参照 src/graph/models/ViewModel.ts:39
 ### behavior
 
 - siderbarkey 行为配置 src/graph/shape/behavior/config.ts:13

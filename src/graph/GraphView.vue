@@ -154,8 +154,8 @@ const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
         min-width: 100%;
         min-height: 100%;
         position: absolute;
-        top: 0;
-        left: 0;
+        top: 12;
+        left: 12;
         pointer-events: none;
       " transform-origin="0 0" :width="graph.viewModel.bounds.width" :height="graph.viewModel.bounds.height">
       <g>

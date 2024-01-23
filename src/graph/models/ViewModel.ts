@@ -40,8 +40,10 @@ export class ViewModel {
 
         }
         const rect = diagramViewDom.getBoundingClientRect();
-        const x = (point.x - rect.left + diagramViewDom.scrollLeft);
-        const y = (point.y - rect.top + diagramViewDom.scrollTop);
+        const rootShape = this.graph.rootShape
+        // 此处坐标是相对于 svg 的相对位置，svg 父级div有 12px 的padding。 point 是鼠标相对于浏览器左上角的位置。需要减去 padding 和 sidebar 的宽度
+        const x = (point.x - rect.left + diagramViewDom.scrollLeft - rootShape.bounds.absX);
+        const y = (point.y - rect.top + diagramViewDom.scrollTop - rootShape.bounds.absY);
         // 相对于画布的距离
         const intPoint = new Point(x, y)
         Point.toInt(intPoint);
