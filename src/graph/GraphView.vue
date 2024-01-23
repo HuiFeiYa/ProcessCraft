@@ -138,10 +138,10 @@ const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
           展示层
           * 整个画布的事件监听
         -->
-    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" transform-origin="0 0" style="min-width: 100%; min-height: 100%"
-      :width="graph.viewModel.bounds.width" :height="graph.viewModel.bounds.height" @click="handleClickOut"
-      @mousedown="handleMousedownOut" @mouseup="handleMouseupOut" @mousemove="handleMousemoveOut"
-      @dragover="handleDragOver" @drop.stop="handleDrop">
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" transform-origin="0 0"
+      style="min-width: 100%; min-height: 100%;background-color: #eee;" :width="graph.viewModel.bounds.width"
+      :height="graph.viewModel.bounds.height" @click="handleClickOut" @mousedown="handleMousedownOut"
+      @mouseup="handleMouseupOut" @mousemove="handleMousemoveOut" @dragover="handleDragOver" @drop.stop="handleDrop">
       <g style="width: 100%; height: 100%; background-color: white">
         <DiagramShape :graph="graph" :shape="graph.rootShape" />
       </g>
@@ -179,5 +179,6 @@ const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
 <style>
 .graph-view {
   position: relative;
+  padding: 12px;
 }
 </style>

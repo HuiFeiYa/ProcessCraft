@@ -33,7 +33,9 @@ export class GraphModel {
     this.graphOption.graph = this;
     const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
     const windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
-    this.rootShape = shapeUtil.createShape(SiderbarItemKey.FlowDiagram, { bounds: new Bounds(0, 0, windowWidth - SideBarWidth, windowHeight - HeaderHeight, 0, 0, 0, 0) })
+    const padding = 12
+    this.rootShape = shapeUtil.createShape(SiderbarItemKey.FlowDiagram, { bounds: new Bounds(12, 12, windowWidth - SideBarWidth - padding * 2 - 60, windowHeight - HeaderHeight - padding * 2, 12, 12, 0, 0) })
+    this.viewModel.updateBounds()
   }
   /**
    * 图形标记（高亮效果）

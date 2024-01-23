@@ -177,6 +177,7 @@ const resetHandler = () => {
   width: 100%;
   border-bottom: 1px solid #dadce0;
   padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .undo img {

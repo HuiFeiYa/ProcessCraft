@@ -29,6 +29,7 @@ const editor = reactive(new GraphEditor({ modelId: 'a-1' }))
 .diagram-container {
     width: calc(100vw - 220px);
     overflow: auto;
+    background-color: #eaecee;
 }
 
 /* 画布计算起点归零 */
