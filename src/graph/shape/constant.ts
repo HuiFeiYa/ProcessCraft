@@ -60,11 +60,13 @@ export enum CreatePointType {
 export enum SiderbarItemKey {
   Block = "Block",
   ItemFlow = "ItemFlow",
+  FlowDiagram = "FlowDiagram"
 }
 
 export enum MetaclassType {
   Class = "Class",
   ItemFlow = "ItemFlow",
+  FlowDiagram = 'FlowDiagram'
 }
 
 export enum StType {
@@ -102,3 +104,7 @@ export const siderBarList: SiderBarItem[] = [
     },
   },
 ];
+
+
+export const HeaderHeight = 38
+export const SideBarWidth = 200

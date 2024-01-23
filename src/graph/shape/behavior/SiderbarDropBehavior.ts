@@ -1,4 +1,4 @@
-import { Shape, SubShapeType } from "../../types"
+import { Bounds, Shape, SubShapeType } from "../../types"
 import { Point } from "../../util/Point";
 import { shapeFactory } from "../ShapeFactory";
 import { shapeUtil } from "../ShapeUtil";
@@ -13,7 +13,9 @@ export interface SiderbarItemKeyConfig {
 }
 
 export interface SiderBarKeyOptions {
-    point?: Point, waypoint?: Point[]
+    point?: Point
+    waypoint?: Point[]
+    bounds?: Bounds
 }
 export class SiderBarDropBehavior {
     shapeParentId: string

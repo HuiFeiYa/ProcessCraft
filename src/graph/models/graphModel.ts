@@ -1,4 +1,4 @@
-import { EventType, CreatePointType, SiderbarItemKey } from "../shape/constant";
+import { EventType, CreatePointType, SiderbarItemKey, HeaderHeight, SideBarWidth, siderBarList } from "../shape/constant";
 import { Emitter } from "../util/Emitter";
 import { MoveModel, MoveRange, StartMoveSource } from "./MoveModel";
 import { ViewModel } from "./ViewModel";
@@ -18,16 +18,12 @@ import {
 } from "../service";
 import { Point } from "../util/Point";
 import { shapeUtil } from "../shape/ShapeUtil";
+import { Bounds } from "../util/Bounds";
 export const emitter = new Emitter();
 export class GraphModel {
   disabled = false;
   shapes: Set<Shape>;
-  rootShape = {
-    bounds: {
-      absX: 12,
-      absY: 12,
-    },
-  } as Shape;
+  rootShape: Shape;
   /**
    * graph配置对象(暴露的接口，由外部实现)
    */
@@ -35,6 +31,9 @@ export class GraphModel {
   constructor(opt: IGraphOption) {
     this.graphOption = opt;
     this.graphOption.graph = this;
+    const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+    this.rootShape = shapeUtil.createShape(SiderbarItemKey.FlowDiagram, { bounds: new Bounds(0, 0, windowWidth - SideBarWidth, windowHeight - HeaderHeight, 0, 0, 0, 0) })
   }
   /**
    * 图形标记（高亮效果）
@@ -365,7 +364,7 @@ export class GraphModel {
       case CreatePointType.Top: {
         const startPoint = new Point(
           endPoint.x - width / 2,
-          endPoint.y - height 
+          endPoint.y - height
         );
         return this.createShapeByPoint(startPoint, edgeShape, siderBarkey);
       }
@@ -374,11 +373,11 @@ export class GraphModel {
         return this.createShapeByPoint(startPoint, edgeShape, siderBarkey);
       }
       case CreatePointType.Right: {
-        const startPoint = new Point(endPoint.x,endPoint.y - height/2)
+        const startPoint = new Point(endPoint.x, endPoint.y - height / 2)
         return this.createShapeByPoint(startPoint, edgeShape, siderBarkey)
       }
       case CreatePointType.Left: {
-        const startPoint = new Point(endPoint.x - width,endPoint.y - height/2)
+        const startPoint = new Point(endPoint.x - width, endPoint.y - height / 2)
         return this.createShapeByPoint(startPoint, edgeShape, siderBarkey)
       }
     }

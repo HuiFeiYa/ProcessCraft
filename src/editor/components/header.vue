@@ -14,11 +14,9 @@ import {
   Step,
   stepManager,
 } from "../../graph/util/stepManager";
-import { SiderBarDropRunner } from "../../graph/shape/behavior/SiderBarDropRunner";
-import { SiderbarItemKey } from "../../graph/shape/constant";
 import { Point } from "../../graph/util/Point";
-import { SiderBarDropBehavior } from "../../graph/shape/behavior/SiderbarDropBehavior";
 import { shapeUtil } from "../../graph/shape/ShapeUtil";
+import { HeaderHeight } from "../../graph/shape/constant";
 const store = useDrawStore();
 const props = defineProps<{ graph: GraphModel }>();
 const selectedShapes = computed(() => {
@@ -27,7 +25,8 @@ const selectedShapes = computed(() => {
 const hasSelectedShape = computed(() => {
   return selectedShapes.value.length > 0;
 });
-const dropRunner = new SiderBarDropRunner();
+
+
 const deleteHandler = () => {
   if (hasSelectedShape) {
     const deleteIds = [];
@@ -141,33 +140,22 @@ const resetHandler = () => {
 </script>
 
 <template>
-  <div class="toolbar">
+  <div class="toolbar" :style="{ height: HeaderHeight + 'px' }">
     <el-tooltip effect="dark" content="删除元素" placement="top-start">
       <el-button text @click="resetHandler">清空画布</el-button>
     </el-tooltip>
     <el-tooltip effect="dark" content="撤销" placement="top-start">
       <el-button text @click="undoHandler" :disabled="!currentStep.hasPrev">
-        <el-image
-          src="src/assets/undo.svg"
-          :style="currentStep.hasPrev ? {} : { filter: 'grayscale(85%)' }"
-        ></el-image>
+        <el-image src="src/assets/undo.svg" :style="currentStep.hasPrev ? {} : { filter: 'grayscale(85%)' }"></el-image>
       </el-button>
     </el-tooltip>
     <el-tooltip effect="dark" content="重做" placement="top-start">
       <el-button text :disabled="!currentStep.hasNext" @click="redoHandler">
-        <el-image
-          src="src/assets/redo.svg"
-          :style="currentStep.hasNext ? {} : { filter: 'grayscale(85%)' }"
-        ></el-image>
+        <el-image src="src/assets/redo.svg" :style="currentStep.hasNext ? {} : { filter: 'grayscale(85%)' }"></el-image>
       </el-button>
     </el-tooltip>
     <el-tooltip effect="dark" content="删除元素" placement="top-start">
-      <el-button
-        :disabled="!hasSelectedShape"
-        icon="delete"
-        text
-        @click="deleteHandler"
-      ></el-button>
+      <el-button :disabled="!hasSelectedShape" icon="delete" text @click="deleteHandler"></el-button>
     </el-tooltip>
   </div>
 </template>
@@ -186,7 +174,6 @@ const resetHandler = () => {
 .toolbar {
   display: flex;
   align-items: center;
-  height: 38px;
   width: 100%;
   border-bottom: 1px solid #dadce0;
   padding: 0 10px;

@@ -151,6 +151,35 @@ export const blockOption: ShapeOption = {
     textAlign: "center",
   },
 };
+
+export const diagramOption: ShapeOption = {
+  ...baseShapeOption,
+  shapeType: ShapeType.Diagram,
+  subShapeType: SubShapeType.CommonDiagram,
+  shapeKey: ShapeKey.Diagram,
+
+  style: {
+    background: '#fff',
+    strokeColor: 'rgb(0,0,0)',
+    strokeWidth: 1,
+    minWidth: 200,
+    minHeight: 150,
+    paddingRight: 20,
+    paddingBottom: 20,
+    selectable: true,
+    movable: false,
+    resizable: true,
+    editable: false
+  },
+
+  keywordsBounds: null,
+  icon: '', // 图的图标
+  showIcon: false,
+  showName: true,
+
+  bounds: { absX: 12, absY: 12, width: 1000, height: 800, x: 12, y: 12, offsetX: 0, offsetY: 0 }
+
+};
 export const modelKeyConfig = {
   [SiderbarItemKey.Block]: {
     shapeOption: {
@@ -172,4 +201,17 @@ export const modelKeyConfig = {
       siderbarKey: SiderbarItemKey.ItemFlow,
     },
   },
+  [SiderbarItemKey.FlowDiagram]: {
+    keyword: { en: '', cn: '' },
+    shapeOption: {
+      ...diagramOption,
+      shapeKey: ShapeKey.PackageDiagram,
+      names: {
+        shortName: '流程图',
+        contextTypeName: 'Model',
+        contextName: 'Model',
+        name: 'Model'
+      }
+    }
+  }
 };

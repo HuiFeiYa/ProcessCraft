@@ -12,9 +12,15 @@ export class ShapeUtil {
   getShapeKey(shape: Shape) {
     return shape.shapeKey;
   }
+
+  initDiagram(shape: Shape, bounds: Bounds) {
+    shape.bounds = bounds
+    return shape
+  }
   initShape(shape: Shape, point: Point) {
     shape.bounds.absX = point.x;
     shape.bounds.absY = point.y;
+    return shape
   }
   initEdgeShape(shape: Shape, points: Point[]) {
     const point = points[0];
@@ -30,6 +36,7 @@ export class ShapeUtil {
       : { width: 0, height: 20 };
     // 更新 label 位置, 相对于父级的坐标
     shape.nameBounds = new Bounds(point.x, point.y, width, height);
+    return shape
   }
   /**
    * 获得一段文本的宽高，换行符会被计算进折行,
@@ -62,16 +69,20 @@ export class ShapeUtil {
   getLineHeight(fontSize: number) {
     return (fontSize || 12) + lineHeightAdd;
   }
-  createShape(siderBarKey, options: SiderBarKeyOptions): Shape {
+  createShape(siderBarKey: SiderbarItemKey, options: SiderBarKeyOptions): Shape {
     const { point, waypoint } = options
     let shapeOption = shapeFactory.getModelShapeOption(siderBarKey);
     const shape = Shape.fromOption(shapeOption);
-    if (shape.subShapeType === SubShapeType.CommonEdge) {
-      shapeUtil.initEdgeShape(shape, waypoint)
-      return shape
-    } else {
-      shapeUtil.initShape(shape, point)
-      return shape
+    switch (shape.subShapeType) {
+      case SubShapeType.CommonEdge: {
+        return shapeUtil.initEdgeShape(shape, waypoint)
+      }
+      case SubShapeType.CommonDiagram: {
+        return shapeUtil.initDiagram(shape, options.bounds)
+      }
+      default: {
+        return shapeUtil.initShape(shape, point)
+      }
     }
   }
 }

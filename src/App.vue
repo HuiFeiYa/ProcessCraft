@@ -29,8 +29,6 @@ const editor = reactive(new GraphEditor({ modelId: 'a-1' }))
 .diagram-container {
     width: calc(100vw - 220px);
     overflow: auto;
-    background-image: linear-gradient(to right, #eee 1px, transparent 1px, transparent 40px), linear-gradient(to bottom, #eee 1px, transparent 1px, transparent 40px);
-    background-size: 20px 20px;
 }
 
 /* 画布计算起点归零 */

@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { SiderBarItem } from "../SiderBarDropModel";
 import { GraphTab } from "../project/GraphTab";
-import { siderBarList } from "../../graph/shape/constant";
+import { SideBarWidth, siderBarList } from "../../graph/shape/constant";
 const props = defineProps<{ tab: GraphTab }>();
 const active = ref("common");
 
@@ -14,15 +14,11 @@ const onDragstart = (event: DragEvent) => {
 };
 </script>
 <template>
-  <div class="sidebar" @dragstart="onDragstart">
+  <div class="sidebar" @dragstart="onDragstart" :style="{ width: SideBarWidth + 'px' }">
     <el-collapse v-model="active" style="margin-top: -3px">
       <el-collapse-item title="通用" name="common">
-        <div
-          v-for="siderbarItem in siderBarList"
-          :key="siderbarItem.modelId"
-          class="collapse-item"
-          @mousedown="onMousedown($event, siderbarItem)"
-        >
+        <div v-for="siderbarItem in siderBarList" :key="siderbarItem.modelId" class="collapse-item"
+          @mousedown="onMousedown($event, siderbarItem)">
           <img :src="siderbarItem.showData.icon" />
           <span>
             {{ siderbarItem.showData.name }}
@@ -34,12 +30,12 @@ const onDragstart = (event: DragEvent) => {
 </template>
 <style>
 .sidebar {
-  width: 200px;
   user-select: none;
   overflow: hidden;
   background-color: #fbfbfb;
   padding: 0 10px;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .collapse-item {
