@@ -9,8 +9,8 @@ export class ViewModel {
     scale = 1
     paddingRight = 300
     paddingBottom = 300
-    minWidth = 400
-    minHeight = 300
+    minWidth = 600
+    minHeight = 400
     translate = new Point() // 画布的整体的平移量，为了让所有图形都能显示出来，如果出现坐标的x，y为负数的图形则需要调整这个平移量
     constructor(public graph: GraphModel) { }
 

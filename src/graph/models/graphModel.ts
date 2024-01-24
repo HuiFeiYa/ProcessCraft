@@ -17,13 +17,13 @@ import {
   patchItemFactory,
 } from "../service";
 import { Point } from "../util/Point";
-import { shapeUtil } from "../shape/ShapeUtil";
+import { rootShape, shapeUtil } from "../shape/ShapeUtil";
 import { Bounds } from "../util/Bounds";
 export const emitter = new Emitter();
 export class GraphModel {
   disabled = false;
   shapes: Set<Shape>;
-  rootShape: Shape;
+  rootShape: Shape = rootShape;
   /**
    * graph配置对象(暴露的接口，由外部实现)
    */
@@ -31,10 +31,10 @@ export class GraphModel {
   constructor(opt: IGraphOption) {
     this.graphOption = opt;
     this.graphOption.graph = this;
-    const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
-    const windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
-    const padding = 12
-    this.rootShape = shapeUtil.createShape(SiderbarItemKey.FlowDiagram, { bounds: new Bounds(12, 12, windowWidth - SideBarWidth - padding * 2 - 60, windowHeight - HeaderHeight - padding * 2, 12, 12, 0, 0) })
+
+    // this.rootShape =
+    const store = useDrawStore()
+    store.shapeMap[this.rootShape.id] = this.rootShape
     this.viewModel.updateBounds()
   }
   /**
@@ -300,6 +300,7 @@ export class GraphModel {
         const endPoint = new Point(absX + width / 2, absY - LENGTH);
         const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
           waypoint: [startPoint, endPoint],
+          parentId: this.rootShape.id
         });
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
@@ -312,6 +313,7 @@ export class GraphModel {
         const endPoint = new Point(absX + width / 2, absY + height + LENGTH);
         const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
           waypoint: [startPoint, endPoint],
+          parentId: this.rootShape.id
         });
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
@@ -324,6 +326,7 @@ export class GraphModel {
         const endPoint = new Point(absX + width + LENGTH, absY + height / 2)
         const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
           waypoint: [startPoint, endPoint],
+          parentId: this.rootShape.id
         });
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
@@ -336,6 +339,7 @@ export class GraphModel {
         const endPoint = new Point(absX - LENGTH, absY + height / 2)
         const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
           waypoint: [startPoint, endPoint],
+          parentId: this.rootShape.id
         });
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
@@ -396,7 +400,7 @@ export class GraphModel {
     edgeShape: Shape,
     siderBarkey: SiderbarItemKey
   ) {
-    const shape = shapeUtil.createShape(siderBarkey, { point });
+    const shape = shapeUtil.createShape(siderBarkey, { point, parentId: edgeShape.parentId });
     /** 创建 shape， edge 的 target 指向该图形 */
     edgeShape.targetId = shape.id;
     /** 更新 shape bounds  */

@@ -5,7 +5,7 @@ import { Point } from "../util/Point";
 import { charWidthConfig } from "../util/charWidth";
 import { shapeFactory } from "./ShapeFactory";
 import { SiderBarKeyOptions } from "./behavior/SiderbarDropBehavior";
-import { SiderbarItemKey } from "./constant";
+import { HeaderHeight, SideBarWidth, SiderbarItemKey } from "./constant";
 export const lineHeightAdd = 6; // 行高比字体增加多少， 设置为1
 export const textPadding = 10; // 左右padding各 5
 export class ShapeUtil {
@@ -70,11 +70,13 @@ export class ShapeUtil {
     return (fontSize || 12) + lineHeightAdd;
   }
   createShape(siderBarKey: SiderbarItemKey, options: SiderBarKeyOptions): Shape {
-    const { point, waypoint } = options
+    let { point, waypoint, parentId } = options
     let shapeOption = shapeFactory.getModelShapeOption(siderBarKey);
     const shape = Shape.fromOption(shapeOption);
+    shape.parentId = parentId
     switch (shape.subShapeType) {
       case SubShapeType.CommonEdge: {
+        waypoint = waypoint || [point, new Point(point.x + 100, point.y)]
         return shapeUtil.initEdgeShape(shape, waypoint)
       }
       case SubShapeType.CommonDiagram: {
@@ -88,6 +90,15 @@ export class ShapeUtil {
 }
 
 export const shapeUtil = new ShapeUtil();
+
+const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+const windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+const minWidth = 400
+const minHeight = 300
+const padding = 12
+const canvasWidth = Math.max(minWidth, windowWidth - SideBarWidth - padding * 2 - 60)
+const canvasHeight = Math.max(minHeight, windowHeight - HeaderHeight - padding * 2 - 30)
+export const rootShape = shapeUtil.createShape(SiderbarItemKey.FlowDiagram, { bounds: new Bounds(12, 12, canvasWidth, canvasHeight, 12, 12, 0, 0), parentId: null })
 
 /**
  * 点是否在边框上

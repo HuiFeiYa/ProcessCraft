@@ -1,8 +1,10 @@
 import { Bounds, Shape, SubShapeType } from "../../types"
 import { Point } from "../../util/Point";
+import { Change } from "../../util/stepManager";
 import { shapeFactory } from "../ShapeFactory";
 import { shapeUtil } from "../ShapeUtil";
 import { SiderbarItemKey } from "../constant";
+import { ResizeUtil } from "../resizeUtil";
 import { SiderBarDropRunner } from "./SiderBarDropRunner";
 import { siderbarKeyConfig } from "./config";
 export interface SiderbarItemKeyConfig {
@@ -16,30 +18,31 @@ export interface SiderBarKeyOptions {
     point?: Point
     waypoint?: Point[]
     bounds?: Bounds
+    parentId: string
 }
 export class SiderBarDropBehavior {
     shapeParentId: string
 
     modelOwnerId: string
 
-    createdMainShape: Shape
-
-
     createdShapes: Set<Shape> = new Set()
 
-    affectedShapes: Set<Shape> = new Set()
+    affectedShapes: Set<Change> = new Set()
 
     siderbarConfigItem: SiderbarItemKeyConfig
     point: Point
     waypoint: Point[]
     constructor(public context: SiderBarDropRunner, public siderBarKey: SiderbarItemKey, options: SiderBarKeyOptions) {
-        const { point, waypoint } = options
+        const { point, waypoint, parentId } = options
         this.point = point
         this.waypoint = waypoint
+        this.shapeParentId = parentId
     }
     async run(): Promise<void | "stop"> {
         await this.setSiderbarConfigItem();
         await this.createShape();
+        /** 调整画布大小 */
+        await this.resizeShape()
     }
     async setSiderbarConfigItem() {
         const { siderBarKey } = this;
@@ -56,8 +59,17 @@ export class SiderBarDropBehavior {
 
     async createShape() {
         const { siderBarKey } = this;
-        const shape = shapeUtil.createShape(siderBarKey, { point: this.point })
+        const shape = shapeUtil.createShape(siderBarKey, { point: this.point, parentId: this.shapeParentId })
         this.createdShapes.add(shape);
     }
 
+    async resizeShape() {
+        const resizeUtil = new ResizeUtil();
+        this.createdShapes.forEach(shape => {
+            resizeUtil.expandParent(shape);
+        })
+        resizeUtil.affectedShapes.forEach(shape => {
+            this.affectedShapes.add(shape)
+        })
+    }
 }

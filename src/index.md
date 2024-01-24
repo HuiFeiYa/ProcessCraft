@@ -20,6 +20,7 @@
 - 根据 subShapeType 使用对应组件， 注册 components 处 src/graph/GraphView.vue:13
 - shapeComps src/graph/shape/index.ts:4
 - 图形关系绑定 src/graph/models/EdgePointMoveModel.ts:113
+* 自动更新画布宽高 src/graph/shape/resizeUtil.ts:16
 
 ## todo
 

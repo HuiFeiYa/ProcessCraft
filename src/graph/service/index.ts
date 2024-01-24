@@ -126,10 +126,10 @@ export enum StepOperation {
 
 type Shapes = Shape[] | Set<Shape>;
 /** 添加多个 shape 到 store，并且存储记录到 stepManager */
-export const addShapesService = (shapes: Shapes) => {
-  store.addShapes(shapes);
-  shapes.forEach((shape: Shape) => {
-    const stepId = getStepId();
+export const addShapesService = (createdShapes: Set<Shape> | Shape[], affectedShapes?: Set<Change>) => {
+  store.addShapes(createdShapes);
+  let changes = []
+  createdShapes.forEach((shape: Shape) => {
     const change = new Change(ChangeType.INSERT, shape.id);
     change.newValue = {
       siderbarKey: shape.siderbarKey,
@@ -137,13 +137,17 @@ export const addShapesService = (shapes: Shapes) => {
       waypoint: shape.waypoint,
       shapeId: shape.id,
     };
-    const step = new Step(stepId, currentStep.nextStepIndex, [
-      convertToRaw(change),
-    ]);
-    currentStep.deleteAfterIndex();
-    stepManager.add(step);
-    currentStep.freshCurrentStep(stepId);
+    changes.push(convertToRaw(change))
   });
+
+  affectedShapes?.forEach((change: Change) => {
+    changes.push(convertToRaw(change))
+  })
+  const stepId = getStepId();
+  const step = new Step(stepId, currentStep.nextStepIndex, changes);
+  currentStep.deleteAfterIndex();
+  stepManager.add(step);
+  currentStep.freshCurrentStep(stepId);
 };
 
 /**

@@ -15,7 +15,7 @@ import {
   stepManager,
 } from "../../graph/util/stepManager";
 import { Point } from "../../graph/util/Point";
-import { shapeUtil } from "../../graph/shape/ShapeUtil";
+import { rootShape, shapeUtil } from "../../graph/shape/ShapeUtil";
 import { HeaderHeight } from "../../graph/shape/constant";
 const store = useDrawStore();
 const props = defineProps<{ graph: GraphModel }>();
@@ -65,6 +65,7 @@ const restoreShape = async (value: UpdateShapeValue) => {
   const shape = shapeUtil.createShape(siderbarKey, {
     point: new Point(bounds.absX, bounds.absY),
     waypoint,
+    parentId: rootShape.id
   });
   shape.id = shapeId;
   return shape;
@@ -136,6 +137,7 @@ const resetHandler = () => {
   store.$reset();
   stepManager.clear();
   currentStep.reset();
+  store.shapeMap[rootShape.id] = rootShape
 };
 </script>
 
