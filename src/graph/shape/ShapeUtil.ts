@@ -1,4 +1,5 @@
-import { Shape, SubShapeType } from "../types";
+import { useDrawStore } from "../../editor/store";
+import { Shape, ShapeType, SubShapeType } from "../types";
 import { getTextWidth } from "../util";
 import { Bounds } from "../util/Bounds";
 import { Point } from "../util/Point";
@@ -86,6 +87,37 @@ export class ShapeUtil {
         return shapeUtil.initShape(shape, point)
       }
     }
+  }
+  /**
+  * 一个图形有哪些连线
+  * @param shapeMap
+  * @returns
+  */
+  getEndToEdgeMap() {
+    const store = useDrawStore()
+    const endToEdgeMap = new Map<string, Set<Shape>>();
+    const edges = store.shapes.filter(shape => shape.shapeType === ShapeType.Edge)
+    edges.forEach(edge => {
+      if (edge.sourceId) {
+        let set = endToEdgeMap.get(edge.sourceId);
+        if (!set) {
+          set = new Set();
+          endToEdgeMap.set(edge.sourceId, set);
+        }
+        set.add(edge);
+
+      }
+      if (edge.targetId) {
+        let set = endToEdgeMap.get(edge.targetId);
+        if (!set) {
+          set = new Set();
+          endToEdgeMap.set(edge.targetId, set);
+        }
+        set.add(edge);
+
+      }
+    });
+    return endToEdgeMap
   }
 }
 

@@ -1,4 +1,6 @@
 import { Base36 } from "../types";
+import { Bounds, int } from "./Bounds";
+import { Point } from "./Point";
 import { charWidthConfig } from "./charWidth";
 
 /**
@@ -330,4 +332,14 @@ export function recursiveOmit(obj1, obj2) {
   }
 
   return [result1, result2];
+}
+
+export function getBoundsCenterPoint(bounds: Bounds, useFloat = true) {
+  let x = bounds.absX + bounds.width / 2;
+  let y = bounds.absY;
+  if (useFloat) {
+    x = float(x);
+    y = float(y);
+  }
+  return new Point(x, y);
 }

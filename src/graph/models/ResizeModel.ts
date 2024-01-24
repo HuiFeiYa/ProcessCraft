@@ -34,7 +34,6 @@ export class ResizeModel {
         this.clearEvents?.();
     }
     async startResize(event: MouseEvent, resizeShape: Shape, resizeIndex: VertexType) {
-        // const res: Bounds | undefined = await this.graph.graphOption.getMinimumBounds?.(resizeShape, resizeIndex);
         const res = new Bounds(0, 0, 100, 100, 0, 0)
         // absX x轴移动的最大移动量， absY 是Y轴的最大值， height 是最小高度， width 是最小宽度
         if (res) {
