@@ -4,7 +4,7 @@ import { Change } from "../../util/stepManager";
 import { shapeFactory } from "../ShapeFactory";
 import { shapeUtil } from "../ShapeUtil";
 import { SiderbarItemKey } from "../constant";
-import { ResizeUtil } from "../resizeUtil";
+import { ResizeUtil, resizeUtil } from "../resizeUtil";
 import { SiderBarDropRunner } from "./SiderBarDropRunner";
 import { siderbarKeyConfig } from "./config";
 export interface SiderbarItemKeyConfig {
@@ -64,7 +64,6 @@ export class SiderBarDropBehavior {
     }
 
     async resizeShape() {
-        const resizeUtil = new ResizeUtil();
         this.createdShapes.forEach(shape => {
             resizeUtil.expandParent(shape);
         })

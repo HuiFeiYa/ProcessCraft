@@ -19,6 +19,7 @@ import {
 import { Point } from "../util/Point";
 import { rootShape, shapeUtil } from "../shape/ShapeUtil";
 import { Bounds } from "../util/Bounds";
+import { resizeUtil } from "../shape/resizeUtil";
 export const emitter = new Emitter();
 export class GraphModel {
   disabled = false;
@@ -243,11 +244,10 @@ export class GraphModel {
       } else {
         newStyle.zIndex = maxZIndex + 1;
       }
-      /** 不参与 step 变更记录，直接修改 shape */
-      // res.oldVal.style = shape.style
-      // res.newVal.style = newStyle
+      resizeUtil.expandParent(Object.assign({}, shape, { bounds: res.newVal.bounds }))
     });
     batchUpdateShapesService(valList);
+
   }
   getMoveRange(moveShapes: Shape[]): Promise<MoveRange> {
     // 判断是否存在只能沿x或y轴移动的元素，没有考虑上面俩

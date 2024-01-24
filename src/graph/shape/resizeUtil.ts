@@ -7,14 +7,14 @@ import { Change, ChangeType } from "../util/stepManager";
  */
 export class ResizeUtil {
     affectedShapes: Set<Change> = new Set()
-    store = useDrawStore()
     /**
      * 画布的撑开
      * 画布只能向右边或下边撑开
      * @param shape
      */
     expandParent(shape: Shape) {
-        const parent = this.store.shapeMap[shape.parentId]
+        const store = useDrawStore()
+        const parent = store.shapeMap[shape.parentId]
         const bounds = shape.bounds;
         const parentBounds = parent.bounds;
         // 超出当前画布 x 轴方向
@@ -41,3 +41,4 @@ export class ResizeUtil {
         }
     }
 }
+export const resizeUtil = new ResizeUtil();

@@ -79,9 +79,10 @@ export const baseShapeOption: ShapeOption = {
    */
   async customEndMove(moveModel: MoveModel, dx: number, dy: number) {
     // 更新模型位置
-    const effectList: UpdatePatchItem[] = moveModel.movingShapes.map(
+    const effectList: UpdatePatchItem[] = []
+    moveModel.movingShapes.map(
       (shape) => {
-        return {
+        const change = {
           oldVal: { bounds: shape.bounds },
           newVal: {
             bounds: {
