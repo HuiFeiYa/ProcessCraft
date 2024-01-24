@@ -20,6 +20,7 @@ import QuickCreatePoint from "./shape/interaction/QuickCreatePoint.vue";
 import ShapeDashboard from "./shape/interaction/shapeDashboard.vue";
 import { SubShapeType } from "./types/index";
 import { Point } from "./util/Point";
+import { resizeUtil } from "./shape/resizeUtil";
 const store = useDrawStore();
 const props = defineProps<{ graph: GraphModel }>();
 provide("graph", props.graph);
@@ -112,6 +113,7 @@ const handleQuickCreate = async (index: CreatePointType) => {
     index
   );
   edgeIndex.value = index;
+  resizeUtil.expandParent(edgeShape)
   quickCreateEdgeShape.value = edgeShape
   // 弹框，选择继续要创建的元素
   props.graph.isShowShapeDashboard = true
@@ -128,6 +130,7 @@ const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
     edge
   );
   edgeIndex.value = "";
+  resizeUtil.expandParent(shape)
   quickCreateEdgeShape.value = null;
   props.graph.isShowShapeDashboard = false
 };

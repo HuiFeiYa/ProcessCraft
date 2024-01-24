@@ -5,7 +5,8 @@ import { IGraphOption, Shape } from "../graph/types";
 import { ShapeOption } from "../graph/types/shapeOption";
 import { SiderBarDropModel } from "./SiderBarDropModel";
 import { GraphTab } from "./project/GraphTab";
-import { useDrawStore } from "./store";
+const graphOption = new GraphOption()
+export const graph = reactive(new GraphModel(graphOption));
 export class GraphEditor {
   graphOption!: GraphOption;
 
@@ -13,10 +14,7 @@ export class GraphEditor {
 
   shapes: Set<Shape>
   siderBarDropModel: SiderBarDropModel
-  store = useDrawStore()
   constructor(public tab: GraphTab) {
-    const graphOption = new GraphOption()
-    const graph = reactive(new GraphModel(graphOption));
     this.graph = graph;
     graph.init();
     this.init()

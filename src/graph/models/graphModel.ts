@@ -5,7 +5,6 @@ import { ViewModel } from "./ViewModel";
 import { ShapeCompManager } from "./shapeManager";
 import { SelectionModel } from "./SelectionModel";
 import { IGraphOption, Shape, ShapeKey, SubShapeType } from "../types";
-import { useDrawStore } from "../../editor/store";
 import { ResizeModel } from "./ResizeModel";
 import { EdgePointMoveModel } from "./EdgePointMoveModel";
 import { MarkerModel } from "./MarkerModel";
@@ -18,8 +17,8 @@ import {
 } from "../service";
 import { Point } from "../util/Point";
 import { rootShape, shapeUtil } from "../shape/ShapeUtil";
-import { Bounds } from "../util/Bounds";
 import { resizeUtil } from "../shape/resizeUtil";
+import { useDrawStore } from "../../editor/store";
 export const emitter = new Emitter();
 export class GraphModel {
   disabled = false;
@@ -32,10 +31,6 @@ export class GraphModel {
   constructor(opt: IGraphOption) {
     this.graphOption = opt;
     this.graphOption.graph = this;
-
-    // this.rootShape =
-    const store = useDrawStore()
-    store.shapeMap[this.rootShape.id] = this.rootShape
     this.viewModel.updateBounds()
   }
   /**
@@ -79,7 +74,6 @@ export class GraphModel {
    * 图形组件管理器(当前画布上使用到的那些图形组件)
    */
   shapeCompManager = new ShapeCompManager();
-  store = useDrawStore();
 
   /**
    * children索引， id -> children，(父图形ID对应的其多个子图形)
@@ -92,6 +86,8 @@ export class GraphModel {
   isShowShapeDashboard = false;
   init() {
     this.initEvents();
+    const store = useDrawStore()
+    store.shapeMap[this.rootShape.id] = this.rootShape
   }
   initEvents() {
     // 移动事件监听
@@ -154,9 +150,10 @@ export class GraphModel {
    * @param dy
    */
   async customEndMove(moveModel: MoveModel, dx: number, dy: number) {
+    const store = useDrawStore()
     // 当数组为空时，得到的时 -Infinity 需要设置最低为0
     const maxZIndex = Math.max(
-      ...this.store.shapes
+      ...store.shapes
         .map((item) => item.style?.zIndex)
         .filter((item) => item !== undefined),
       0
@@ -178,7 +175,7 @@ export class GraphModel {
 
       if (shape.subShapeType === SubShapeType.Block) {
         // 查询 shapes 中关联的线，将线的一端进行更新
-        this.store.shapes.forEach((s) => {
+        store.shapes.forEach((s) => {
           if (s.subShapeType === SubShapeType.CommonEdge) {
             if (s.sourceId === shape.id) {
               let edgePatch = patchItemFactory();

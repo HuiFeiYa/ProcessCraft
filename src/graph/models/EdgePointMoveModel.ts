@@ -5,7 +5,6 @@ import { ShapeType } from "../types/shapeOption";
 import { Point } from "../util/Point";
 import { int } from "../util/WaypointUtil";
 import { GraphModel } from "./graphModel";
-import { useDrawStore } from "../../editor/store";
 import { Marker } from "./Marker";
 import { Line } from "../shape/Line";
 import { shapeUtil } from "../shape/ShapeUtil";
@@ -29,7 +28,6 @@ export class EdgePointMoveModel {
     targetShape?: Shape
     moved = false
     marker?: Marker
-    store = useDrawStore()
     // 是否连到图形
     isConnectShape = false
     constructor(public graph: GraphModel) {
