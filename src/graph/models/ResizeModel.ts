@@ -77,8 +77,8 @@ export class ResizeModel {
             const originBounds = this.resizeShape.bounds;
             const previewBounds = this.previewBounds;
             // 图形最小宽高
-            const MIN_HEIGHT = 50
-            const MIN_WIDTH = 100
+            const MIN_HEIGHT = 30
+            const MIN_WIDTH = 30
             switch (this.resizeIndex) {
                 case VertexType.leftTop: {
                     // 最小 x 轴坐标为0

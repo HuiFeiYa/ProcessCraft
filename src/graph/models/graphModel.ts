@@ -360,9 +360,15 @@ export class GraphModel {
     index: CreatePointType,
     edgeShape: Shape
   ) {
-    const width = 100;
-    const height = 50;
+    let width = 100;
+    let height = 50;
     const LENGTH = 100;
+    const store = useDrawStore()
+    const oldSize = store.getShapeSize(siderBarkey)
+    if (oldSize) {
+      width = oldSize.width
+      height = oldSize.height
+    }
     switch (index) {
       case CreatePointType.Top: {
         const startPoint = new Point(

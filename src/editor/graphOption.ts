@@ -8,6 +8,7 @@ import { IGraphOption, Shape, SubShapeType } from "../graph/types/index";
 import { Bounds } from "../graph/util/Bounds";
 import { Point } from "../graph/util/Point";
 import { getBoundsCenterPoint } from "../graph/util";
+import { useDrawStore } from "./store";
 export class GraphOption implements IGraphOption {
   // src/editor/graphEditor.ts:18 更新 graph 处
   graph!: GraphModel
@@ -58,7 +59,8 @@ export class GraphOption implements IGraphOption {
     }
     const changes = this.adjustEdgeWhenShapeResized(Object.assign({}, shape, resizeChange.newVal))
     batchUpdateShapesService([resizeChange, ...changes])
-    // updateShapeService(shape.id, , )
+    const store = useDrawStore()
+    store.setShapeSize(shape.siderbarKey, { width: newBounds.width, height: newBounds.height })
     resizeUtil.expandParent(Object.assign({}, shape, { bounds: newBounds }))
   }
   getConnectTargetShape(edgeKey: string, hoverShape: Shape | undefined, point: Point) {

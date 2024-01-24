@@ -74,6 +74,13 @@ export class ShapeUtil {
     let { point, waypoint, parentId } = options
     let shapeOption = shapeFactory.getModelShapeOption(siderBarKey);
     const shape = Shape.fromOption(shapeOption);
+    if (siderBarKey !== SiderbarItemKey.FlowDiagram) {
+      const store = useDrawStore()
+      const oldSize = store.getShapeSize(shape.siderbarKey)
+      if (oldSize) {
+        Object.assign(shape.bounds, oldSize)
+      }
+    }
     shape.parentId = parentId
     switch (shape.subShapeType) {
       case SubShapeType.CommonEdge: {
