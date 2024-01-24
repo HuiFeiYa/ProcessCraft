@@ -89,7 +89,7 @@ export const siderBarList: SiderBarItem[] = [
     dropdownTag: "",
     showData: {
       name: "矩形",
-      icon: "src/assets/Block.svg",
+      icon: "src/assets/rect.png",
       siderBarkey: SiderbarItemKey.Block,
     },
   },
@@ -99,7 +99,7 @@ export const siderBarList: SiderBarItem[] = [
     dropdownTag: "",
     showData: {
       name: "直线",
-      icon: "src/assets/ItemFlow.svg",
+      icon: "src/assets/line.png",
       siderBarkey: SiderbarItemKey.ItemFlow,
     },
   },

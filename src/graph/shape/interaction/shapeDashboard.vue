@@ -14,20 +14,10 @@ const symbolShapes = siderBarList.filter((item) => {
 });
 </script>
 <template>
-  <foreignObject
-    width="100"
-    height="100"
-    :x="x + 6"
-    :y="y"
-    class="shape-dashboard"
-  >
+  <foreignObject width="100" height="100" :x="x + 6" :y="y" class="shape-dashboard">
     <div>
-      <img
-        v-for="item of symbolShapes"
-        class="shape"
-        :src="item.showData.icon"
-        @click="handleCreateShape(item.showData.siderBarkey)"
-      />
+      <img v-for="item of symbolShapes" class="shape" :src="item.showData.icon"
+        @click="handleCreateShape(item.showData.siderBarkey)" />
     </div>
   </foreignObject>
 </template>
@@ -42,10 +32,16 @@ const symbolShapes = siderBarList.filter((item) => {
   border: 1px solid #e9edf2;
   pointer-events: all;
 }
+
+.shape-dashboard img {
+  width: 26px;
+}
+
 .shape {
   margin-right: 10px;
   padding: 4px;
 }
+
 .shape:hover {
   background-color: #eee;
 }

@@ -17,10 +17,9 @@ const props = defineProps<{
 
 const graph = inject<GraphModel>("graph");
 const eventHandler = createEventHandler(graph, props);
-const editable = ref(false);
+const editable = ref(true);
 const labelDom = ref(null);
-const text = ref(props.shape.modelName);
-const prevText = ref(props.shape.modelName);
+const text = ref(props.shape.modelName); const prevText = ref(props.shape.modelName);
 const prevNameBounds = ref(new Bounds());
 /** 非受控组件 */
 const nameBounds = reactive(props.shape.nameBounds);
@@ -127,68 +126,31 @@ const handleBlur = () => {
     prevText.value = text.value;
   }
 };
-window.addEventListener("mouseup", handleBlur);
+// window.addEventListener("mouseup", handleBlur);
+
+onMounted(() => {
+  labelDom.value.focus()
+})
 </script>
 <template>
-  <g
-    @click.stop
-    @mousedown.stop
-    @mouseup.stop
-    @drop.stop
-    v-on="eventHandler"
-    style="position: relative"
-    @dblclick="handleDbClick"
-  >
+  <g @click.stop @mousedown.stop @mouseup.stop @drop.stop v-on="eventHandler" style="position: relative"
+    @dblclick="handleDbClick">
     <g :style="style">
       <!-- 展示线 -->
-      <path
-        :d="computedData.svgPath"
-        :stroke="computedData.style.strokeColor"
-        :stroke-dasharray="
-          computedData.style.strokeDasharray ||
-          (computedData.style.dashed ? '10 8' : '')
-        "
-        :stroke-width="computedData.style.strokeWidth"
-        fill="none"
-        stroke-linejoin="round"
-      />
+      <path :d="computedData.svgPath" :stroke="computedData.style.strokeColor" :stroke-dasharray="computedData.style.strokeDasharray ||
+        (computedData.style.dashed ? '10 8' : '')
+        " :stroke-width="computedData.style.strokeWidth" fill="none" stroke-linejoin="round" />
 
       <!-- 箭头 -->
-      <component
-        :is="arrowMap[computedData.style.targetArrow]"
-        v-if="computedData.style.targetArrow"
-        :edge="shape"
-        :style="computedData.style"
-        position="end"
-      />
+      <component :is="arrowMap[computedData.style.targetArrow]" v-if="computedData.style.targetArrow" :edge="shape"
+        :style="computedData.style" position="end" />
       <!-- 操作线，设置宽度为10，透明方便拖拽 -->
-      <path
-        :d="computedData.svgPath"
-        fill="none"
-        :stroke-width="10"
-        stroke="rgba(0,0,0,0)"
-        stroke-linejoin="round"
-      />
+      <path :d="computedData.svgPath" fill="none" :stroke-width="10" stroke="rgba(0,0,0,0)" stroke-linejoin="round" />
     </g>
-    <foreignObject
-      :width="labelStyle.width"
-      :height="labelStyle.height"
-      :x="labelStyle.absX"
-      :y="labelStyle.absY"
-      @click.stop
-      @mousedown.stop
-      @mouseup.stop
-      @drop.stop
-    >
-      <div
-        ref="labelDom"
-        class="label"
-        :class="{ edit: editable }"
-        :contenteditable="editable"
-        @focus="handleFocus"
-        @input="handleInput"
-        @blur="handleBlur"
-      >
+    <foreignObject :width="labelStyle.width" :height="labelStyle.height" :x="labelStyle.absX" :y="labelStyle.absY"
+      @click.stop @mousedown.stop @mouseup.stop @drop.stop>
+      <div ref="labelDom" class="label" :class="{ edit: editable }" :contenteditable="editable" @focus="handleFocus"
+        @input="handleInput" @blur="handleBlur">
         {{ shape.modelName }}
       </div>
     </foreignObject>
@@ -211,10 +173,11 @@ window.addEventListener("mouseup", handleBlur);
   border: 1px solid transparent;
   background-color: #fff;
   cursor: grab;
+  user-select: none;
 }
 
 .edit {
-  border: 1px solid red;
+  border: 1px solid #e5ce1c;
   padding: 0 5px;
 }
 </style>

@@ -59,7 +59,7 @@ const space = 1;
 .create {
   color: #7ebfde !important;
   font-weight: 500;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.7);
   padding: 1px;
 }
 

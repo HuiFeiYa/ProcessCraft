@@ -17,12 +17,15 @@ const onDragstart = (event: DragEvent) => {
   <div class="sidebar" @dragstart="onDragstart" :style="{ width: SideBarWidth + 'px' }">
     <el-collapse v-model="active" style="margin-top: -3px">
       <el-collapse-item title="通用" name="common">
-        <div v-for="siderbarItem in siderBarList" :key="siderbarItem.modelId" class="collapse-item"
-          @mousedown="onMousedown($event, siderbarItem)">
-          <img :src="siderbarItem.showData.icon" />
-          <span>
-            {{ siderbarItem.showData.name }}
-          </span>
+        <div class="collapse">
+          <div v-for="siderbarItem in siderBarList" :key="siderbarItem.modelId" class="collapse-item"
+            @mousedown="onMousedown($event, siderbarItem)">
+            <el-popover placement="bottom" :content="siderbarItem.showData.name" trigger="hover" width="60">
+              <template #reference>
+                <img :src="siderbarItem.showData.icon" />
+              </template>
+            </el-popover>
+          </div>
         </div>
       </el-collapse-item>
     </el-collapse>
@@ -38,22 +41,26 @@ const onDragstart = (event: DragEvent) => {
   box-sizing: border-box;
 }
 
-.collapse-item {
-  user-select: none;
+.collapse {
   display: flex;
   align-items: center;
 }
 
+.collapse-item {
+  user-select: none;
+  margin-right: 4px;
+}
+
 .collapse-item span {
-  margin-left: 4px;
+  margin-left: 10px;
   vertical-align: top;
   /* 阻止原生的拖动视觉效果，拖动行为又父级代理 */
   pointer-events: none;
 }
 
 .collapse-item img {
+  width: 26px;
   vertical-align: text-top;
   /* 阻止原生的拖动视觉效果，拖动行为又父级代理 */
-  pointer-events: none;
 }
 </style>

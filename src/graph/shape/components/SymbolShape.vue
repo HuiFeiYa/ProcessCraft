@@ -26,7 +26,9 @@ const handleSave = () => {
 const handleInput = (e) => {
   text.value = e.target.innerHTML
 }
-
+onMounted(() => {
+  input.value.focus()
+})
 </script>
 <template>
   <g @click.stop @mousedown.stop @mouseup.stop @mousemove.stop @dragenter.stop dragenter stop @dragleave.stop @drop.stop
@@ -34,10 +36,10 @@ const handleInput = (e) => {
 
     <!-- 最外层是绝对坐标，要创建相对坐标系需要用<g transform=" translate(absX,absY) /> 或foreignObject" -->
     <foreignObject :width="shape.bounds.width" :height="shape.bounds.height" :x="shape.bounds.absX" :y="shape.bounds.absY"
-      style="overflow:visible" @dblclick="handleDbClick">
-      <div class="textarea" ref="input"
-        style="height:100% ;background: linear-gradient(to right, rgb(221, 205, 158), rgb(253, 247, 223)); "
-        :contenteditable="editable" @input="handleInput" @blur="handleSave">
+      style="overflow:visible;border: 1px solid #000;padding: 1px;background-color: #fff;"
+      :style="{ lineHeight: text ? 'normal' : shape.bounds.height - 4 + 'px' }" @dblclick="handleDbClick">
+      <!-- 减去 padding 和 border 的距离 -->
+      <div class="textarea" ref="input" :contenteditable="editable" @input="handleInput" @blur="handleSave">
         {{ shape.modelName }}
       </div>
     </foreignObject>
@@ -53,5 +55,9 @@ const handleInput = (e) => {
   caret-color: black;
   user-select: none;
   text-align: center;
+  word-break: break-all;
+  height: calc(100% - 4px);
+  width: calc(100% - 4px);
+  margin: 2px;
 }
 </style>
