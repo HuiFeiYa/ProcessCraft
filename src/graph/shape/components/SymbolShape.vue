@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 import { Shape } from '../../types/index'
 import { createEventHandler } from '../createEventHandler';
 import { GraphModel } from '../../models/graphModel';
@@ -13,6 +13,10 @@ const eventHandler = createEventHandler(graph, props);
 const text = ref(props.shape.modelName)
 const prevText = ref(props.shape.modelName)
 const editable = ref(true)
+
+const radiusValue = computed(() => {
+  return props.shape.style.radius || 0
+})
 /** 双击图形时显示编辑 label 输入框 */
 const handleDbClick = () => {
   editable.value = true
@@ -35,9 +39,11 @@ onMounted(() => {
     @dragover.stop v-on="eventHandler">
 
     <!-- 最外层是绝对坐标，要创建相对坐标系需要用<g transform=" translate(absX,absY) /> 或foreignObject" -->
+    <rect :rx="radiusValue" :ry="radiusValue" :width="shape.bounds.width" :height="shape.bounds.height"
+      :x="shape.bounds.absX" :y="shape.bounds.absY" fill="#fff" stroke="#000" stroke-width="1">
+    </rect>
     <foreignObject :width="shape.bounds.width" :height="shape.bounds.height" :x="shape.bounds.absX" :y="shape.bounds.absY"
-      style="overflow:visible;border: 1px solid #000;padding: 1px;background-color: #fff;"
-      :style="{ lineHeight: text ? 'normal' : shape.bounds.height - 4 + 'px' }" @dblclick="handleDbClick">
+      :style="{ lineHeight: text ? 'normal' : shape.bounds.height + 'px' }" @dblclick="handleDbClick">
       <!-- 减去 padding 和 border 的距离 -->
       <div class="textarea" ref="input" :contenteditable="editable" @input="handleInput" @blur="handleSave">
         {{ shape.modelName }}
@@ -52,12 +58,9 @@ onMounted(() => {
   justify-content: center;
   outline-color: transparent;
   /* 设置光标颜色 */
-  caret-color: black;
+  caret-color: rgb(0, 0, 0);
   user-select: none;
   text-align: center;
   word-break: break-all;
-  height: calc(100% - 4px);
-  width: calc(100% - 4px);
-  margin: 2px;
 }
 </style>

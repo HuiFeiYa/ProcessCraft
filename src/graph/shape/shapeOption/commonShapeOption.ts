@@ -189,6 +189,17 @@ export const modelKeyConfig = {
       siderbarKey: SiderbarItemKey.Block,
     },
   },
+  [SiderbarItemKey.Start]: {
+    shapeOption: {
+      ...blockOption,
+      shapeKey: ShapeKey.Block,
+      siderbarKey: SiderbarItemKey.Start,
+      style: {
+        ...blockOption.style,
+        radius: 20, // 圆角大小
+      }
+    },
+  },
   [SiderbarItemKey.ItemFlow]: {
     shapeOption: {
       ...edgeOption,
@@ -214,5 +225,13 @@ export const modelKeyConfig = {
         name: 'Model'
       }
     }
-  }
+  },
+  [SiderbarItemKey.Decide]: {
+    shapeOption: {
+      ...blockOption,
+      shapeKey: ShapeKey.Decide,
+      siderbarKey: SiderbarItemKey.Decide,
+      SubShapeType: SubShapeType.Decide
+    },
+  },
 };

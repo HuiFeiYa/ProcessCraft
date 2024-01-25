@@ -22,6 +22,7 @@ export enum ShapeType {
 
 // 图形小类， 小类声明了要用哪个组件来渲染图形，在SubShapeType_Component 映射了小类到组件的映射
 export enum SubShapeType {
+  Decide = "Decide",
   requirementMapShape = "requirementMapShape",
   CommonEdgeLabel = "CommonEdgeLabel",
   EdgeKewordLabel = "EdgeKewordLabel",
@@ -106,6 +107,7 @@ export enum SubShapeType {
  * shapeKey是最细的标识，用于标识各个图形，用于业务逻辑中的图形逻辑判断，基本每个模型都会对应一到多个
  */
 export enum ShapeKey {
+  Decide = "Decide",
   StructureSysMLRetrospectMap = "StructureSysMLRetrospectMap", // 结构追溯图画布
   StructureRetrospectShape = "StructureRetrospectShape", // 结构追溯图元素
   RetrospectShape = "RetrospectShape", // 追溯图元素

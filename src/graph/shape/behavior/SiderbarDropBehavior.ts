@@ -6,14 +6,6 @@ import { CreateType, shapeUtil } from "../ShapeUtil";
 import { SiderbarItemKey } from "../constant";
 import { ResizeUtil, resizeUtil } from "../resizeUtil";
 import { SiderBarDropRunner } from "./SiderBarDropRunner";
-import { siderbarKeyConfig } from "./config";
-export interface SiderbarItemKeyConfig {
-    metaclass: string | null;
-    stereotype: string[];
-    operation: string;
-    shapeKey: string;
-}
-
 export interface SiderBarKeyOptions {
     point?: Point
     waypoint?: Point[]
@@ -31,7 +23,6 @@ export class SiderBarDropBehavior {
 
     affectedShapes: Set<Change> = new Set()
 
-    siderbarConfigItem: SiderbarItemKeyConfig
     point: Point
     waypoint: Point[]
     constructor(public context: SiderBarDropRunner, public siderBarKey: SiderbarItemKey, options: SiderBarKeyOptions) {
@@ -41,18 +32,9 @@ export class SiderBarDropBehavior {
         this.shapeParentId = parentId
     }
     async run(): Promise<void | "stop"> {
-        await this.setSiderbarConfigItem();
         await this.createShape();
         /** 调整画布大小 */
         await this.resizeShape()
-    }
-    async setSiderbarConfigItem() {
-        const { siderBarKey } = this;
-        const config = siderbarKeyConfig[siderBarKey];
-        if (!config) {
-            throw new Error("siderbarkey node found");
-        }
-        this.siderbarConfigItem = config;
     }
     async setShapeParentId() {
         const parentId = this.context.shape.id;

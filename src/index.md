@@ -11,9 +11,10 @@
 - 模型配置 modelKeyConfig src/graph/shape/shapeOption/commonShapeOption.ts
 - 创建图形 src/graph/shape/behavior/SiderbarDropBehavior.ts:38
 * 画布坐标参照 src/graph/models/ViewModel.ts:39
-### behavior
+### service
 
 - siderbarkey 行为配置 src/graph/shape/behavior/config.ts:13
+* siderbarkey 对应的 behavior src/graph/shape/behavior/config.ts:22
 
 ## graph
 
@@ -21,6 +22,7 @@
 - shapeComps src/graph/shape/index.ts:4
 - 图形关系绑定 src/graph/models/EdgePointMoveModel.ts:113
 * 自动更新画布宽高 src/graph/shape/resizeUtil.ts:16
+* graph 组件注册处 src/graph/shape/index.ts:16
 
 ## todo
 

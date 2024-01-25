@@ -29,6 +29,7 @@ export interface StyleObject {
   rounded?: boolean
   rightAngle?: boolean
   imageBox?: boolean
+  radius?: number
   [key: string]: any
 }
 

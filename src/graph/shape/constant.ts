@@ -60,7 +60,9 @@ export enum CreatePointType {
 export enum SiderbarItemKey {
   Block = "Block",
   ItemFlow = "ItemFlow",
-  FlowDiagram = "FlowDiagram"
+  FlowDiagram = "FlowDiagram",
+  Start = 'Start',
+  Decide = 'Decide'
 }
 
 export enum MetaclassType {
@@ -88,6 +90,16 @@ export const siderBarList: SiderBarItem[] = [
     operation: "",
     dropdownTag: "",
     showData: {
+      name: "开始/结束",
+      icon: "src/assets/startend.png",
+      siderBarkey: SiderbarItemKey.Start,
+    },
+  },
+  {
+    modelId: "SysML::Blocks::Block",
+    operation: "",
+    dropdownTag: "",
+    showData: {
       name: "矩形",
       icon: "src/assets/rect.png",
       siderBarkey: SiderbarItemKey.Block,
@@ -100,6 +112,16 @@ export const siderBarList: SiderBarItem[] = [
     showData: {
       name: "直线",
       icon: "src/assets/line.png",
+      siderBarkey: SiderbarItemKey.ItemFlow,
+    },
+  },
+  {
+    modelId: "SysML::ItemFlow",
+    operation: "",
+    dropdownTag: "",
+    showData: {
+      name: "判定",
+      icon: "src/assets/decide.png",
       siderBarkey: SiderbarItemKey.ItemFlow,
     },
   },
