@@ -35,7 +35,6 @@ export class MoveModel {
             this.endPoint.x = event.clientX;
             this.endPoint.y = event.clientY;
             this.mouseDown = true;
-            this.showMovingPreview = true;
             this.movingShapes = [mouseDownShape];
             this.previewDx = 0;
             this.previewDy = 0;
@@ -62,6 +61,8 @@ export class MoveModel {
     }
     async onMouseMove(event: MouseEvent, shape: Shape) {
         const movingShapes = this.movingShapes
+        // 移动时展示预览框
+        this.showMovingPreview = true;
         /** 当线有连接不可以移动 */
         for (const s of movingShapes) {
             if (s.subShapeType === SubShapeType.CommonEdge && (s.sourceId || s.targetId)) {

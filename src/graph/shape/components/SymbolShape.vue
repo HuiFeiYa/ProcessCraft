@@ -15,7 +15,7 @@ const prevText = ref(props.shape.modelName)
 const editable = ref(true)
 
 const radiusValue = computed(() => {
-  return props.shape.style.radius || 0
+  return props.shape.style.borderRadius || 0
 })
 /** 双击图形时显示编辑 label 输入框 */
 const handleDbClick = () => {
@@ -40,10 +40,12 @@ onMounted(() => {
 
     <!-- 最外层是绝对坐标，要创建相对坐标系需要用<g transform=" translate(absX,absY) /> 或foreignObject" -->
     <rect :rx="radiusValue" :ry="radiusValue" :width="shape.bounds.width" :height="shape.bounds.height"
-      :x="shape.bounds.absX" :y="shape.bounds.absY" fill="#fff" stroke="#000" stroke-width="1">
+      :x="shape.bounds.absX" :y="shape.bounds.absY" fill="#fff" stroke="#000" stroke-width="2">
     </rect>
-    <foreignObject :width="shape.bounds.width" :height="shape.bounds.height" :x="shape.bounds.absX" :y="shape.bounds.absY"
-      :style="{ lineHeight: text ? 'normal' : shape.bounds.height + 'px' }" @dblclick="handleDbClick">
+    <foreignObject :width="shape.bounds.width - 4" :height="shape.bounds.height - 4" :x="shape.bounds.absX + 2"
+      :y="shape.bounds.absY + 2" style="overflow: hidden;"
+      :style="{ lineHeight: text ? 'normal' : shape.bounds.height + 'px', borderRadius: radiusValue + 'px' }"
+      @dblclick="handleDbClick">
       <!-- 减去 padding 和 border 的距离 -->
       <div class="textarea" ref="input" :contenteditable="editable" @input="handleInput" @blur="handleSave">
         {{ shape.modelName }}

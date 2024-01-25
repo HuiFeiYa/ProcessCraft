@@ -43,6 +43,10 @@ const selectedShapes = computed(() => {
   );
   return store.shapes.filter((shape) => ids.includes(shape.id));
 });
+
+const borderRadius = computed(() => {
+  return selectedShapes.value[0]?.style.borderRadius || 0
+})
 const showSelectionVertex = computed(() => {
   return (
     selectedShapes.value.length > 0 &&
@@ -164,7 +168,8 @@ const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
       <g>
         <Shape-move-preview v-if="graph.moveModel.showMovingPreview" :shapes="graph.moveModel.movingShapes"
           :dx="graph.moveModel.previewDx" :dy="graph.moveModel.previewDy" />
-        <Shape-resize-preview v-if="graph.resizeModel.showResizePreview" :bounds="graph.resizeModel.previewBounds" />
+        <Shape-resize-preview v-if="graph.resizeModel.showResizePreview" :bounds="graph.resizeModel.previewBounds"
+          :borderRadius="borderRadius" />
         <selection-vertex v-if="showSelectionVertex" :selection="selectedShapes" :resize-model="graph.resizeModel"
           @vertex-mousedown="handleVertexMousedown" />
         <edge-move-preview v-if="graph.edgePointMoveModel.showPreview" :shape="graph.edgePointMoveModel.movingShape"

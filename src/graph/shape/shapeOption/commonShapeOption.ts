@@ -116,7 +116,7 @@ export const edgeOption: ShapeOption = {
     imageBox: false,
     strokeColor: "rgb(0,0,0)",
     fillColor: "rgb(255,255,255)",
-    strokeWidth: 1,
+    strokeWidth: 2,
     sourceArrow: undefined,
     // midArrow: undefined,
     targetMidArrow: undefined,
@@ -196,7 +196,7 @@ export const modelKeyConfig = {
       siderbarKey: SiderbarItemKey.Start,
       style: {
         ...blockOption.style,
-        radius: 20, // 圆角大小
+        borderRadius: 20, // 圆角大小
       }
     },
   },

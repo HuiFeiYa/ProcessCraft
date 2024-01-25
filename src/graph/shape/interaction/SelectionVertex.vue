@@ -50,16 +50,19 @@ function handleMouseDown(event: MouseEvent, index: VertexType) {
   <g style="pointer-events:all">
     <!-- symbol 图形 -->
     <g v-for="shape in shapeGroup.commonShapes" :key="shape.id">
-      <rect :x="shape.bounds.absX" :y="shape.bounds.absY" width="6" height="6" fill="#000"
-        :style="{ cursor: resizable ? 'nw-resize' : '', transform: 'translate(-3px,-3px)' }"
+      <rect :x="shape.bounds.absX" :y="shape.bounds.absY" width="6" height="6" fill="#fff" stroke-width="1"
+        stroke="rgb(6, 123, 239)" :style="{ cursor: resizable ? 'nw-resize' : '', transform: 'translate(-3px,-3px)' }"
         @mousedown="handleMouseDown($event, 1)" />
-      <rect :x="shape.bounds.absX + shape.bounds.width" :y="shape.bounds.absY" width="6" height="6" fill="#000"
+      <rect :x="shape.bounds.absX + shape.bounds.width" :y="shape.bounds.absY" width="6" height="6" fill="#fff"
+        stroke-width="1" stroke="rgb(6, 123, 239)"
         :style="{ cursor: resizable ? 'ne-resize' : '', transform: 'translate(-3px,-3px)' }"
         @mousedown="handleMouseDown($event, 2)" />
       <rect :x="shape.bounds.absX + shape.bounds.width" :y="shape.bounds.absY + shape.bounds.height" width="6" height="6"
-        fill="#000" :style="{ cursor: resizable ? 'se-resize' : '', transform: 'translate(-3px,-3px)' }"
+        fill="#fff" stroke-width="1" stroke="rgb(6, 123, 239)"
+        :style="{ cursor: resizable ? 'se-resize' : '', transform: 'translate(-3px,-3px)' }"
         @mousedown="handleMouseDown($event, 3)" />
-      <rect :x="shape.bounds.absX" :y="shape.bounds.absY + shape.bounds.height" width="6" height="6" fill="#000"
+      <rect :x="shape.bounds.absX" :y="shape.bounds.absY + shape.bounds.height" width="6" height="6" fill="#fff"
+        stroke-width="1" stroke="rgb(6, 123, 239)"
         :style="{ cursor: resizable ? 'sw-resize' : '', transform: 'translate(-3px,-3px)' }"
         @mousedown="handleMouseDown($event, 4)" />
     </g>
@@ -67,7 +70,8 @@ function handleMouseDown(event: MouseEvent, index: VertexType) {
     <g v-for="shape in shapeGroup.edgeShapes" :key="shape.id">
       <g v-if="shape.waypoint">
         <rect v-for="(point, index) in (shape).waypoint" :key="index" :x="point.x - 3" :y="point.y - 3" width="6"
-          height="6" fill="#000" style="cursor: crosshair" @mousedown="handleMouseDown($event, index)" />
+          height="6" fill="#fff" stroke-width="1" stroke="rgb(6, 123, 239)" style="cursor: crosshair"
+          @mousedown="handleMouseDown($event, index)" />
       </g>
     </g>
   </g>

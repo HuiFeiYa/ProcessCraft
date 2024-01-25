@@ -44,7 +44,6 @@ export class ResizeModel {
 
         this.resizeShape = resizeShape;
         this.mouseDown = true;
-        this.showResizePreview = true;
 
         this.startPoint.x = event.clientX;
         this.startPoint.y = event.clientY;
@@ -69,6 +68,7 @@ export class ResizeModel {
         window.addEventListener('mouseup', onMouseUp);
     }
     onMouseMove(event: MouseEvent) {
+        this.showResizePreview = true;
         this.endPoint.x = event.clientX;
         this.endPoint.y = event.clientY;
         let dx = this.endPoint.x - this.startPoint.x;

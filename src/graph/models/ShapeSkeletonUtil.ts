@@ -38,24 +38,6 @@ class ShapeSkeletonUtil {
     p.Arc(cx, cy, 0, 0, 1, absX + width - borderRadius, absY + height);
     p.lineHorizontalTo(-(width - borderRadius * 2));
     p.Arc(cx, cy, 0, 0, 1, absX, absY + height - borderRadius);
-    // if (borderRadius &&  borderRadius > 0){
-    //   const cx = borderRadius;
-    //   const cy = borderRadius;
-    //   p.moveTo(absX, absY + borderRadius);
-    //   p.Arc(cx, cy, 0, 0, 1, absX + borderRadius, absY);
-    //   p.lineHorizontalTo(width - borderRadius * 2);
-    //   p.Arc(cx, cy, 0, 0, 1, absX + width, absY + borderRadius);
-    //   p.lineVerticalTo(height - borderRadius * 2);
-    //   p.Arc(cx, cy, 0, 0, 1, absX + width - borderRadius, absY + height);
-    //   p.lineHorizontalTo(-(width - borderRadius * 2));
-    //   p.Arc(cx, cy, 0, 0, 1, absX, absY + height - borderRadius);
-    //   p.lineVerticalTo(-(height - borderRadius * 2));
-    // } else {
-    //   p.MoveTo(absX, absY);
-    //   p.lineHorizontalTo(width);
-    //   p.lineVerticalTo(height);
-    //   p.lineHorizontalTo(-width);
-    // }
     p.closePath();
   }
 

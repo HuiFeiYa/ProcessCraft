@@ -8,9 +8,9 @@ const props = defineProps<{
   style?: { [key: string]: string },
   position: String
 }>();
-let pt1 = new Point(-8, 4);
-let pt2 = new Point(0, 0);
-let pt3 = new Point(-8, -4);
+let pt1 = new Point(-12, 4);
+let pt2 = new Point(-1, 0);
+let pt3 = new Point(-12, -4);
 const getPath = computed(() => {
   const edge = props.edge;
   let p = '';
