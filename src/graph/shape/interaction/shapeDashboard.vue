@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { siderBarList, SiderbarItemKey } from "../constant";
+import { siderBarList, SiderbarItemKey, showDashboardList } from "../constant";
 const props = defineProps<{ x: number; y: number }>();
 const emit = defineEmits<{
   (e: "createShape", siderBarkey: SiderbarItemKey);
@@ -10,7 +10,7 @@ const handleCreateShape = (siderBarkey: SiderbarItemKey) => {
 };
 // 过滤模块
 const symbolShapes = siderBarList.filter((item) => {
-  return item.showData.siderBarkey === SiderbarItemKey.Block;
+  return showDashboardList.includes(item.showData.siderBarkey);
 });
 </script>
 <template>

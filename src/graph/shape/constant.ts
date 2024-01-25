@@ -116,13 +116,13 @@ export const siderBarList: SiderBarItem[] = [
     },
   },
   {
-    modelId: "SysML::ItemFlow",
+    modelId: "SysML::Decide",
     operation: "",
     dropdownTag: "",
     showData: {
       name: "判定",
       icon: "src/assets/decide.png",
-      siderBarkey: SiderbarItemKey.ItemFlow,
+      siderBarkey: SiderbarItemKey.Decide,
     },
   },
 ];
@@ -130,3 +130,10 @@ export const siderBarList: SiderBarItem[] = [
 
 export const HeaderHeight = 38
 export const SideBarWidth = 200
+
+export const showQuickCreateList = [
+  SubShapeType.Block, SubShapeType.Decide
+]
+export const showDashboardList = [
+  SiderbarItemKey.Block, SiderbarItemKey.Decide
+]

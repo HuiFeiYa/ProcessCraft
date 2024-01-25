@@ -13,6 +13,7 @@ import {
   VertexType,
   CreatePointType,
   SiderbarItemKey,
+  showQuickCreateList,
 } from "./shape/constant";
 import { Shape, ShapeType } from "./types";
 import { useDrawStore } from "../editor/store";
@@ -68,9 +69,10 @@ const edgeEndPoint = computed(() => {
   }
 })
 const showQuickCreatePoint = computed(() => {
+
   if (
     selectedShapes.value.length === 1 &&
-    selectedShapes.value[0].subShapeType === SubShapeType.Block
+    showQuickCreateList.includes(selectedShapes.value[0].subShapeType)
   ) {
     return true;
   }
@@ -188,5 +190,9 @@ const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
 .graph-view {
   position: relative;
   padding: 12px;
+}
+
+svg {
+  image-rendering: optimizeQuality;
 }
 </style>

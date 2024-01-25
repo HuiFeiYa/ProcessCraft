@@ -16,7 +16,7 @@ export const behaviorConfigs: ConfigItem[] = [
     behavior: CreateShapeOnDiagramBehavior
   },
   {
-    siderbarItemKeys: [SiderbarItemKey.ItemFlow, SiderbarItemKey.Start],
+    siderbarItemKeys: [SiderbarItemKey.ItemFlow, SiderbarItemKey.Start, SiderbarItemKey.Decide],
     targetShapeKeys: [],
     behavior: CreateEdgeOnDiagramBehavior
   }

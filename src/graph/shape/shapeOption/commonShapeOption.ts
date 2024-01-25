@@ -231,7 +231,7 @@ export const modelKeyConfig = {
       ...blockOption,
       shapeKey: ShapeKey.Decide,
       siderbarKey: SiderbarItemKey.Decide,
-      SubShapeType: SubShapeType.Decide
+      subShapeType: SubShapeType.Decide
     },
   },
 };
