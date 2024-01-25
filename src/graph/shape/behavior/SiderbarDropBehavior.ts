@@ -2,7 +2,7 @@ import { Bounds, Shape, SubShapeType } from "../../types"
 import { Point } from "../../util/Point";
 import { Change } from "../../util/stepManager";
 import { shapeFactory } from "../ShapeFactory";
-import { shapeUtil } from "../ShapeUtil";
+import { CreateType, shapeUtil } from "../ShapeUtil";
 import { SiderbarItemKey } from "../constant";
 import { ResizeUtil, resizeUtil } from "../resizeUtil";
 import { SiderBarDropRunner } from "./SiderBarDropRunner";
@@ -61,7 +61,7 @@ export class SiderBarDropBehavior {
 
     async createShape() {
         const { siderBarKey } = this;
-        const shape = shapeUtil.createShape(siderBarKey, { point: this.point, parentId: this.shapeParentId })
+        const shape = shapeUtil.createShape(siderBarKey, { point: this.point, parentId: this.shapeParentId }, CreateType.normal)
         this.createdShapes.add(shape);
     }
 

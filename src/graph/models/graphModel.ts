@@ -16,7 +16,7 @@ import {
   patchItemFactory,
 } from "../service";
 import { Point } from "../util/Point";
-import { rootShape, shapeUtil } from "../shape/ShapeUtil";
+import { CreateType, rootShape, shapeUtil } from "../shape/ShapeUtil";
 import { resizeUtil } from "../shape/resizeUtil";
 import { useDrawStore } from "../../editor/store";
 import { Change, ChangeType } from "../util/stepManager";
@@ -303,7 +303,7 @@ export class GraphModel {
         const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
           waypoint: [startPoint, endPoint],
           parentId: this.rootShape.id
-        });
+        }, CreateType.quick);
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
         change.shapeId = edgeShape.id
@@ -317,7 +317,7 @@ export class GraphModel {
         const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
           waypoint: [startPoint, endPoint],
           parentId: this.rootShape.id
-        });
+        }, CreateType.quick);
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
         change.shapeId = edgeShape.id
@@ -331,7 +331,7 @@ export class GraphModel {
         const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
           waypoint: [startPoint, endPoint],
           parentId: this.rootShape.id
-        });
+        }, CreateType.quick);
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
         change.shapeId = edgeShape.id
@@ -345,7 +345,7 @@ export class GraphModel {
         const edgeShape = shapeUtil.createShape(SiderbarItemKey.ItemFlow, {
           waypoint: [startPoint, endPoint],
           parentId: this.rootShape.id
-        });
+        }, CreateType.quick);
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
         change.shapeId = edgeShape.id
@@ -412,7 +412,7 @@ export class GraphModel {
     edgeShape: Shape,
     siderBarkey: SiderbarItemKey
   ) {
-    const shape = shapeUtil.createShape(siderBarkey, { point, parentId: edgeShape.parentId });
+    const shape = shapeUtil.createShape(siderBarkey, { point, parentId: edgeShape.parentId }, CreateType.quick);
     /** 创建 shape， edge 的 target 指向该图形 */
     edgeShape.targetId = shape.id;
     // 将更新也应用在 edgeShape 上，用于回退，重做时指向正确关系

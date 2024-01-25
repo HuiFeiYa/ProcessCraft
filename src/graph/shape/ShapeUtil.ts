@@ -9,6 +9,11 @@ import { SiderBarKeyOptions } from "./behavior/SiderbarDropBehavior";
 import { HeaderHeight, SideBarWidth, SiderbarItemKey } from "./constant";
 export const lineHeightAdd = 6; // 行高比字体增加多少， 设置为1
 export const textPadding = 10; // 左右padding各 5
+
+export enum CreateType {
+  'normal' = 'normal',
+  'quick' = 'quick', // 快速创建
+}
 export class ShapeUtil {
   getShapeKey(shape: Shape) {
     return shape.shapeKey;
@@ -70,11 +75,11 @@ export class ShapeUtil {
   getLineHeight(fontSize: number) {
     return (fontSize || 12) + lineHeightAdd;
   }
-  createShape(siderBarKey: SiderbarItemKey, options: SiderBarKeyOptions): Shape {
+  createShape(siderBarKey: SiderbarItemKey, options: SiderBarKeyOptions, createType: CreateType): Shape {
     let { point, waypoint, parentId } = options
     let shapeOption = shapeFactory.getModelShapeOption(siderBarKey);
     const shape = Shape.fromOption(shapeOption);
-    if (siderBarKey !== SiderbarItemKey.FlowDiagram) {
+    if (siderBarKey !== SiderbarItemKey.FlowDiagram && createType === CreateType.quick) {
       const store = useDrawStore()
       const oldSize = store.getShapeSize(shape.siderbarKey)
       if (oldSize) {
@@ -137,7 +142,7 @@ const minHeight = 300
 const padding = 12
 const canvasWidth = Math.max(minWidth, windowWidth - SideBarWidth - padding * 2 - 60)
 const canvasHeight = Math.max(minHeight, windowHeight - HeaderHeight - padding * 2 - 30)
-export const rootShape = shapeUtil.createShape(SiderbarItemKey.FlowDiagram, { bounds: new Bounds(12, 12, canvasWidth, canvasHeight, 12, 12, 0, 0), parentId: null })
+export const rootShape = shapeUtil.createShape(SiderbarItemKey.FlowDiagram, { bounds: new Bounds(12, 12, canvasWidth, canvasHeight, 12, 12, 0, 0), parentId: null }, CreateType.normal)
 
 /**
  * 点是否在边框上

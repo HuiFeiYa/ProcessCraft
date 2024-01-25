@@ -15,7 +15,7 @@ import {
   stepManager,
 } from "../../graph/util/stepManager";
 import { Point } from "../../graph/util/Point";
-import { rootShape, shapeUtil } from "../../graph/shape/ShapeUtil";
+import { CreateType, rootShape, shapeUtil } from "../../graph/shape/ShapeUtil";
 import { HeaderHeight } from "../../graph/shape/constant";
 const store = useDrawStore();
 const props = defineProps<{ graph: GraphModel }>();
@@ -67,7 +67,7 @@ const restoreShape = async (value: UpdateShapeValue) => {
     waypoint,
     parentId: rootShape.id,
     sourceId, targetId
-  });
+  }, CreateType.quick);
   shape.id = shapeId;
   return shape;
 };
