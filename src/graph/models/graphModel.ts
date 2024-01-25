@@ -19,6 +19,7 @@ import { Point } from "../util/Point";
 import { rootShape, shapeUtil } from "../shape/ShapeUtil";
 import { resizeUtil } from "../shape/resizeUtil";
 import { useDrawStore } from "../../editor/store";
+import { Change, ChangeType } from "../util/stepManager";
 export const emitter = new Emitter();
 export class GraphModel {
   disabled = false;
@@ -291,6 +292,10 @@ export class GraphModel {
     } = shape;
     /** 创建线的长度 */
     const LENGTH = 100;
+    const change = new Change(ChangeType.UPDATE, shape.id)
+    change.newValue = {
+      sourceId: shape.id
+    }
     switch (index) {
       case CreatePointType.Top: {
         const startPoint = new Point(absX + width / 2, absY);
@@ -301,7 +306,8 @@ export class GraphModel {
         });
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
-        addShapesService([edgeShape]);
+        change.shapeId = edgeShape.id
+        addShapesService([edgeShape], [change]);
         this.selectionModel.setSelection([edgeShape]);
         return edgeShape;
       }
@@ -314,7 +320,8 @@ export class GraphModel {
         });
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
-        addShapesService([edgeShape]);
+        change.shapeId = edgeShape.id
+        addShapesService([edgeShape], [change]);
         this.selectionModel.setSelection([edgeShape]);
         return edgeShape;
       }
@@ -327,7 +334,8 @@ export class GraphModel {
         });
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
-        addShapesService([edgeShape]);
+        change.shapeId = edgeShape.id
+        addShapesService([edgeShape], [change]);
         this.selectionModel.setSelection([edgeShape]);
         return edgeShape;
       }
@@ -340,7 +348,8 @@ export class GraphModel {
         });
         /** 更新 edge 的 source，自动创建以shape为 source，创建线 */
         edgeShape.sourceId = shape.id;
-        addShapesService([edgeShape]);
+        change.shapeId = edgeShape.id
+        addShapesService([edgeShape], [change]);
         this.selectionModel.setSelection([edgeShape]);
         return edgeShape;
       }
@@ -406,10 +415,13 @@ export class GraphModel {
     const shape = shapeUtil.createShape(siderBarkey, { point, parentId: edgeShape.parentId });
     /** 创建 shape， edge 的 target 指向该图形 */
     edgeShape.targetId = shape.id;
+    // 将更新也应用在 edgeShape 上，用于回退，重做时指向正确关系
+    const change = new Change(ChangeType.UPDATE, edgeShape.id)
+    change.newValue = { targetId: shape.id }
     /** 更新 shape bounds  */
     shape.bounds.absX = point.x;
     shape.bounds.absY = point.y;
-    addShapesService([shape]);
+    addShapesService([shape], [change]);
     this.selectionModel.setSelection([shape]);
     return shape;
   }

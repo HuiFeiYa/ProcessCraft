@@ -126,7 +126,7 @@ export enum StepOperation {
 
 type Shapes = Shape[] | Set<Shape>;
 /** 添加多个 shape 到 store，并且存储记录到 stepManager */
-export const addShapesService = (createdShapes: Set<Shape> | Shape[], affectedShapes?: Set<Change>) => {
+export const addShapesService = (createdShapes: Set<Shape> | Shape[], affectedShapes?: Set<Change> | Change[]) => {
   store.addShapes(createdShapes);
   let changes = []
   createdShapes.forEach((shape: Shape) => {

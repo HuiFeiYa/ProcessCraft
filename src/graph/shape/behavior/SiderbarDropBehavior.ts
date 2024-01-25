@@ -19,6 +19,8 @@ export interface SiderBarKeyOptions {
     waypoint?: Point[]
     bounds?: Bounds
     parentId: string
+    sourceId?: string
+    targetId?: string
 }
 export class SiderBarDropBehavior {
     shapeParentId: string

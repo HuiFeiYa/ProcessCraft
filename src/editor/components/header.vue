@@ -61,11 +61,12 @@ const deleteHandler = () => {
   }
 };
 const restoreShape = async (value: UpdateShapeValue) => {
-  const { siderbarKey, bounds, shapeId, waypoint } = value;
+  const { siderbarKey, bounds, shapeId, waypoint, sourceId, targetId } = value;
   const shape = shapeUtil.createShape(siderbarKey, {
     point: new Point(bounds.absX, bounds.absY),
     waypoint,
-    parentId: rootShape.id
+    parentId: rootShape.id,
+    sourceId, targetId
   });
   shape.id = shapeId;
   return shape;
@@ -75,31 +76,40 @@ const undoHandler = () => {
   if (currentStep.hasPrev) {
     stepManager
       .findPre(currentStep.stepId)
-      .then((result: { step: Step; prevStepId: string }) => {
+      .then(async (result: { step: Step; prevStepId: string }) => {
         const { prevStepId, step } = result;
         /** 回退到之前修改 */
         const changes = step.changes;
         // 最后的变更最先回退
         changes.reverse();
-        changes.forEach(async (change: Change) => {
-          switch (change.type) {
-            /** 之前是新增，回退这边要删除 */
-            case ChangeType.INSERT: {
-              store.deleteShape(change.shapeId);
-              break;
-            }
-            case ChangeType.DELETE: {
-              const { oldValue } = change;
-              const shape = await restoreShape(oldValue);
-              store.addShapes([shape]);
-              break;
-            }
-            case ChangeType.UPDATE: {
-              const { oldValue, shapeId } = change;
-              store.updateShape(shapeId, oldValue);
-            }
+        const executePromisesSequentially = async (changes: Change[]) => {
+          for (const change of changes) {
+            await new Promise(async (resolve) => {
+              switch (change.type) {
+                /** 之前是新增，回退这边要删除 */
+                case ChangeType.INSERT: {
+                  store.deleteShape(change.shapeId);
+                  resolve(null)
+                  break;
+                }
+                case ChangeType.DELETE: {
+                  const { oldValue } = change;
+                  const shape = await restoreShape(oldValue);
+                  store.addShapes([shape]);
+                  resolve(null)
+                  break;
+                }
+                case ChangeType.UPDATE: {
+                  const { oldValue, shapeId } = change;
+                  store.updateShape(shapeId, oldValue);
+                  resolve(null)
+                  break
+                }
+              }
+            })
           }
-        });
+        }
+        await executePromisesSequentially(changes)
         currentStep.freshCurrentStep(prevStepId, StepOperation.undo);
       });
   }
@@ -107,27 +117,35 @@ const undoHandler = () => {
 
 const redoHandler = () => {
   if (currentStep.hasNext) {
-    stepManager.findNext(currentStep.stepId).then((step: Step) => {
+    stepManager.findNext(currentStep.stepId).then(async (step: Step) => {
       const changes = step.changes;
-      changes.forEach(async (change: Change) => {
-        switch (change.type) {
-          /** 之前是新增，回退这边要删除 */
-          case ChangeType.INSERT: {
-            const { newValue } = change;
-            const shape = await restoreShape(newValue);
-            store.addShapes([shape]);
-            break;
-          }
-          case ChangeType.DELETE: {
-            store.deleteShape(change.shapeId);
-            break;
-          }
-          case ChangeType.UPDATE: {
-            const { newValue, shapeId } = change;
-            store.updateShape(shapeId, newValue);
-          }
+      /** 每个 change 需要链式去更新，后面的 change 可能依赖前面的结果 */
+      const executePromisesSequentially = async (changes: Change[]) => {
+        for (const change of changes) {
+          await new Promise(async (resolve) => {
+            switch (change.type) {
+              case ChangeType.INSERT: {
+                const { newValue } = change;
+                const shape = await restoreShape(newValue);
+                store.addShapes([shape]);
+                resolve(null);
+                break;
+              }
+              case ChangeType.DELETE: {
+                store.deleteShape(change.shapeId);
+                resolve(null);
+                break;
+              }
+              case ChangeType.UPDATE: {
+                const { newValue, shapeId } = change;
+                store.updateShape(shapeId, newValue);
+                resolve(null);
+              }
+            }
+          });
         }
-      });
+      };
+      await executePromisesSequentially(changes)
       currentStep.freshCurrentStep(step.stepId, StepOperation.redo);
     });
   }
