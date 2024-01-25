@@ -135,5 +135,5 @@ export const showQuickCreateList = [
   SubShapeType.Block, SubShapeType.Decide
 ]
 export const showDashboardList = [
-  SiderbarItemKey.Block, SiderbarItemKey.Decide
+  SiderbarItemKey.Block, SiderbarItemKey.Decide, SiderbarItemKey.Start
 ]

@@ -14,7 +14,7 @@ const symbolShapes = siderBarList.filter((item) => {
 });
 </script>
 <template>
-  <foreignObject width="100" height="100" :x="x + 6" :y="y" class="shape-dashboard">
+  <foreignObject width="120" height="100" :x="x + 6" :y="y" class="shape-dashboard" @click.stop @mousedown.stop>
     <div>
       <img v-for="item of symbolShapes" class="shape" :src="item.showData.icon"
         @click="handleCreateShape(item.showData.siderBarkey)" />
@@ -24,7 +24,7 @@ const symbolShapes = siderBarList.filter((item) => {
 <style scoped>
 .shape-dashboard {
   padding: 6px 2px 2px 6px;
-  width: 138px;
+  width: 100px;
   cursor: default;
   background: #fff;
   box-shadow: 0 8px 20px 1px rgba(0, 0, 0, 0.1);

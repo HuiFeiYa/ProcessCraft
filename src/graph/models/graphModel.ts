@@ -174,7 +174,18 @@ export class GraphModel {
       res.id = shape.id;
       valList.push(res);
 
-      if (shape.subShapeType === SubShapeType.Block) {
+
+      if (shape.subShapeType === SubShapeType.CommonEdge) {
+        // 更新 waypoint 位置
+        res.oldVal.waypoint = shape.waypoint;
+        res.newVal.waypoint = shape.waypoint.map((point) => {
+          return {
+            ...point,
+            x: point.x + dx,
+            y: point.y + dy,
+          };
+        });
+      } else {
         // 查询 shapes 中关联的线，将线的一端进行更新
         store.shapes.forEach((s) => {
           if (s.subShapeType === SubShapeType.CommonEdge) {
@@ -221,17 +232,6 @@ export class GraphModel {
               valList.push(edgePatch);
             }
           }
-        });
-      }
-      if (shape.subShapeType === SubShapeType.CommonEdge) {
-        // 更新 waypoint 位置
-        res.oldVal.waypoint = shape.waypoint;
-        res.newVal.waypoint = shape.waypoint.map((point) => {
-          return {
-            ...point,
-            x: point.x + dx,
-            y: point.y + dy,
-          };
         });
       }
       /** 最新移动的层级最高 */
@@ -371,7 +371,6 @@ export class GraphModel {
   ) {
     let width = 100;
     let height = 50;
-    const LENGTH = 100;
     const store = useDrawStore()
     const oldSize = store.getShapeSize(siderBarkey)
     if (oldSize) {

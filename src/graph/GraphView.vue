@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, computed, onMounted, ref } from "vue";
+import { provide, computed, onMounted, ref, onUnmounted } from "vue";
 import DiagramShape from "./DiagramShape.vue";
 import { GraphModel } from "./models/graphModel";
 import { shapeComps } from "./shape/index";
@@ -31,13 +31,8 @@ const viewDom = ref<HTMLDivElement | null>(null);
 const quickCreateEdgeShape = ref<Shape>(null)
 /** 快速创建线的方向 */
 const edgeIndex = ref();
-onMounted(() => {
-  if (!viewDom.value) return;
-  props.graph.viewModel.setViewDom(viewDom.value);
-});
-/**
- * store 中是最新的样式， model 中存储的是历史的，@todo，如何同步？
- */
+
+//store 中是最新的样式， model 中存储的是历史的，@todo，如何同步？
 const selectedShapes = computed(() => {
   const ids = props.graph.selectionModel.selectedShapes.map(
     (shape) => shape.id
@@ -111,7 +106,9 @@ function handleMousemoveOut(event: MouseEvent) {
 function handleDragOver() { }
 
 const handleDrop = () => { };
-
+const handleTriggerDashboard = (val: boolean) => {
+  props.graph.isShowShapeDashboard = val
+}
 /** 快速创建线 */
 const handleQuickCreate = async (index: CreatePointType) => {
   const edgeShape = await props.graph.quickCreateEdge(
@@ -122,7 +119,7 @@ const handleQuickCreate = async (index: CreatePointType) => {
   resizeUtil.expandParent(edgeShape)
   quickCreateEdgeShape.value = edgeShape
   // 弹框，选择继续要创建的元素
-  props.graph.isShowShapeDashboard = true
+  handleTriggerDashboard(true)
 };
 
 /** 快速创建指定图形 */
@@ -138,8 +135,18 @@ const handleCreateShape = async (siderBarkey: SiderbarItemKey) => {
   edgeIndex.value = "";
   resizeUtil.expandParent(shape)
   quickCreateEdgeShape.value = null;
-  props.graph.isShowShapeDashboard = false
+  handleTriggerDashboard(false)
 };
+const trigger = () => handleTriggerDashboard(false)
+onMounted(() => {
+  if (!viewDom.value) return;
+  props.graph.viewModel.setViewDom(viewDom.value);
+  window.addEventListener('click', trigger)
+});
+
+onUnmounted(() => {
+  window.removeEventListener('click', trigger)
+})
 </script>
 <template>
   <div class="graph-view" ref="viewDom">
