@@ -12,6 +12,8 @@ export function createEventHandler(graph: GraphModel, props: { shape: Shape }) {
     },
     mousedown() {
       console.log('mousedown shape:', props.shape)
+      /** 选中其他元素之前清空其他选中元素 */
+      graph.selectionModel.clearSelection()
       graph.emitter.emit(EventType.SHAPE_MOUSE_DOWN, window.event, StartMoveSource.Shape, props.shape);
     },
     mouseup() {
