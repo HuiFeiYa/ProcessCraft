@@ -25,14 +25,14 @@ Svg提供了丰富的元素和属性，例如rect（矩形）、circle（圆形�
 我们这里使用 Svg 主要原因是它可以生成各种我们需要的形状。
 
 ## 画布上添加图形
-
 从图中可以看出在画布上画出一个 rect 图形。
 1. 首先有一个相对坐标轴，可能这个坐标轴的位置是相对浏览器左上角有一定偏移的。
 2. 需要知道这个图形的坐标位置
 3. 需要知道这个图形的宽高
+### 矩形
 
 ```TS
-// 描述图形位置和大小
+// 通过 Bounds 来描述图形位置和大小
 class Bounds  {
   constructor(
     public width = 0,
@@ -43,3 +43,98 @@ class Bounds  {
   ) { }
 }
 ```
+
+```html
+   <!-- 绘制 rect 图形代码  -->
+    <rect :rx="radiusValue" :ry="radiusValue" :width="shape.bounds.width" :height="shape.bounds.height"
+      :x="shape.bounds.absX" :y="shape.bounds.absY" :fill="shape.style.fill" :stroke="shape.style.stroke" :stroke-width="shape.style.width" />
+```
+
+绘制一个矩形不仅仅需要 `Bounds` 信息，我们还需要定义一个 `Shape` 类来描述一个通用的图形。可以是任何形状的图形。
+
+```ts
+// 目前我们用到这两个属性，后面需要更多属性再加
+export class Shape {
+    bounds: Bounds;
+    style: StyleObj;
+}
+```
+
+### 直线
+
+首先来看一条最简单的一条直线, 涉及点 (0,0)、(0,6) 两个点，绘制一条线跟矩形不同，他可能涉及多个点，无法通过 `Bounds` 进行描述。可以通过 `Point` 描述点
+```html
+<path d="M0,0 L0,6 " fill="#000" />
+```
+
+```ts
+interface Point {
+  x: number;
+  y: number;
+}
+```
+
+再来更新下 `Shape` 
+
+```ts
+export class Shape {
+    bounds: Bounds; // 此处的 (absX,absY) 和 waypoint[0] 位置相同
+    style: StyleObj;
+    waypoint: Point[] // 一条线至少有两个点，可以是多个点，如果多个点不在一条直线上就是折线
+}
+```
+
+绘制线的代码
+
+```html
+      <!-- 展示线 -->
+  <path :d="computedData.svgPath" :stroke="computedData.style.strokeColor" :stroke-dasharray="computedData.style.strokeDasharray ||
+    (computedData.style.dashed ? '10 8' : '')
+    " :stroke-width="computedData.style.strokeWidth" fill="none" stroke-linejoin="round" />
+```
+
+### 其他图形
+如圆形、菱形、多边形等就不在赘述，也是相同的方法。像这几个图形都可以用 `Bounds` 来描述。知道了坐标，可以通过计算得到各个点，将它们绘制出来。接下来来看看如何将它们联动起来。
+
+```VUE
+<script setup lang="ts">
+const points = computed(() => {
+    const { absX, absY, width, height } = props.shape.bounds
+    return `${absX + width / 2},${absY}  ${absX + width},${absY + height / 2} ${absX + width / 2}, ${absY + height} ${absX}, ${absY + height / 2}`
+})
+</script>
+<!-- 菱形 -->
+<polygon :points="points" fill="#fff" stroke="#000" stroke-width="2" />
+```
+
+## 交互
+
+### 连线关系
+
+* sourceId、targetId
+* move、resize 时联动
+* 快速创建、删除、拖动时关联关系变动
+
+### 输入文字
+* 矩形上输入
+  * 光标如何居中
+* 线上输入文字，offsetX、offsetY
+
+### move/resize 预览
+* move
+* resize
+* 快速创建加号
+
+### 自动扩展画布
+* updateViewModel
+
+
+## redo/undo
+* indexDb
+* 工作原理和流程
+
+## 其他难题
+* 连接裁剪
+* 矩形 waypoint 计算(目前未做)
+* 自动布局，点击调整画布
+* 画布缩略图
