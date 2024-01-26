@@ -1,3 +1,7 @@
+
+![Rec 0001000000000-000038000_138.gif](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1bcb64b7447d45508b0663c8338c8079~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1280&h=720&s=2018210&e=gif&f=858&b=f5f4f1)
+
+
 ## 简介
 
 近期接触 Svg 比较多, 想着 Svg 能做些啥。看到 Process On 是一个应用的场景, 而且平时我们多少都会接触一些。使用人群比较多，就这样一拍脑袋决定做一个流程图的程序。
@@ -8,7 +12,9 @@
 
 最近我接触到了Svg（可伸缩矢量图形）的技术，开始思考Svg能用来做些什么有趣的事情。我注意到流程图是一个常见的应用场景，我们在日常生活中经常会遇到一些流程图。因为流程图的使用人群众多，就这样一拍脑袋决定做一个流程图的程序。
 
-首先，我们需要明确流程图软件需要哪些基本功能。主要的页面可以分为物料区域、画布区域和操作栏。而最终的目标就是在画布上绘制出各种形状的图形。
+
+首先，我们需要明确流程图软件需要哪些基本功能。主要的页面可以分为物料区域、画布区域和操作栏。而最终的目标就是在画布上绘制出各种形状的图形。  
+<img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5061f4f803ee43b98eb3514ab0d186d8~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=908&h=833&s=104929&e=png&b=fcfcfc" style="width:400px;" />    
 
 因此，我们面临的问题就变成了如何在画布上绘制矩形、菱形和直线等基本图形。这时候，Svg技术就派上用场了。
 
@@ -25,6 +31,8 @@ Svg提供了丰富的元素和属性，例如rect（矩形）、circle（圆形�
 我们这里使用 Svg 主要原因是它可以生成各种我们需要的形状。
 
 ## 画布上添加图形
+
+<img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d6043ba800624cfca95ac3b655a72b4a~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=627&h=608&s=33062&e=png&b=fcfcfc" style="width:400px;" />    
 从图中可以看出在画布上画出一个 rect 图形。
 1. 首先有一个相对坐标轴，可能这个坐标轴的位置是相对浏览器左上角有一定偏移的。
 2. 需要知道这个图形的坐标位置
@@ -139,11 +147,13 @@ interface Shape {
 
 ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/56f3e06c52184459960bdd02d58500f2~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=576&h=555&s=43268&e=png&b=fcfcfc)
 ```vue
-<!-- 画布顶层,监听整个画布事件 -->
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" transform-origin="0 0" @mousemove="handleMousemove">
-     <!-- 渲染所有图形 -->
-     <DiagramShape :graph="graph" :shape="graph.rootShape" />
-</svg>
+<template>
+    <!-- 画布顶层,监听整个画布事件 -->
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" transform-origin="0 0" @mousemove="handleMousemove">
+        <!-- 渲染所有图形 -->
+        <DiagramShape :graph="graph" :shape="graph.rootShape" />
+    </svg>
+</template>
 ```
 
 ```vue
@@ -153,12 +163,14 @@ interface Shape {
       graph.emitter.emit(EventType.SHAPE_MOUSE_MOVE, event, props.shape);
     }
 </script>
+<template>
   <g @click.stop @mousedown.stop @mouseup.stop @mousemove.stop @dragenter.stop dragenter stop @dragleave.stop @drop.stop
     @dragover.stop @mousemove="mousemove">
     <rect :rx="radiusValue" :ry="radiusValue" :width="shape.bounds.width" :height="shape.bounds.height"
       :x="shape.bounds.absX" :y="shape.bounds.absY" fill="#fff" stroke="#000" stroke-width="2">
     </rect>
   </g>
+</template>
 ```
 
 事件处理
@@ -256,25 +268,194 @@ const endMove = (dx,dy,edgeShape,movePointType) => {
 ```
 
 ### 输入文字
-* 矩形上输入
-  * 光标如何居中
-* 线上输入文字，offsetX、offsetY
+接下来看看如何在矩形或者线上进行文字输入。输入我们常用的时 *input、textarea、div contenteditable*。  
+我们可以通过 `Svg foreignObject` 标签嵌入HTML内容。我们这里选择 *div contenteditable*。它支持多行，并且样式自定义比较简单和纯粹。
 
-### move/resize 预览
-* move
-* resize
-* 快速创建加号
+#### 多边形上的输入框
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c8a6b4d205ae4055b441414ea80505b7~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=309&h=146&s=3016&e=png&b=fefdfd)
 
-### 自动扩展画布
-* updateViewModel
+实现输入的效果比较简单，就是在原来的图形上盖一层输入框。需要注意的是输入框的大小要比原来的图形大一圈，这样不会出现盖住原来图形边的情况。
 
+```html
+<template>
+    <!-- 图形 -->
+    <rect :rx="radiusValue" :ry="radiusValue" :width="shape.bounds.width" :height="shape.bounds.height"
+      :x="shape.bounds.absX" :y="shape.bounds.absY">
+    </rect>
+    <foreignObject :width="shape.bounds.width - 4" :height="shape.bounds.height - 4" :x="shape.bounds.absX + 2"
+      :y="shape.bounds.absY + 2">
+      <div class="textarea" ref="input" :contenteditable="editable">
+        {{ shape.modelName }}
+      </div>
+    </foreignObject>
+<template>
+```
+
+#### 线上的输入框
+线上的输入框实现和多边形一样，多了一点是线需要确定当前输入框相对于线的相对位置。
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0a6648c7a1fa4f91b3ff97d3377a5740~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=453&h=98&s=3452&e=png&b=ffffff)
+
+更新 Bounds 定义
+```TS
+class Bounds  {
+  constructor(
+    public width = 0,
+    public height = 0,
+    public absX = 0,
+    public absY = 0,
+    public offsetX = 0.5, // 代表 x 轴相对位置百分比 50%
+    public offsetY = 0.5, // 代表 y 轴相对位置百分比 50%
+  ) { }
+```
+
+```VUE
+<script >
+const labelStyle = computed(() => {
+  const { waypoint } = props.shape;
+  // 名称的宽度，宽度是根据 str 算出来的   
+  const { width, height, offsetX, offsetY } = props.shape.nameBounds;
+  const firstPoint = waypoint[0];
+  const lastPoint = waypoint[waypoint.length - 1];
+  return {
+      width: width + paddingWidth,
+      height: Math.max(height, 30),
+      absX: firstPoint.x + (lastPoint.x - firstPoint.x) * offsetX - width / 2,
+      absY: firstPoint.y + (lastPoint.y - firstPoint.y) * offsetY - height / 2,
+    };
+})
+</script>
+<template>
+<foreignObject :width="labelStyle.width" :height="labelStyle.height" :x="labelStyle.absX" :y="labelStyle.absY">
+    <div :contenteditable="editable">
+    {{ shape.modelName }}
+    </div>
+</foreignObject>
+</template>
+```
 
 ## redo/undo
-* indexDb
-* 工作原理和流程
+![2.gif](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17112c0f69e443dcbc995c61e68a83f1~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1280&h=720&s=1258537&e=gif&f=336&b=f5f4f1)
+最后来看下 redo/undo 是如何实现的？  
 
-## 其他难题
-* 连接裁剪
-* 矩形 waypoint 计算(目前未做)
-* 自动布局，点击调整画布
-* 画布缩略图
+### 规则
+首先来说下规则：
+* undo、redo 操作中未进行更新、新增操作，可以任意在已有步骤里进行 undo、redo。
+* 假设现在执行了四步，undo 了两步，然后执行了一个新的操作 newStep。此时之前四步中的后两步会被丢弃，所有的步骤中只包含前两步和最新的newStep。
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/643724e6a8f14ae49165c0dcc896ff7b~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=542&h=368&s=12766&e=png&b=ffffff)
+可以在这三步中自由的 undo/redo。
+
+### 思路
+
+思路如下：
+1. 首先我们得有记录，创建步骤记录对象 *Step*。
+2. 然后需要一个队列存储所有的 *Step*
+3. 当我们点击 undo/redo 时候本质是更新 *CurrentStep* 指针指向队列中的 *Step*。所以我们需要创建一个 *CurrentStep* 来维护指针指向
+4. 当我们 undo 之后做了更新操作或者创建操作，需要将 *CurrentStep* 之后的 Step 都进行删除，然后再向队列中添加新的 *Step*
+
+### 代码
+```TS
+/** Step 相关 */
+
+// 更新类型
+export enum ChangeType {
+    INSERT = 1, // 插入对象
+    UPDATE = 2, // 更新某个或多个字段
+    DELETE = 3, // 删除对象
+}
+
+/**
+ * 一条更新记录，一次更新可能存在多条更新记录
+ * @param {ChangeType} type 更新类型
+ * @param {string} shapeId 图形id
+ */
+export class Change {
+    constructor(public type: ChangeType, public shapeId: string) {
+    }
+    // 更新前的旧值，与 newValue 对象中的 key 保持一致，未发生变更不列入
+    oldValue?: UpdateShapeValue;
+    // 更新后对应的值
+    newValue?: UpdateShapeValue;
+}
+/**
+ * 一条更新记录
+ * @param {string} stepId 
+ * @param {number} index 第几条记录
+ * @param {Change[]} changes 一次更新记录包含多个更新，如：移动一个矩形，需要更新矩形的位置，也需要更新关联线的位置
+ */
+export class Step {
+    constructor(public stepId: string, public index: number /**序号 */, public changes: Change[]) {
+    }
+}
+
+/*** CurrentStep */
+class CurrentStep {
+  hasPrev = false; // 是否有上一步
+  hasNext = false; // 是否有下一步
+  stepId = ""; // 指针指向 step 记录
+  stepSize = 0; // 总的 step 数，用于判断是否有 next
+  nextStepIndex = 0; /** 用于判断是否有 prev */
+  // ...
+}
+```
+
+维护 Step 队列，这里用的是 IndexDb, 出于将所有操作都放在前端的考虑采用前端存储的方案。
+
+```js
+const dbName = 'history';
+const version = 3;
+const storeName = 'stack';
+
+const dbPromise = new Promise((resolve, reject) => {
+    // 打开或创建数据库,指定数据库名和版本号
+    let request = indexedDB.open(dbName, version);
+    // ...
+    request.onsuccess = (event: any) => {
+        resolve(event.target.result);
+    };
+})
+/**
+ * 在IndexedDB中，db.transaction方法是进行数据操作的核心接口。它用于开始一个新的数据库事务，通过事务可以确保一系列读写操作的原子性和一致性。
+ */
+const dbOperation = (transactionMode, operation) => {
+    return dbPromise.then((db: any) => {
+        // db.transaction 方法开启一个事务
+        // 参数1：要操作的对象存储数组（Object Store）名称列表
+        // 参数2：事务模式，可选值包括 'readonly'、'readwrite' 和 'versionchange'
+        const transaction = db.transaction(storeName, transactionMode);
+        // 通过事务对象获取或创建对象存储（Object Store）
+        // 在IndexedDB中，数据操作必须通过事务对象进行。
+        const objectStore = transaction.objectStore(storeName);
+        // 将事务对象和事务暴露给调用者使用
+        return operation(objectStore, transaction);
+    });
+};
+
+export const stepManager = {
+    add(data: Step) {
+        // 声明是读写操作，拿到事务对象，的通过 objectStore.add 进行数据添加
+        // 在 onsuccess 中表示添加成功将结果 resolve 出去
+        return dbOperation('readwrite', (objectStore) => {
+            return new Promise((resolve, reject) => {
+                const request = objectStore.add(data);
+                request.onsuccess = () => {
+                    console.log('Data added successfully');
+                    resolve(request.result);
+                };
+                request.onerror = reject;
+            });
+        });
+    },
+    // findPre、findNext、deleteAfterIndex、clear 等等操作
+}
+```
+
+## 其他需求点
+剩下还有一些问题点，限于文章篇幅原因放到后面再讲，可以先把问题抛出来，有兴趣的同学可以自己尝试一下。
+
+* 连接裁剪，如下图，将多余线进行裁剪，连接到最近的点。
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/122f74c55f1a4e06837c91fa91ddbec3~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=610&h=297&s=31785&e=png&b=fdfdfd)
+* 连线折线，连接两个图形是自动生成折线
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3f30736e76f747109c55b9be6340fbbe~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=244&h=269&s=9202&e=png&b=fcfcfc)
+* 自动布局，点击调整画布整体排版
+* 画布缩略图，当画布比较大，需要缩略图来快速调整画布位置，脑图中可能比较场景。

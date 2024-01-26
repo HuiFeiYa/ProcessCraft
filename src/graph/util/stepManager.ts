@@ -43,12 +43,10 @@ export enum ChangeType {
 
 export class Change {
     constructor(public type: ChangeType, public shapeId: string) {
-
     }
-
     /** 新增和删除不需要这两个值 */
-    oldValue?: UpdateShapeValue; // 更新前的key-value对象的 json串，只记录变更的字段即可，undo的时候会用这个keyValue去update对应的table
-    newValue?: UpdateShapeValue; // 更新后的key-value对象的 json串，只记录变更的字段即可，redo的时候会用这个keyValue去update对应的table
+    oldValue?: UpdateShapeValue;
+    newValue?: UpdateShapeValue;
 }
 
 export class Step {
