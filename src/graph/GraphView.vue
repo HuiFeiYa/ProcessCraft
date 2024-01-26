@@ -100,7 +100,7 @@ function handleMouseupOut() {
     props.graph.rootShape
   );
 }
-function handleMousemoveOut(event: MouseEvent) {
+function handleMousemove(event: MouseEvent) {
   props.graph.emitter.emit(EventType.SHAPE_MOUSE_MOVE, event, undefined);
 }
 function handleDragOver() { }
@@ -157,7 +157,7 @@ onUnmounted(() => {
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" transform-origin="0 0"
       style="min-width: 100%; min-height: 100%;background-color: #eee;" :width="graph.viewModel.bounds.width"
       :height="graph.viewModel.bounds.height" @click="handleClickOut" @mousedown="handleMousedownOut"
-      @mouseup="handleMouseupOut" @mousemove="handleMousemoveOut" @dragover="handleDragOver" @drop.stop="handleDrop">
+      @mouseup="handleMouseupOut" @mousemove="handleMousemove" @dragover="handleDragOver" @drop.stop="handleDrop">
       <g style="width: 100%; height: 100%; background-color: white">
         <DiagramShape :graph="graph" :shape="graph.rootShape" />
       </g>

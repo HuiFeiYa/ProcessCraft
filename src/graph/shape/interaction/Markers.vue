@@ -44,10 +44,10 @@ const typedMarkers = computed(() => {
     <g>
         <!-- 根据目标元素绘制对应 rect 边框 -->
         <rect v-for="marker in typedMarkers.symbolMarkers" v-show="marker.visible" :key="marker.id"
-            :x="marker.targetShape!.bounds.absX - marker.strokeWidth / 2 - 1"
-            :y="marker.targetShape!.bounds.absY - marker.strokeWidth / 2 - 1"
-            :width="marker.targetShape!.bounds.width + marker.strokeWidth + 3"
-            :height="marker.targetShape!.bounds.height + marker.strokeWidth + 3" fill="none" :stroke="marker.strokeColor"
-            :stroke-width="marker.strokeWidth" @click="handleClickMarker(marker.targetShape)"></rect>
+            :x="marker.targetShape!.bounds.absX - marker.strokeWidth / 2"
+            :y="marker.targetShape!.bounds.absY - marker.strokeWidth / 2"
+            :width="marker.targetShape!.bounds.width + marker.strokeWidth"
+            :height="marker.targetShape!.bounds.height + marker.strokeWidth" fill="none" :stroke="marker.strokeColor"
+            :stroke-width="3" @click="handleClickMarker(marker.targetShape)"></rect>
     </g>
 </template>
